@@ -6,7 +6,7 @@
 
 Mail target for [NLog](https://github.com/nlog/nlog) on .NET Core. 
 
-Same name and options as the original mailTarget, see [docs of the original mailTarget](https://github.com/NLog/NLog/wiki/Mail-Target)
+Same name and options as the original mail target, see [docs of the original mailTarget](https://github.com/NLog/NLog/wiki/Mail-Target)
 
 This libary is using the [MailKit library](https://github.com/jstedfast/MailKit)
 
@@ -29,5 +29,5 @@ Also add this to your nlog.config:
 ```
 
 ### License
-BSD
+BSD. License of MailKit is MIT
 
