@@ -1,8 +1,8 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 
   <PropertyGroup>
-    <TargetFramework>netstandard1.3</TargetFramework>
-    <Version>1.0.0-beta4</Version>
+    <TargetFramework>netstandard1.4</TargetFramework>
+    <Version>1.0.0-beta5</Version>
     <Authors>Julian Verdurmen</Authors>
     <Company>NLog</Company>
     <Description>NLog Mail Target for .NET Core
@@ -17,7 +17,10 @@ Using MailKit</Description>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
-    <PackageReleaseNotes>First release. 
+    <PackageReleaseNotes>
+beta5: added XML docs to nupkg
+      
+First release. 
 
 Missing options compared to the original MailTarget:
 
