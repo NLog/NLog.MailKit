@@ -16,6 +16,8 @@ Currently not implemented:
 - PickupDirectory
 - NTLM auth
 
+SMTP section from web.config is also not available
+
 
 ### How to use
 Also add this to your nlog.config:
