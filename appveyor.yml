@@ -1,0 +1,13 @@
+version: 1.0.{build}
+image: Visual Studio 2017
+configuration: Release
+platform: Any CPU
+before_build:
+- ps: msbuild src\NLog.MailKit.sln /t:restore
+build:
+  project: src/NLog.MailKit.sln
+  verbosity: minimal
+test_script:
+- ps: dotnet test test\NLog.MailKit.Tests\NLog.MailKit.Tests.csproj
+artifacts:
+- path: '**\*.nupkg'
