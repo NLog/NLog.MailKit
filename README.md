@@ -11,7 +11,6 @@ System.Net.Mail was not ported to .NET Core, so this libary is using the [MailKi
 
 Currently not implemented:
 
-- Encoding
 - PickupDirectory
 - NTLM auth
 
