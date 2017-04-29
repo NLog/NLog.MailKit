@@ -2,10 +2,10 @@
 
   <PropertyGroup>
     <TargetFramework>netstandard1.3</TargetFramework>
-    <Version>1.0.0-beta2</Version>
+    <Version>1.0.0-beta3</Version>
     <Authors>Julian Verdurmen</Authors>
     <Company>NLog</Company>
-    <Description>NLog MailTarget for .NET Core
+    <Description>NLog Mail Target for .NET Core
 
 Using MailKit</Description>
     <PackageProjectUrl>https://github.com/NLog/NLog.MailKit</PackageProjectUrl>
@@ -19,17 +19,17 @@ Using MailKit</Description>
     <DelaySign>False</DelaySign>
     <PackageReleaseNotes>First release. 
 
-Missing options compare to Original MailTarget 
+Missing options compare to original MailTarget 
 
  - Encoding
- - PickupDirectory
+ - Pickup Directory
  - NTLM auth
 
-Real testing with unit test.</PackageReleaseNotes>
+</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\netstandard1.3\NLog.MailKit.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\NLog.MailKit.xml</DocumentationFile>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE;RELEASE</DefineConstants>
   </PropertyGroup>
