@@ -1,0 +1,36 @@
+﻿<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <TargetFramework>netcoreapp1.1</TargetFramework>
+    <Version>1.0.0-beta1</Version>
+    <Authors>Julian Verdurmen</Authors>
+    <Company>NLog</Company>
+    <Description>NLog MailTarget for .NET Core
+
+Using MailKit</Description>
+    <PackageProjectUrl>https://github.com/NLog/NLog.MailKit</PackageProjectUrl>
+    <PackageLicenseUrl>https://raw.githubusercontent.com/NLog/NLog.MailKit/master/LICENSE</PackageLicenseUrl>
+    <PackageIconUrl>http://nlog-project.org/N.png</PackageIconUrl>
+    <RepositoryUrl>https://github.com/NLog/NLog.MailKit</RepositoryUrl>
+    <PackageTags>nlog mail mailkit netcore</PackageTags>
+    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+    <SignAssembly>True</SignAssembly>
+    <AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
+    <DelaySign>False</DelaySign>
+    <PackageReleaseNotes>First release. 
+
+Missing options compare to Original MailTarget 
+
+ - Encoding
+ - PickupDirectory
+ - NTLM auth
+
+Real testing with unit test.</PackageReleaseNotes>
+  </PropertyGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="1.16.0" />
+    <PackageReference Include="NLog" Version="5.0.0-beta07" /> 
+  </ItemGroup>
+
+</Project>
