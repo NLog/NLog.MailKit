@@ -337,7 +337,7 @@ namespace NLog.MailKit
                     client.AuthenticationMechanisms.Remove("XOAUTH2");
 
                     // Note: only needed if the SMTP server requires authentication
-                    
+
                     if (this.SmtpAuthentication == SmtpAuthenticationMode.Basic)
                     {
                         var userName = SmtpUserName?.Render(lastEvent);
@@ -489,6 +489,7 @@ namespace NLog.MailKit
             }
 
             msg.Subject = Subject == null ? string.Empty : Subject.Render(lastEvent).Trim();
+
             //todo msg.BodyEncoding = Encoding;
 
             if (Priority != null)
@@ -514,6 +515,7 @@ namespace NLog.MailKit
                 return new TextPart(Html ? TextFormat.Html : TextFormat.Plain)
                 {
                     Text = newBody,
+                    ContentType = { Charset = Encoding?.WebName }
 
 
                 };
