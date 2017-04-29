@@ -12,7 +12,7 @@ Using MailKit</Description>
     <PackageLicenseUrl>https://raw.githubusercontent.com/NLog/NLog.MailKit/master/LICENSE</PackageLicenseUrl>
     <PackageIconUrl>http://nlog-project.org/N.png</PackageIconUrl>
     <RepositoryUrl>https://github.com/NLog/NLog.MailKit</RepositoryUrl>
-    <PackageTags>nlog mail mailkit netcore</PackageTags>
+    <PackageTags>nlog mail mailkit netcore smtp</PackageTags>
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
