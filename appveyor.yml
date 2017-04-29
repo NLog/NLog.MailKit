@@ -9,7 +9,11 @@ build:
   project: src/NLog.MailKit.sln
   verbosity: minimal
 test_script:
-- ps: dotnet test test\NLog.MailKit.Tests\NLog.MailKit.Tests.csproj
+  - nuget.exe install OpenCover -ExcludeVersion
+  - OpenCover\tools\OpenCover.Console.exe -register:user -target:"dotnet" -targetargs:"test c:\project\test\NLog.MailKit.Tests\NLog.MailKit.Tests.csproj"  -returntargetcode -filter:"+[NLog.MailKit]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:coverage.xml
+  - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
+  - pip install codecov
+  - codecov -f "coverage.xml"
 artifacts:
 - path: src\NLog.MailKit\bin\Release\*.nupkg
 deploy:
@@ -19,9 +23,3 @@ deploy:
   artifact: /.*\.nupkg/
   on:
     branch: master
-test_script:
-  - nuget.exe install OpenCover -ExcludeVersion
-  - OpenCover\tools\OpenCover.Console.exe -register:user -target:"dotnet" -targetargs:"test c:\project\test\NLog.MailKit.Tests\NLog.MailKit.Tests.csproj"  -returntargetcode -filter:"+[NLog.MailKit]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:coverage.xml
-  - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
-  - pip install codecov
-  - codecov -f "coverage.xml"
