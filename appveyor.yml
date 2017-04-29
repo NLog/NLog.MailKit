@@ -1,4 +1,5 @@
 version: 1.0.{build}
+clone_folder: c:\project\
 image: Visual Studio 2017
 configuration: Release
 platform: Any CPU
@@ -18,3 +19,9 @@ deploy:
   artifact: /.*\.nupkg/
   on:
     branch: master
+ test_script:
+  - nuget.exe install OpenCover -ExcludeVersion
+  - OpenCover\tools\OpenCover.Console.exe -register:user -target:"dotnet" -targetargs:"test c:\project\test\NLog.MailKit.Tests\NLog.MailKit.Tests.csproj"  -returntargetcode -filter:"+[NLog.MailKit]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:coverage.xml
+  - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
+  - pip install codecov
+  - codecov -f "coverage.xml"
