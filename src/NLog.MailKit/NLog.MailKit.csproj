@@ -28,7 +28,7 @@ Real testing with unit test.</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\NLog.MailKit.xml</DocumentationFile>
+    <DocumentationFile>bin\Release\netstandard1.3\NLog.MailKit.xml</DocumentationFile>
     <OutputPath>bin\Release\</OutputPath>
     <DefineConstants>TRACE;RELEASE</DefineConstants>
   </PropertyGroup>
