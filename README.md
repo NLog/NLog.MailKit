@@ -14,3 +14,16 @@ Currently not implemented:
 - PickupDirectory
 - NTLM auth
 
+
+### How to use
+Also add this to your nlog.config:
+
+```xml
+<extensions>
+    <add assembly="NLog.MailKit"/>
+</extensions>
+```
+
+### License
+BSD
+
