@@ -19,12 +19,10 @@ Using MailKit</Description>
     <DelaySign>False</DelaySign>
     <PackageReleaseNotes>First release. 
 
-Missing options compare to Original MailTarget 
+Missing options compared to the original MailTarget:
 
  - PickupDirectory
- - NTLM auth
-
-Real testing with unit test.</PackageReleaseNotes>
+ - NTLM auth</PackageReleaseNotes>
   </PropertyGroup>
 
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
