@@ -10,7 +10,7 @@ build:
   verbosity: minimal
 test_script:
   - nuget.exe install OpenCover -ExcludeVersion
-  - OpenCover\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test c:\project\test\NLog.MailKit.Tests\NLog.MailKit.Tests.csproj"  -returntargetcode -filter:"+[NLog.MailKit]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:coverage.xml
+  - OpenCover\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test c:\project\test\NLog.MailKit.Tests\NLog.MailKit.Tests.csproj -d=coverage.xml"  -returntargetcode -filter:"+[NLog.MailKit]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:coverage.xml
   - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
   - pip install codecov
   - codecov -f "coverage.xml"
