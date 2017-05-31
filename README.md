@@ -16,6 +16,8 @@ Currently not implemented:
 
 SMTP section from web.config is also not available
 
+This library is unit tested with the [SmtpServer NuGet package](https://www.nuget.org/packages/SmtpServer/)
+
 
 ### How to use
 Also add this to your nlog.config:
