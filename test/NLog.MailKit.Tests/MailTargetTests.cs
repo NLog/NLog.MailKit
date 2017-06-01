@@ -5,6 +5,7 @@ using System.Threading;
 using NLog.Config;
 using NLog.Targets;
 using SmtpServer;
+using SmtpServer.Mail;
 using Xunit;
 
 namespace NLog.MailKit.Tests
@@ -16,36 +17,23 @@ namespace NLog.MailKit.Tests
         [Fact]
         public void SendUnauthenticationMail()
         {
-
-            var countdownEvent = new CountdownEvent(1);
-
-            var messageStore = new MessageStore(countdownEvent);
-            var smtpServer = CreateSmtpServer(messageStore);
-
-            var cancellationToken = new CancellationTokenSource();
-            smtpServer.StartAsync(cancellationToken.Token);
-
-            CreateNLogConfig();
-
-            var logger = LogManager.GetLogger("logger1");
-            logger.Info("hello first mail!");
-
-            countdownEvent.Wait(TimeSpan.FromSeconds(10));
-
-            Assert.Equal(1, messageStore.RecievedMessages.Count);
-            var recievedMesssage = messageStore.RecievedMessages[0];
-            Assert.Equal("hi@unittest.com", recievedMesssage.From.User + "@" + recievedMesssage.From.Host);
-            var recievedBody = recievedMesssage.Mime.ToString();
-            Assert.Contains("hello first mail!", recievedBody);
-
-            cancellationToken.Cancel(false);
-
+            SendTest(() =>
+            {
+                CreateNLogConfig();
+            });
         }
 
         [Fact]
         public void SendAuthenticationMail()
         {
+            SendTest(() =>
+            {
+                CreateNLogConfig("user1", "myPassw0rd");
+            });
+        }
 
+        private static void SendTest(Action createConfig, Action<IMimeMessage> extraTest = null)
+        {
             var countdownEvent = new CountdownEvent(1);
 
             var messageStore = new MessageStore(countdownEvent);
@@ -54,8 +42,8 @@ namespace NLog.MailKit.Tests
             var cancellationToken = new CancellationTokenSource();
             smtpServer.StartAsync(cancellationToken.Token);
 
+            createConfig();
 
-            CreateNLogConfig("user1", "myPassw0rd");
 
             var logger = LogManager.GetLogger("logger1");
             logger.Info("hello first mail!");
@@ -68,8 +56,9 @@ namespace NLog.MailKit.Tests
             var recievedBody = recievedMesssage.Mime.ToString();
             Assert.Contains("hello first mail!", recievedBody);
 
-            cancellationToken.Cancel(false);
+            extraTest?.Invoke(recievedMesssage);
 
+            cancellationToken.Cancel(false);
         }
 
         private static SmtpServer.SmtpServer CreateSmtpServer(MessageStore store)
@@ -87,7 +76,7 @@ namespace NLog.MailKit.Tests
             return smtpServer;
         }
 
-        private static void CreateNLogConfig(string username = null, string password = null)
+        private static MailTarget CreateNLogConfig(string username = null, string password = null)
         {
             var target = new MailTarget("mail1")
             {
@@ -103,6 +92,8 @@ namespace NLog.MailKit.Tests
             loggingConfiguration.AddRuleForAllLevels(target);
 
             LogManager.Configuration = loggingConfiguration;
+
+            return target;
         }
     }
 }
