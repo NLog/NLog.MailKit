@@ -20,7 +20,7 @@ namespace NLog.MailKit.Tests
             SendTest(() =>
             {
                 CreateNLogConfig();
-            });
+            }, 1);
         }
 
         [Fact]
@@ -29,10 +29,28 @@ namespace NLog.MailKit.Tests
             SendTest(() =>
             {
                 CreateNLogConfig("user1", "myPassw0rd");
+            }, 1);
+        }
+
+
+
+        [Fact]
+        public void SendAuthenticationMail_cc_with_name()
+        {
+            SendTest(() =>
+            {
+                var mailTarget = CreateNLogConfig();
+                mailTarget.Cc = "no reply <do_not_reply@domain.com>";
+            }, 2, (message) =>
+            {
+                var fullMessage = message.Mime.ToString();
+                // wont work, bug ? Assert.Equal("no reply", bcc.DisplayName);
+                Assert.Contains("Cc: no reply <do_not_reply@domain.com>", fullMessage);
+
             });
         }
 
-        private static void SendTest(Action createConfig, Action<IMimeMessage> extraTest = null)
+        private static void SendTest(Action createConfig, int toCount, Action<IMimeMessage> extraTest = null)
         {
             var countdownEvent = new CountdownEvent(1);
 
@@ -55,6 +73,8 @@ namespace NLog.MailKit.Tests
             Assert.Equal("hi@unittest.com", recievedMesssage.From.User + "@" + recievedMesssage.From.Host);
             var recievedBody = recievedMesssage.Mime.ToString();
             Assert.Contains("hello first mail!", recievedBody);
+
+            Assert.Equal(toCount, recievedMesssage.To.Count);
 
             extraTest?.Invoke(recievedMesssage);
 
