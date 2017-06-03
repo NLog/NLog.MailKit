@@ -477,7 +477,7 @@ namespace NLog.MailKit
             {
                 throw new NLogRuntimeException(RequiredPropertyIsEmptyFormat, "From");
             }
-            msg.From.Add(new MailboxAddress(renderedFrom));
+            msg.From.Add(MailboxAddress.Parse(renderedFrom));
 
             var addedTo = AddAddresses(msg.To, To, lastEvent);
             var addedCc = AddAddresses(msg.Cc, Cc, lastEvent);
@@ -540,7 +540,7 @@ namespace NLog.MailKit
             {
                 foreach (string mail in layout.Render(logEvent).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
                 {
-                    mailAddressCollection.Add(new MailboxAddress(mail));
+                    mailAddressCollection.Add(MailboxAddress.Parse(mail));
                     added = true;
                 }
             }

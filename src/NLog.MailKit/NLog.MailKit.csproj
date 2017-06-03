@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
-    <Version>1.0.0-beta5</Version>
+    <Version>1.0.0-dev20170531</Version>
     <Authors>Julian Verdurmen</Authors>
     <Company>NLog</Company>
     <Description>
