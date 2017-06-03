@@ -20,7 +20,7 @@ This library is unit tested with the [SmtpServer NuGet package](https://www.nuge
 
 
 ### How to use
-Also add this to your nlog.config:
+Install the package: `Install-Package NLog.MailKit` and add to your nlog.config:
 
 ```xml
 <extensions>
