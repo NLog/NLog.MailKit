@@ -22,11 +22,21 @@ This library is unit tested with the [SmtpServer NuGet package](https://www.nuge
 ### How to use
 Install the package: `Install-Package NLog.MailKit` and add to your nlog.config:
 
-```xml
-<extensions>
-    <add assembly="NLog.MailKit"/>
-</extensions>
-```
+    <extensions>
+        <add assembly="NLog.MailKit"/>
+    </extensions>
+
+Use the target "mail"
+and config options can be found here: https://github.com/NLog/NLog/wiki/Mail-Target
+
+
+Currently not implemented:
+
+- PickupDirectory
+- NTLM auth
+
+
+
 
 ### License
 BSD. License of MailKit is MIT
