@@ -223,7 +223,7 @@ namespace NLog.MailKit
         /// </summary>
         /// <docgen category='SMTP Options' order='16' />.
         [DefaultValue(false)]
-        public bool IgnoreCertificateValidation { get; set; }
+        public bool SkipCertificateValidation { get; set; }
         
         /// <summary>
         /// Gets or sets the priority used for sending mails.
@@ -335,7 +335,7 @@ namespace NLog.MailKit
                     InternalLogger.Trace("  Subject: '{0}'", message.Subject);
                     InternalLogger.Trace("  From: '{0}'", message.From.ToString());
                     
-                    if(IgnoreCertificateValidation)
+                    if(SkipCertificateValidation)
                         client.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
 
                     client.Connect(renderedHost, SmtpPort, EnableSsl);
