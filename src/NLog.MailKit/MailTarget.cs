@@ -219,6 +219,13 @@ namespace NLog.MailKit
         public int SmtpPort { get; set; }
 
         /// <summary>
+        /// Gets or sets a value indicating whether SmtpClient should ignore invalid certificate.
+        /// </summary>
+        /// <docgen category='SMTP Options' order='16' />.
+        [DefaultValue(false)]
+        public bool SkipCertificateValidation { get; set; }
+        
+        /// <summary>
         /// Gets or sets the priority used for sending mails.
         /// </summary>
         public Layout Priority { get; set; }
@@ -327,7 +334,9 @@ namespace NLog.MailKit
                     InternalLogger.Debug("Sending mail to {0} using {1}:{2} (ssl={3})", message.To, renderedHost, SmtpPort, EnableSsl);
                     InternalLogger.Trace("  Subject: '{0}'", message.Subject);
                     InternalLogger.Trace("  From: '{0}'", message.From.ToString());
-
+                    
+                    if(SkipCertificateValidation)
+                        client.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
 
                     client.Connect(renderedHost, SmtpPort, EnableSsl);
                     InternalLogger.Trace("  Connecting succesfull");
