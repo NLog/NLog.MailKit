@@ -22,9 +22,11 @@ This library is unit tested with the [SmtpServer NuGet package](https://www.nuge
 ### How to use
 Install the package: `Install-Package NLog.MailKit` and add to your nlog.config:
 
-    <extensions>
-        <add assembly="NLog.MailKit"/>
-    </extensions>
+```xml
+<extensions>
+    <add assembly="NLog.MailKit"/>
+</extensions>
+```
 
 Use the target "mail"
 and config options can be found here: https://github.com/NLog/NLog/wiki/Mail-Target
