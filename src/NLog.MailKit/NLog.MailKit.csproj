@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFramework>netstandard1.4</TargetFramework>
-    <Version>1.1.0</Version>
+    <Version>1.1.1</Version>
     <Authors>Julian Verdurmen</Authors>
     <Company>NLog</Company>
     <Description>
@@ -26,7 +26,8 @@
     <AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <PackageReleaseNotes>
-      Added SkipCertificateValidation option
+      1.1.1: Updated dependencies
+      1.1.0: Added SkipCertificateValidation option
     </PackageReleaseNotes>
     <AssemblyVersion>1.0.0.0</AssemblyVersion>
     <!--AssemblyVersion: keep 1.0.0.0-->
@@ -39,7 +40,7 @@
     <DefineConstants>TRACE;RELEASE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="1.16.0" />
-    <PackageReference Include="NLog" Version="5.0.0-beta07" />
+    <PackageReference Include="MailKit" Version="1.16.2" />
+    <PackageReference Include="NLog" Version="5.0.0-beta09" />
   </ItemGroup>
 </Project>
