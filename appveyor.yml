@@ -1,4 +1,5 @@
 version: 1.0.{build}
+clone_folder: c:\project\
 image: Visual Studio 2017
 configuration: Release
 platform: Any CPU
@@ -11,7 +12,11 @@ build:
   project: src/NLog.MailKit.sln
   verbosity: minimal
 test_script:
-- ps: dotnet test test\NLog.MailKit.Tests\NLog.MailKit.Tests.csproj
+  - nuget.exe install OpenCover -ExcludeVersion
+  - OpenCover\tools\OpenCover.Console.exe -register:user -target:"dotnet.exe" -targetargs:"test c:\project\test\NLog.MailKit.Tests\NLog.MailKit.Tests.csproj -d=coverage.xml" -mergeoutput -oldStyle  -returntargetcode -filter:"+[NLog.MailKit]*" -excludebyattribute:*.ExcludeFromCodeCoverage* -hideskipped:All -output:coverage.xml
+  - "SET PATH=C:\\Python34;C:\\Python34\\Scripts;%PATH%"
+  - pip install codecov
+  - codecov -f "coverage.xml"
 artifacts:
 - path: src\NLog.MailKit\bin\Release\*.nupkg
 deploy:
