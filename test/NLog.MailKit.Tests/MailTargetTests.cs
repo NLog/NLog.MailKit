@@ -43,14 +43,14 @@ namespace NLog.MailKit.Tests
                 mailTarget.Cc = "no reply <do_not_reply@domain.com>";
             }, 2, (message) =>
             {
-                var fullMessage = message.Mime.ToString();
+                var fullMessage = message.Message.ToString();
                 // wont work, bug ? Assert.Equal("no reply", bcc.DisplayName);
                 Assert.Contains("Cc: no reply <do_not_reply@domain.com>", fullMessage);
 
             });
         }
 
-        private static void SendTest(Action createConfig, int toCount, Action<IMimeMessage> extraTest = null)
+        private static void SendTest(Action createConfig, int toCount, Action<IMessageTransaction> extraTest = null)
         {
             var countdownEvent = new CountdownEvent(1);
 
@@ -71,7 +71,7 @@ namespace NLog.MailKit.Tests
             Assert.Equal(1, messageStore.RecievedMessages.Count);
             var recievedMesssage = messageStore.RecievedMessages[0];
             Assert.Equal("hi@unittest.com", recievedMesssage.From.User + "@" + recievedMesssage.From.Host);
-            var recievedBody = recievedMesssage.Mime.ToString();
+            var recievedBody = recievedMesssage.Message.ToString();
             Assert.Contains("hello first mail!", recievedBody);
 
             Assert.Equal(toCount, recievedMesssage.To.Count);

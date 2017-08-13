@@ -11,7 +11,7 @@ namespace NLog.MailKit.Tests
 {
     public class MessageStore : IMessageStore, IMessageStoreFactory
     {
-        public IList<IMimeMessage> RecievedMessages { get; }
+        public IList<IMessageTransaction> RecievedMessages { get; }
 
         private readonly CountdownEvent _countdownEvent;
 
@@ -21,7 +21,7 @@ namespace NLog.MailKit.Tests
             {
                 throw new ArgumentNullException(nameof(countdownEvent));
             }
-            RecievedMessages = new List<IMimeMessage>();
+            RecievedMessages = new List<IMessageTransaction>();
             _countdownEvent = countdownEvent;
         }
 
@@ -30,11 +30,15 @@ namespace NLog.MailKit.Tests
             return this;
         }
 
-        public Task<SmtpResponse> SaveAsync(ISessionContext context, IMimeMessage message, CancellationToken cancellationToken)
+        #region Implementation of IMessageStore
+
+        public Task<SmtpResponse> SaveAsync(ISessionContext context, IMessageTransaction message, CancellationToken cancellationToken)
         {
             RecievedMessages.Add(message);
             _countdownEvent.Signal();
             return Task.FromResult(SmtpResponse.Ok);
         }
+
+        #endregion
     }
 }
