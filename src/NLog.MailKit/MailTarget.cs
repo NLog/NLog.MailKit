@@ -253,6 +253,8 @@ namespace NLog.MailKit
             Write((IList<AsyncLogEventInfo>)new[] { logEvent });
         }
 
+#if !NETSTANDARD2_0
+
         /// <summary>
         /// NOTE! Will soon be marked obsolete. Instead override Write(IList{AsyncLogEventInfo} logEvents)
         /// 
@@ -265,6 +267,8 @@ namespace NLog.MailKit
         {
             Write((IList<AsyncLogEventInfo>)logEvents);
         }
+
+#endif
 
         /// <summary>
         /// Renders an array logging events.
