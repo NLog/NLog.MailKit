@@ -33,7 +33,7 @@ Small breaking change, SmtpAuthenticationMode has been moved to this dll.
 1.1.0: Added SkipCertificateValidation option
 </PackageReleaseNotes>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <!--AssemblyVersion: keep 1.0.0.0-->
+    <!--AssemblyVersion: keep 2.0.0.0-->
     <FileVersion>2.0.0.0</FileVersion>
     <!-- FileVersion = AssemblyFileVersionAttribute, patched by AppVeyor -->
   </PropertyGroup>
