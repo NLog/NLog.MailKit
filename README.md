@@ -31,7 +31,7 @@ Install the package: `Install-Package NLog.MailKit` and add to your nlog.config:
 Use the target "mail"
 and config options can be found here: https://github.com/NLog/NLog/wiki/Mail-Target
 
-Use `skipCertificateValidation="true"` for prevent `AuthenticationException` if your remote certificate for smtpServer is invalid 
+Use `skipCertificateValidation="true"` for prevent `AuthenticationException` if your remote certificate for smtpServer is invalid - not recommend! 
 
 Currently not implemented:
 
