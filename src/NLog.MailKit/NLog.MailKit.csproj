@@ -43,7 +43,7 @@ Small breaking change, SmtpAuthenticationMode has been moved to this dll.
     <DefineConstants>RELEASE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="1.18.1.1" />
+    <PackageReference Include="MailKit" Version="1.20.0" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
     <PackageReference Include="NLog" Version="4.4.12" />
@@ -52,6 +52,6 @@ Small breaking change, SmtpAuthenticationMode has been moved to this dll.
     <PackageReference Include="NLog" Version="5.0.0-beta11" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="NLog" Version="4.5.0-beta03" />
+    <PackageReference Include="NLog" Version="4.5.0-beta08" />
   </ItemGroup>
 </Project>
