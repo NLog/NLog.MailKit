@@ -1,20 +1,21 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard1.4;net40;netstandard2.0</TargetFrameworks>
-    <Version>2.0</Version>
+    <Version>2.1</Version>
     <Authors>Julian Verdurmen</Authors>
     <Company>NLog</Company>
-    <Description>NLog Mail Target for .NET Core, using MailKit.
-      
-As System.Net.Mail isn't ported to .NET Core (yet), the original Mail Target of NLog isn't working when using .NET Core. 
-      
-This package add the mail target to NLog and has the same options as the original Mail Target. 
-      
+    <Description>NLog Mail Target for .NET Core &amp; .NET Standard, and .NET 4+ using MailKit.
+
+This package add the mail target to NLog and has the same options as the original Mail Target.
+
+If the mail target was already available on your platform (.NET Standard 2+, .NET 4+),
+this package will overwrite the original Mail Target.
+
 Compared to the original MailTarget, the following options aren't implemented:
 
- - PickupDirectory
- - NTLM auth
-</Description>
+- PickupDirectory
+- NTLM auth
+    </Description>
     <PackageProjectUrl>https://github.com/NLog/NLog.MailKit</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/NLog/NLog.MailKit/master/LICENSE</PackageLicenseUrl>
     <PackageIconUrl>http://nlog-project.org/N.png</PackageIconUrl>
@@ -25,6 +26,8 @@ Compared to the original MailTarget, the following options aren't implemented:
     <AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <PackageReleaseNotes>
+2.1: Add setting SecureSocketOption, update dependencies
+      
 2.0: .NET 4+ and .NET standard 2 support. 
       
 Small breaking change, SmtpAuthenticationMode has been moved to this dll.
