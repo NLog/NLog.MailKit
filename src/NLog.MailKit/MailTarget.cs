@@ -99,6 +99,7 @@ namespace NLog.MailKit
             Encoding = Encoding.UTF8;
             SmtpPort = 25;
             SmtpAuthentication = SmtpAuthenticationMode.None;
+            SecureSocketOption = SecureSocketOptions.StartTlsWhenAvailable;
             Timeout = 10000;
         }
 
@@ -219,7 +220,7 @@ namespace NLog.MailKit
         /// 
         /// If <see cref="EnableSsl"/> is <c>true</c>, then <see cref="SecureSocketOptions.SslOnConnect"/> will be used.
         /// </summary>
-        [DefaultValue(false)]
+        [DefaultValue(SecureSocketOptions.StartTlsWhenAvailable)]
         public SecureSocketOptions SecureSocketOption { get; set; }
 
         /// <summary>
