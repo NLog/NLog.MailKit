@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.5;net40;netstandard2.0</TargetFrameworks>
-    <Version>2.1.1</Version>
+    <TargetFrameworks>netstandard1.3;netstandard1.5;net40;netstandard2.0</TargetFrameworks>
+    <Version>2.2</Version>
     <Authors>Julian Verdurmen</Authors>
     <Company>NLog</Company>
     <Description>NLog Mail Target for .NET Core &amp; .NET Standard, and .NET 4+ using MailKit.
@@ -26,6 +26,8 @@ Compared to the original MailTarget, the following options aren't implemented:
     <AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <PackageReleaseNotes>
+      2.2 NLog 4.5, updated mailkit, netstandard1.3
+      
       2.1.1 Remove dependency to NLog 5
 2.1: Add setting SecureSocketOption, update dependencies
       
@@ -47,15 +49,18 @@ Small breaking change, SmtpAuthenticationMode has been moved to this dll.
     <DefineConstants>RELEASE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="1.20.0" />
+    <PackageReference Include="MailKit" Version="1.22.0" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
-    <PackageReference Include="NLog" Version="4.4.12" />
+    <PackageReference Include="NLog" Version="4.5.0" />
+  </ItemGroup>
+   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
+    <PackageReference Include="NLog" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
-    <PackageReference Include="NLog" Version="4.5.0-rc03" />
+    <PackageReference Include="NLog" Version="4.5.0" />
   </ItemGroup>
   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="NLog" Version="4.5.0-rc03" />
+    <PackageReference Include="NLog" Version="4.5.0" />
   </ItemGroup>
 </Project>
