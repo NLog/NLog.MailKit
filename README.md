@@ -5,7 +5,7 @@
 
 Alternaive Mail target for [NLog](https://github.com/nlog/nlog) using MailKit. Compatible with .NET standard 1, .NET standard 2 and .NET 4+
 
-Including this package will replace the original mail targrt and had the
+Including this package will replace the original mail target and has the
 same options as the original mail target, see [docs of the original mailTarget](https://github.com/NLog/NLog/wiki/Mail-Target)
 
 
