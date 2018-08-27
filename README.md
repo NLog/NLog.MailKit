@@ -8,6 +8,11 @@ Alternaive Mail target for [NLog](https://github.com/nlog/nlog) using MailKit. C
 Including this package will replace the original mail target and has the
 same options as the original mail target, see [docs of the original mailTarget](https://github.com/NLog/NLog/wiki/Mail-Target)
 
+Notice that the orginal [SmtpClient](https://docs.microsoft.com/en-us/dotnet/api/system.net.mail.smtpclient) of .NET is obsolete in favor of MailKit:
+
+![image](https://user-images.githubusercontent.com/5808377/44685633-351b0600-aa4c-11e8-9eec-48dd9fadb963.png)
+
+
 
 Currently not implemented:
 
