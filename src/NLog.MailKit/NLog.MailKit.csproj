@@ -1,14 +1,14 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard1.5;net40;netstandard2.0</TargetFrameworks>
-    <Version>2.2</Version>
+    <TargetFrameworks>netstandard1.3;netstandard1.5;net45;netstandard2.0</TargetFrameworks>
+    <Version>3.0</Version>
     <Authors>Julian Verdurmen</Authors>
     <Company>NLog</Company>
-    <Description>NLog Mail Target for .NET Core &amp; .NET Standard, and .NET 4+ using MailKit.
+    <Description>NLog Mail Target for .NET Core &amp; .NET Standard, and .NET 4.5+ using MailKit.
 
 This package add the mail target to NLog and has the same options as the original Mail Target.
 
-If the mail target was already available on your platform (.NET Standard 2+, .NET 4+),
+If the mail target was already available on your platform (.NET Standard 2+, .NET 4.5),
 this package will overwrite the original Mail Target.
 
 Compared to the original MailTarget, the following options aren't implemented:
@@ -26,6 +26,7 @@ Compared to the original MailTarget, the following options aren't implemented:
     <AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <PackageReleaseNotes>
+      3.0: MailKit 2.0, Update NLog. Minimal support for .NET moved from 4.0 to 4.5
       2.2 NLog 4.5, updated mailkit, netstandard1.3
       
       2.1.1 Remove dependency to NLog 5
@@ -49,18 +50,9 @@ Small breaking change, SmtpAuthenticationMode has been moved to this dll.
     <DefineConstants>RELEASE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="1.22.0" />
+    <PackageReference Include="MailKit" Version="2.0.6" />
   </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'net40' ">
-    <PackageReference Include="NLog" Version="4.5.0" />
-  </ItemGroup>
-   <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.3' ">
-    <PackageReference Include="NLog" Version="4.5.0" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard1.5' ">
-    <PackageReference Include="NLog" Version="4.5.0" />
-  </ItemGroup>
-  <ItemGroup Condition=" '$(TargetFramework)' == 'netstandard2.0' ">
-    <PackageReference Include="NLog" Version="4.5.0" />
+  <ItemGroup>
+    <PackageReference Include="NLog" Version="4.5.9" />
   </ItemGroup>
 </Project>
