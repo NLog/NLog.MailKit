@@ -3,7 +3,7 @@
 [![Build status](https://ci.appveyor.com/api/projects/status/nuh3pkael8ltd4bq/branch/master?svg=true)](https://ci.appveyor.com/project/nlog/nlog-mailkit/branch/master)
 [![NuGet](https://img.shields.io/nuget/v/NLog.MailKit.svg)](https://www.nuget.org/packages/NLog.MailKit)
 
-Alternaive Mail target for [NLog](https://github.com/nlog/nlog) using MailKit. Compatible with .NET standard 1, .NET standard 2 and .NET 4+
+Alternative Mail target for [NLog](https://github.com/nlog/nlog) using MailKit. Compatible with .NET standard 1, .NET standard 2 and .NET 4+
 
 Including this package will replace the original mail target and has the
 same options as the original mail target, see [docs of the original mailTarget](https://github.com/NLog/NLog/wiki/Mail-Target)
@@ -24,7 +24,16 @@ This library is unit tested with the [SmtpServer NuGet package](https://www.nuge
 
 
 ### How to use
-Install the package: `Install-Package NLog.MailKit` and add to your nlog.config:
+
+1) Install the package: 
+
+`Install-Package NLog.MailKit` or in your csproj:
+
+```xml
+<PackageReference Include="NLog.MailKit" Version="3.0.0" />
+```
+
+2) Add to your nlog.config:
 
 ```xml
 <extensions>
