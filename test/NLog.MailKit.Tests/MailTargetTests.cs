@@ -66,7 +66,7 @@ namespace NLog.MailKit.Tests
             var logger = LogManager.GetLogger("logger1");
             logger.Info("hello first mail!");
 
-            countdownEvent.Wait(TimeSpan.FromSeconds(10));
+            countdownEvent.Wait(TimeSpan.FromSeconds(50));
 
             Assert.Equal(1, messageStore.RecievedMessages.Count);
             var recievedMesssage = messageStore.RecievedMessages[0];
