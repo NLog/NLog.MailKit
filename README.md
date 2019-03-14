@@ -30,7 +30,7 @@ This library is unit tested with the [SmtpServer NuGet package](https://www.nuge
     `Install-Package NLog.MailKit` or in your csproj:
 
     ```xml
-    <PackageReference Include="NLog.MailKit" Version="3.0.0" />
+    <PackageReference Include="NLog.MailKit" Version="3.0.1" />
     ```
 
 2) Add to your nlog.config:
