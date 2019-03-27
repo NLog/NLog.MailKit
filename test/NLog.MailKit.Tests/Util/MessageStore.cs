@@ -3,26 +3,20 @@ using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
 using SmtpServer;
-using SmtpServer.Mail;
 using SmtpServer.Protocol;
 using SmtpServer.Storage;
 
-namespace NLog.MailKit.Tests
+namespace NLog.MailKit.Tests.Util
 {
     public class MessageStore : IMessageStore, IMessageStoreFactory
     {
-        public IList<IMimeMessage> RecievedMessages { get; }
+        public IList<IMessageTransaction> RecievedTransactions { get; } = new List<IMessageTransaction>();
 
         private readonly CountdownEvent _countdownEvent;
 
         public MessageStore(CountdownEvent countdownEvent)
         {
-            if (countdownEvent == null)
-            {
-                throw new ArgumentNullException(nameof(countdownEvent));
-            }
-            RecievedMessages = new List<IMimeMessage>();
-            _countdownEvent = countdownEvent;
+            _countdownEvent = countdownEvent ?? throw new ArgumentNullException(nameof(countdownEvent));
         }
 
         public IMessageStore CreateInstance(ISessionContext context)
@@ -30,11 +24,17 @@ namespace NLog.MailKit.Tests
             return this;
         }
 
-        public Task<SmtpResponse> SaveAsync(ISessionContext context, IMimeMessage message, CancellationToken cancellationToken)
+
+        #region Implementation of IMessageStore
+
+        /// <inheritdoc />
+        public Task<SmtpResponse> SaveAsync(ISessionContext context, IMessageTransaction transaction, CancellationToken cancellationToken)
         {
-            RecievedMessages.Add(message);
+            RecievedTransactions.Add(transaction);
             _countdownEvent.Signal();
             return Task.FromResult(SmtpResponse.Ok);
         }
+
+        #endregion
     }
 }
