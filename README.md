@@ -20,7 +20,7 @@ Currently not implemented:
 - NTLM auth
 - reading SMTP section from web.config
 
-This library is unit tested with the [SmtpServer NuGet package](https://www.nuget.org/packages/SmtpServer/)
+This library is integration tested with the [SmtpServer NuGet package](https://www.nuget.org/packages/SmtpServer/)
 
 
 ### How to use
