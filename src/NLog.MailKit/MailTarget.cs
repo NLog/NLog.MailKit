@@ -275,6 +275,7 @@ namespace NLog.MailKit
         /// optimize batch writes.
         /// </summary>
         /// <param name="logEvents">Logging events to be written out.</param>
+        [Obsolete("Write(AsyncLogEventInfo[]) is obsolete. Override Write(IList{AsyncLogEventInfo} logEvents) instead.", true)]
         protected override void Write(AsyncLogEventInfo[] logEvents)
         {
             Write((IList<AsyncLogEventInfo>)logEvents);
