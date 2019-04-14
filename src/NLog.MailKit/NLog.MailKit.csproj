@@ -6,15 +6,18 @@
     <Company>NLog</Company>
     <Description>NLog Mail Target for .NET Core &amp; .NET Standard, and .NET 4.5+ using MailKit.
 
-This package add the mail target to NLog and has the same options as the original Mail Target.
+This package add the mail target to NLog and has the same options* as the original Mail Target.
 
 If the mail target was already available on your platform (.NET Standard 2+, .NET 4.5),
 this package will overwrite the original Mail Target.
 
-Compared to the original MailTarget, the following options aren't implemented:
+* Compared to the original MailTarget, the following options aren't implemented:
 
 - PickupDirectory
 - NTLM auth
+      
+* MailKit gives more control of the sockets, so you get the `secureSocketOption` option for free!    
+      
     </Description>
     <PackageProjectUrl>https://github.com/NLog/NLog.MailKit</PackageProjectUrl>
     <PackageLicenseUrl>https://raw.githubusercontent.com/NLog/NLog.MailKit/master/LICENSE</PackageLicenseUrl>
