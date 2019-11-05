@@ -58,7 +58,7 @@ this package will overwrite the original Mail Target.
     <DefineConstants>RELEASE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="2.3.2" />
+    <PackageReference Include="MailKit" Version="2.4.0.1" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.6.7" />
