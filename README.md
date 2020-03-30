@@ -6,7 +6,9 @@
 Alternative Mail target for [NLog](https://github.com/nlog/nlog) using MailKit. Compatible with .NET standard 1, .NET standard 2 and .NET 4+
 
 Including this package will replace the original mail target and has the
-same options as the original mail target, see [docs of the original mailTarget](https://github.com/NLog/NLog/wiki/Mail-Target)
+same options as the original mail target, see [docs of the original mailTarget](https://github.com/NLog/NLog/wiki/Mail-Target).
+
+Please note that this package isn't full backwards compatible with NLog's default MailTarget. The priority values are different. 
 
 Notice that the original [SmtpClient](https://docs.microsoft.com/en-us/dotnet/api/system.net.mail.smtpclient) of .NET is obsolete in favor of MailKit:
 
