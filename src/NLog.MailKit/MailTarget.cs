@@ -522,16 +522,40 @@ namespace NLog.MailKit
 
             if (Priority != null)
             {
-                var renderedPriority = Priority.Render(lastEvent);
-                try
-                {
+                // default is already set by MimeMessage ctor
+                //msg.Priority = MessagePriority.Normal;
 
-                    msg.Priority = (MessagePriority)Enum.Parse(typeof(MessagePriority), renderedPriority, true);
-                }
-                catch
+                string renderedPriority = Priority.Render(lastEvent);
+
+                // try backward compatible enum:System.Net.Mail.MailPriority
+                if (ConversionHelpers.TryParseEnum(renderedPriority, out System.Net.Mail.MailPriority mailPriority))
                 {
-                    InternalLogger.Warn("Could not convert '{0}' to MessagePriority, valid values are NonUrgent, Normal and Urgent. Using normal priority as fallback.");
-                    msg.Priority = MessagePriority.Normal;
+                    // only care for Low/High
+                    switch (mailPriority)
+                    {
+                        case System.Net.Mail.MailPriority.High:
+                            {
+                                InternalLogger.Info("Compatibility: converting [System.Net.Mail.MailPriority.High] to [MimeKit.MessagePriority.Urgent]. Consider updating your configuration!");
+                                msg.Priority = MimeKit.MessagePriority.Urgent;
+                                break;
+                            }
+                        case System.Net.Mail.MailPriority.Low:
+                            {
+                                InternalLogger.Info("Compatibility: converting [System.Net.Mail.MailPriority.Low] to [MimeKit.MessagePriority.NonUrgent]. Consider updating your configuration!");
+                                msg.Priority = MimeKit.MessagePriority.NonUrgent;
+                                break;
+                            }
+                        default: break;
+                    }
+                }
+                // check new enum:MimeKit.MessagePriority
+                else if (ConversionHelpers.TryParseEnum(renderedPriority, out MimeKit.MessagePriority messagePriority))
+                {
+                    msg.Priority = messagePriority;
+                }
+                else
+                {
+                    InternalLogger.Warn("Could not convert '{0}' to MimeKit.MessagePriority, valid values are NonUrgent, Normal and Urgent. Using default priority 'normal' as fallback.");
                 }
             }
 
