@@ -63,4 +63,7 @@ this package will overwrite the original Mail Target.
   <ItemGroup>
     <PackageReference Include="NLog" Version="4.6.8" />
   </ItemGroup>
+  <ItemGroup>
+     <Reference Include="System.Net" />
+  </ItemGroup>   
 </Project>
