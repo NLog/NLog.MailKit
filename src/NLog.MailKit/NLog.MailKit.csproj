@@ -61,6 +61,6 @@ this package will overwrite the original Mail Target.
     <PackageReference Include="MailKit" Version="2.6.0" />
   </ItemGroup>
   <ItemGroup>
-    <PackageReference Include="NLog" Version="4.6.8" />
+    <PackageReference Include="NLog" Version="4.7.0" />
   </ItemGroup>
 </Project>
