@@ -236,7 +236,7 @@ namespace NLog.MailKit
         /// <docgen category='SMTP Options' order='16' />.
         [DefaultValue(false)]
         public bool SkipCertificateValidation { get; set; }
-        
+
         /// <summary>
         /// Gets or sets the priority used for sending mails.
         /// </summary>
@@ -352,11 +352,11 @@ namespace NLog.MailKit
                     InternalLogger.Debug("Sending mail to {0} using {1}:{2} (socket option={3})", message.To, renderedHost, SmtpPort, secureSocketOptions);
                     InternalLogger.Trace("  Subject: '{0}'", message.Subject);
                     InternalLogger.Trace("  From: '{0}'", message.From.ToString());
-                    
-                    if(SkipCertificateValidation)
+
+                    if (SkipCertificateValidation)
                         client.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
 
-                   
+
                     client.Connect(renderedHost, SmtpPort, secureSocketOptions);
                     InternalLogger.Trace("  Connecting succesfull");
 
@@ -523,16 +523,9 @@ namespace NLog.MailKit
             if (Priority != null)
             {
                 var renderedPriority = Priority.Render(lastEvent);
-                try
-                {
-
-                    msg.Priority = (MessagePriority)Enum.Parse(typeof(MessagePriority), renderedPriority, true);
-                }
-                catch
-                {
-                    InternalLogger.Warn("Could not convert '{0}' to MessagePriority, valid values are NonUrgent, Normal and Urgent. Using normal priority as fallback.");
-                    msg.Priority = MessagePriority.Normal;
-                }
+                MessagePriority messagePriority;
+                messagePriority = ParseMessagePriority(renderedPriority);
+                msg.Priority = messagePriority;
             }
 
             TextPart CreateBodyPart()
@@ -552,6 +545,38 @@ namespace NLog.MailKit
             msg.Body = CreateBodyPart();
 
             return msg;
+        }
+
+        public static MessagePriority ParseMessagePriority(string priority)
+        {
+            if (string.IsNullOrWhiteSpace(priority))
+            {
+                return MessagePriority.Normal;
+            }
+
+            priority = priority.Trim();
+            if (priority.Equals("High", StringComparison.OrdinalIgnoreCase))
+            {
+                return MessagePriority.Urgent;
+            }
+            if (priority.Equals("Low", StringComparison.OrdinalIgnoreCase))
+            {
+                return MessagePriority.NonUrgent;
+            }
+            MessagePriority messagePriority;
+            try
+            {
+                messagePriority = (MessagePriority)Enum.Parse(typeof(MessagePriority), priority, true);
+            }
+            catch
+            {
+                InternalLogger.Warn("Could not convert '{0}' to MessagePriority, valid values are NonUrgent, Normal and Urgent. " +
+                                    "Also High and Low could be used as alternatives to Urgent and NonUrgent. " +
+                                    "Using normal priority as fallback.");
+                messagePriority = MessagePriority.Normal;
+            }
+
+            return messagePriority;
         }
 
         /// <summary>
