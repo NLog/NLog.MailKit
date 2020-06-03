@@ -1,0 +1,17 @@
+version: 2
+updates:
+- package-ecosystem: nuget
+  directory: "/"
+  schedule:
+    interval: daily
+  open-pull-requests-limit: 10
+  ignore:
+  - dependency-name: Microsoft.NET.Test.Sdk
+    versions:
+    - "> 16.2.0, < 17"
+  - dependency-name: SmtpServer
+    versions:
+    - ">= 6.a, < 7"
+  - dependency-name: SmtpServer
+    versions:
+    - ">= 7.a, < 8"
