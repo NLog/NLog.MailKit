@@ -1,7 +1,7 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
     <TargetFrameworks>netstandard1.3;netstandard1.5;net45;netstandard2.0</TargetFrameworks>
-    <Version>3.2</Version>
+    <Version>3.3</Version>
     <Authors>Julian Verdurmen</Authors>
     <Company>NLog</Company>
     <Description>NLog Mail Target for .NET Core &amp; .NET Standard, and .NET 4.5+ using MailKit.
@@ -29,6 +29,8 @@ this package will overwrite the original Mail Target.
     <AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <PackageReleaseNotes>
+3.3:
+- Updated dependencies       
 3.2:
 - Updated dependencies   
 - Support for the System.Net.Mail.MailPriority values: High and Low
