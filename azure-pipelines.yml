@@ -85,3 +85,11 @@ steps:
     PathtoPublish: '$(build.artifactstagingdirectory)'
     ArtifactName: packages
   condition: succeededOrFailed()
+
+- task: NuGetCommand@2
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;$(Build.ArtifactStagingDirectory)/**/*.snupkg;'
+    nuGetFeedType: 'external'
+    publishFeedCredentials: 'NLog new'
+    verbosityPush: 'Normal'
