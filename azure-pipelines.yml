@@ -12,17 +12,11 @@ variables:
   BuildConfiguration: 'Release'
 
 steps:
-- task: RestoreCache@1
-  displayName: 'Restore cache'
-  inputs:
-    keyfile: src/NLog.MailKit/NLog.MailKit.csproj
-    targetfolder: '$(System.DefaultWorkingDirectory)'
-    vstsFeed: '72313c57-1b2d-4cf1-a7be-c7b9ac5efdb2'
 
 - task: NuGetToolInstaller@0
-  displayName: 'Use NuGet 5.11'
+  displayName: 'Use NuGet 5.x'
   inputs:
-    versionSpec: 5.11
+    versionSpec: 5.x
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet restore'
@@ -38,6 +32,7 @@ steps:
     organization: nlog
     projectKey: nlog.mailkit
     projectName: 'NLog Mailkit'
+    projectVersion: '$(Build.BuildId)'
 
 - task: VSBuild@1
   displayName: 'Build'
@@ -59,19 +54,13 @@ steps:
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
     rerunFailedTests: true
+    
 
 - task: SonarCloudAnalyze@1
   displayName: 'Run Code Analysis'
 
 - task: SonarCloudPublish@1
   displayName: 'Publish Quality Gate Result'
-
-- task: SaveCache@1
-  displayName: 'Save cache'
-  inputs:
-    keyfile: src/NLog.MailKit/NLog.MailKit.csproj
-    targetfolder: '$(System.DefaultWorkingDirectory)'
-    vstsFeed: '72313c57-1b2d-4cf1-a7be-c7b9ac5efdb2'
 
 - task: PublishSymbols@2
   displayName: 'Publish symbols'
