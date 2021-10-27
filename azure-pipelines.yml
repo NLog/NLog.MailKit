@@ -13,7 +13,7 @@ variables:
 
 steps:
 - task: RestoreCache@1
-  displayName: 'Restore artifact based on: src/NLog.MailKit/NLog.MailKit.csproj'
+  displayName: 'Restore cache'
   inputs:
     keyfile: src/NLog.MailKit/NLog.MailKit.csproj
     targetfolder: '$(System.DefaultWorkingDirectory)'
@@ -40,13 +40,8 @@ steps:
     projectKey: nlog.mailkit
     projectName: 'NLog Mailkit'
 
-- task: DotNetCoreCLI@2
-  inputs:
-    command: 'build'
-    projects: '$(Solution)'
-    arguments: '/v:m'
 - task: VSBuild@1
-  displayName: 'Build solution $(Solution)'
+  displayName: 'Build'
   inputs:
     solution: '$(Solution)'
     msbuildArgs: '/v:m'
@@ -56,7 +51,7 @@ steps:
     logProjectEvents: false
 
 - task: VSTest@2
-  displayName: 'VsTest - testAssemblies'
+  displayName: 'Run Tests'
   inputs:
     testAssemblyVer2: |
      **\*test*.dll
@@ -73,21 +68,21 @@ steps:
   displayName: 'Publish Quality Gate Result'
 
 - task: SaveCache@1
-  displayName: 'Save artifact based on: src/NLog.MailKit/NLog.MailKit.csproj'
+  displayName: 'Save cache'
   inputs:
     keyfile: src/NLog.MailKit/NLog.MailKit.csproj
     targetfolder: '$(System.DefaultWorkingDirectory)'
     vstsFeed: '72313c57-1b2d-4cf1-a7be-c7b9ac5efdb2'
 
 - task: PublishSymbols@2
-  displayName: 'Publish symbols path'
+  displayName: 'Publish symbols'
   inputs:
     SearchPattern: '**\bin\**\*.pdb'
     PublishSymbols: false
   continueOnError: true
 
 - task: CopyFiles@2
-  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  displayName: 'Copy Files artifacts'
   inputs:
     SourceFolder: '$(system.defaultworkingdirectory)'
     Contents: |
