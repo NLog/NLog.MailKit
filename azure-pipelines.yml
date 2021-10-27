@@ -8,8 +8,8 @@ pool:
 
 variables:
   Solution: 'src/NLog.MailKit.sln'
-  BuildPlatform: 'Release'
-  BuildConfiguration: 'Any CPU'
+  BuildPlatform: 'Any CPU'
+  BuildConfiguration: 'Release'
 
 steps:
 - task: RestoreCache@1
