@@ -6,7 +6,7 @@ pool:
   - vstest
 
 variables:
-  Solution: 'src\NLog.MailKit.sln'
+  Solution: 'src/NLog.MailKit.sln'
   BuildPlatform: 'Release'
   BuildConfiguration: 'Any CPU'
 
