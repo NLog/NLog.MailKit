@@ -28,7 +28,7 @@ steps:
 - task: SonarCloudPrepare@1
   displayName: 'Prepare analysis on SonarCloud'
   inputs:
-    SonarCloud: 'Sonarcloud NLog.Mailkit'
+    SonarCloud: 'Sonarcloud'
     organization: nlog
     projectKey: nlog.mailkit
     projectName: 'NLog Mailkit'
