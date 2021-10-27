@@ -93,3 +93,5 @@ steps:
     nuGetFeedType: 'external'
     publishFeedCredentials: 'NLog new'
     verbosityPush: 'Normal'
+  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  continueOnError: true
