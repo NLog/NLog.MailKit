@@ -1,0 +1,98 @@
+pool:
+  name: Azure Pipelines
+  demands:
+  - msbuild
+  - visualstudio
+  - vstest
+
+variables:
+  Solution: 'src\NLog.MailKit.sln'
+  BuildPlatform: 'Release'
+  BuildConfiguration: 'Any CPU'
+
+steps:
+- task: RestoreCache@1
+  displayName: 'Restore artifact based on: src/NLog.MailKit/NLog.MailKit.csproj'
+  inputs:
+    keyfile: src/NLog.MailKit/NLog.MailKit.csproj
+    targetfolder: '$(System.DefaultWorkingDirectory)'
+    vstsFeed: '72313c57-1b2d-4cf1-a7be-c7b9ac5efdb2'
+    dryRun: true
+
+- task: NuGetToolInstaller@0
+  displayName: 'Use NuGet 5.5.1'
+  inputs:
+    versionSpec: 5.5.1
+
+- task: DotNetCoreCLI@2
+  displayName: 'dotnet restore'
+  inputs:
+    command: restore
+    projects: '$(Solution)'
+    verbosityRestore: Minimal
+
+- task: SonarCloudPrepare@1
+  displayName: 'Prepare analysis on SonarCloud'
+  inputs:
+    SonarCloud: 'Sonarcloud NLog.Mailkit'
+    organization: nlog
+    projectKey: nlog.mailkit
+    projectName: 'NLog Mailkit'
+
+- task: VSBuild@1
+  displayName: 'Build solution $(Solution)'
+  inputs:
+    solution: '$(Solution)'
+    msbuildArgs: '/v:m'
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+    maximumCpuCount: true
+    logProjectEvents: false
+
+- task: VSTest@2
+  displayName: 'VsTest - testAssemblies'
+  inputs:
+    testAssemblyVer2: |
+     **\*test*.dll
+     !**\obj\**
+    codeCoverageEnabled: true
+    platform: '$(BuildPlatform)'
+    configuration: '$(BuildConfiguration)'
+    rerunFailedTests: true
+
+- task: SonarCloudAnalyze@1
+  displayName: 'Run Code Analysis'
+
+- task: SonarCloudPublish@1
+  displayName: 'Publish Quality Gate Result'
+
+- task: SaveCache@1
+  displayName: 'Save artifact based on: src/NLog.MailKit/NLog.MailKit.csproj'
+  inputs:
+    keyfile: src/NLog.MailKit/NLog.MailKit.csproj
+    targetfolder: '$(System.DefaultWorkingDirectory)'
+    vstsFeed: '72313c57-1b2d-4cf1-a7be-c7b9ac5efdb2'
+
+- task: PublishSymbols@2
+  displayName: 'Publish symbols path'
+  inputs:
+    SearchPattern: '**\bin\**\*.pdb'
+    PublishSymbols: false
+  continueOnError: true
+
+- task: CopyFiles@2
+  displayName: 'Copy Files to: $(build.artifactstagingdirectory)'
+  inputs:
+    SourceFolder: '$(system.defaultworkingdirectory)'
+    Contents: |
+     **\bin\$(BuildConfiguration)\**\*.nupkg 
+     **\bin\$(BuildConfiguration)\**\*.snupkg 
+    TargetFolder: '$(build.artifactstagingdirectory)'
+  condition: succeededOrFailed()
+
+- task: PublishBuildArtifacts@1
+  displayName: 'Publish Artifact: packages'
+  inputs:
+    PathtoPublish: '$(build.artifactstagingdirectory)'
+    ArtifactName: packages
+  condition: succeededOrFailed()
