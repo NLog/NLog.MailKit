@@ -18,12 +18,11 @@ steps:
     keyfile: src/NLog.MailKit/NLog.MailKit.csproj
     targetfolder: '$(System.DefaultWorkingDirectory)'
     vstsFeed: '72313c57-1b2d-4cf1-a7be-c7b9ac5efdb2'
-    dryRun: true
 
 - task: NuGetToolInstaller@0
-  displayName: 'Use NuGet 5.5.1'
+  displayName: 'Use NuGet 5.11'
   inputs:
-    versionSpec: 5.5.1
+    versionSpec: 5.11
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet restore'
