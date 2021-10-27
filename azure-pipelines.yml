@@ -1,5 +1,6 @@
 pool:
   name: Azure Pipelines
+  vmImage: 'windows-2019'
   demands:
   - msbuild
   - visualstudio
@@ -39,6 +40,11 @@ steps:
     projectKey: nlog.mailkit
     projectName: 'NLog Mailkit'
 
+- task: DotNetCoreCLI@2
+  inputs:
+    command: 'build'
+    projects: '$(Solution)'
+    arguments: '/v:m'
 - task: VSBuild@1
   displayName: 'Build solution $(Solution)'
   inputs:
