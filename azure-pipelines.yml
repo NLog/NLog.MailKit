@@ -1,3 +1,4 @@
+name: '3.$(Rev:.r)' # Build.BuildId
 pool:
   name: Azure Pipelines
   vmImage: 'windows-2019'
@@ -38,7 +39,7 @@ steps:
   displayName: 'Build'
   inputs:
     solution: '$(Solution)'
-    msbuildArgs: '/v:m'
+    msbuildArgs: '-v:m -p:FileVersion=$(Build.BuildId)'
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
     maximumCpuCount: true
