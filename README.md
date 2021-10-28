@@ -1,7 +1,8 @@
 # NLog.MailKit
 
-[![Build status](https://ci.appveyor.com/api/projects/status/nuh3pkael8ltd4bq/branch/master?svg=true)](https://ci.appveyor.com/project/nlog/nlog-mailkit/branch/master)
 [![NuGet](https://img.shields.io/nuget/v/NLog.MailKit.svg)](https://www.nuget.org/packages/NLog.MailKit)
+[![Build Status](https://dev.azure.com/NLogLogging/NLog/_apis/build/status/NLog.MailKit?branchName=master)](https://dev.azure.com/NLogLogging/NLog/_build/latest?definitionId=25&branchName=master)
+
 
 Alternative Mail target for [NLog](https://github.com/nlog/nlog) using MailKit. Compatible with .NET standard 1, .NET standard 2 and .NET 4+
 
