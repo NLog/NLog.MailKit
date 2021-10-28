@@ -1,4 +1,4 @@
-name: '3.$(Rev:.r)' # Build.BuildId
+name: '3.0.0.$(Rev:r)' # Build.BuildId
 pool:
   name: Azure Pipelines
   vmImage: 'windows-2019'
