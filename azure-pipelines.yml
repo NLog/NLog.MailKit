@@ -89,9 +89,11 @@ steps:
     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;$(Build.ArtifactStagingDirectory)/**/*.snupkg;'
     nuGetFeedType: 'external'
     publishFeedCredentials: 'NLog new'
+    allowPackageConflicts: true
     verbosityPush: 'Normal'
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   continueOnError: true
+ 
 
 - task: NuGetCommand@2
   displayName: 'Push NuGet Package to Azure Devops'
