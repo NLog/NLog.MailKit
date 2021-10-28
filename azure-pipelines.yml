@@ -1,4 +1,6 @@
 name: '$(Rev:r)' # Build.BuildId
+trigger:
+- master
 pool:
   name: Azure Pipelines
   vmImage: 'windows-2019'
@@ -11,11 +13,10 @@ variables:
   Solution: 'src/NLog.MailKit.sln'
   BuildPlatform: 'Any CPU'
   BuildConfiguration: 'Release'
-  Version: 3.3.0
-  FullVersion: '$(Version).$(Build.BuildId)
+  Version: '3.3.0'
+  FullVersion: '$(Version).$(Build.BuildId)'
 
 steps:
-
 - task: NuGetToolInstaller@0
   displayName: 'Use NuGet 5.x'
   inputs:
