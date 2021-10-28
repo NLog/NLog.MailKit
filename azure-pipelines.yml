@@ -42,7 +42,7 @@ steps:
   displayName: 'Build'
   inputs:
     solution: '$(Solution)'
-    msbuildArgs: '-v:m -p:version=$(Version) -p:fileVersion=$(FullVersion) -p:SymbolPackageFormat=snupkg'
+    msbuildArgs: '-v:m -p:version=$(Version) -p:fileVersion=$(FullVersion) -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg'
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
     maximumCpuCount: true
