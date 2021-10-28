@@ -30,7 +30,7 @@ steps:
     verbosityRestore: Minimal
 
 - task: SonarCloudPrepare@1
-  displayName: 'Prepare analysis on SonarCloud'
+  displayName: 'Prepare SonarCloud analysis'
   inputs:
     SonarCloud: 'Sonarcloud'
     organization: nlog
@@ -60,17 +60,10 @@ steps:
     rerunFailedTests: true
 
 - task: SonarCloudAnalyze@1
-  displayName: 'Run Code Analysis'
+  displayName: 'Run SonarCloud Analysis'
 
 - task: SonarCloudPublish@1
-  displayName: 'Publish Quality Gate Result'
-
-- task: PublishSymbols@2
-  displayName: 'Publish symbols'
-  inputs:
-    SearchPattern: '**\bin\**\*.pdb'
-    PublishSymbols: false
-  continueOnError: true
+  displayName: 'Publish SonarCloud Quality Gate'
 
 - task: CopyFiles@2
   displayName: 'Copy Files artifacts'
@@ -90,7 +83,7 @@ steps:
   condition: succeededOrFailed()
 
 - task: NuGetCommand@2
-  displayName: 'Push to nuget.org'
+  displayName: 'Push NuGet Package to nuget.org'
   inputs:
     command: 'push'
     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;$(Build.ArtifactStagingDirectory)/**/*.snupkg;'
@@ -99,3 +92,13 @@ steps:
     verbosityPush: 'Normal'
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   continueOnError: true
+
+- task: NuGetCommand@2
+  displayName: 'Push NuGet Package to Azure Devops'
+  inputs:
+    command: 'push'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;$(Build.ArtifactStagingDirectory)/**/*.snupkg;'
+    nuGetFeedType: 'internal'
+    publishVstsFeed: 'a6abb58f-ecac-4f57-8990-021064cff0ff/d910ba3f-9900-4b9a-a317-016618781395' # NLog
+    allowPackageConflicts: true
+    verbosityPush: 'Normal'
