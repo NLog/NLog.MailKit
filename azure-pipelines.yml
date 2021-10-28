@@ -1,4 +1,4 @@
-name: '3.0.0.$(Rev:r)' # Build.BuildId
+name: '$(Rev:r)' # Build.BuildId
 pool:
   name: Azure Pipelines
   vmImage: 'windows-2019'
@@ -11,6 +11,8 @@ variables:
   Solution: 'src/NLog.MailKit.sln'
   BuildPlatform: 'Any CPU'
   BuildConfiguration: 'Release'
+  Version: 3.3.0
+  FullVersion: '$(Version).$(Build.BuildId)
 
 steps:
 
@@ -33,13 +35,13 @@ steps:
     organization: nlog
     projectKey: nlog.mailkit
     projectName: 'NLog Mailkit'
-    projectVersion: '$(Build.BuildId)'
+    projectVersion: '$(FullVersion)'
 
 - task: VSBuild@1
   displayName: 'Build'
   inputs:
     solution: '$(Solution)'
-    msbuildArgs: '-v:m -p:FileVersion=$(Build.BuildId)'
+    msbuildArgs: '-v:m -p:version=$(Version) -p:fileVersion=$(FullVersion)'
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
     maximumCpuCount: true
