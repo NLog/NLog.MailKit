@@ -9,6 +9,9 @@ categories:
     labels:
       - 'enhancement'   
       - 'documentation'
+  - title: '🍩 Package improvements'
+    labels:
+      - 'package'   
   - title: '🐛 Bug Fixes'
     labels:
       - 'fix'
