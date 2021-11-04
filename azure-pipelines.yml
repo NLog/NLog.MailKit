@@ -86,7 +86,7 @@ steps:
   displayName: 'Push NuGet Package to nuget.org'
   inputs:
     command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;$(Build.ArtifactStagingDirectory)/**/*.snupkg;'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg' # will also push the snupkg
     nuGetFeedType: 'external'
     publishFeedCredentials: 'NLog new'
     allowPackageConflicts: true
@@ -99,7 +99,7 @@ steps:
   displayName: 'Push NuGet Package to Azure Devops'
   inputs:
     command: 'push'
-    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg;$(Build.ArtifactStagingDirectory)/**/*.snupkg;'
+    packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg' # will also push the snupkg
     nuGetFeedType: 'internal'
     publishVstsFeed: 'a6abb58f-ecac-4f57-8990-021064cff0ff/d910ba3f-9900-4b9a-a317-016618781395' # NLog
     allowPackageConflicts: true
