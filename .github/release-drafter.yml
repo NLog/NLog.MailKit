@@ -19,6 +19,10 @@ categories:
        - 'refactor'
        - 'test'
        - 'tests'
+  - title: '↜ Dependencies'
+    labels:
+      - 'dependencies'
+      - 'dependency'
 exclude-labels:
   - 'skip-changelog'  
   - 'build'
