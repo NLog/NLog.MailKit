@@ -13,7 +13,7 @@ variables:
   Solution: 'src/NLog.MailKit.sln'
   BuildPlatform: 'Any CPU'
   BuildConfiguration: 'Release'
-  Version: '3.3.0'
+  Version: '3.4.0'
   FullVersion: '$(Version).$(Build.BuildId)'
 
 steps:
