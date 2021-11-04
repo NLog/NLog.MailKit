@@ -29,28 +29,17 @@ this package will overwrite the original Mail Target.
     <AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <PackageReleaseNotes>
-3.3:
-- Updated dependencies       
-3.2:
-- Updated dependencies   
-- Support for the System.Net.Mail.MailPriority values: High and Low
-3.1: 
-- Updated dependencies
-- Marked the method Write(AsyncLogEventInfo[]) as obsolete (@sooraj19)
-3.0.2: Updated NLog dependency
-3.0.1: Updated NLog and Mailkit dependencies
-3.0: 
-- MailKit 2.0, 
-- Update NLog dependency
-- Minimal support for .NET moved from 4.0 to 4.5
-2.2: NLog 4.5, updated mailkit, netstandard1.3
-2.1.1: Remove dependency to NLog 5
-2.1: Add setting SecureSocketOption, update dependencies
-2.0: 
-- .NET 4+ and .NET standard 2 support. 
-- Small breaking change, SmtpAuthenticationMode has been moved to this dll.
-1.1.1: Updated dependencies
-1.1.0: Added SkipCertificateValidation option
+# 🍩 Package improvements
+- Enable deterministic build @304NotModified (#124)
+- Enabled SourceLink @304NotModified (#127)
+- Create and publish snupkg @304NotModified (#123)
+
+# ↜ Dependencies
+- Bump MailKit to 2.9.0 @304NotModified (#128)
+- Bump NLog from 4.7.4 to 4.7.12 @304NotModified @dependabot-preview (#96, #112, #125)
+
+See https://github.com/NLog/NLog.MailKit/releases
+      
 </PackageReleaseNotes>
     <AssemblyVersion>2.0.0.0</AssemblyVersion>
     <!--AssemblyVersion: keep 2.0.0.0-->
