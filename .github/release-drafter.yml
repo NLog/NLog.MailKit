@@ -1,0 +1,27 @@
+name-template: 'Version $NEXT_MINOR_VERSION'
+tag-template: 'v$NEXT_MINOR_VERSION'
+version-template: '$MAJOR.$MINOR'
+categories:
+  - title: '🚀 Features'
+    labels:
+      - 'feature'
+  - title: '👍 Enhancements'
+    labels:
+      - 'enhancement'   
+      - 'documentation'
+  - title: '🐛 Bug Fixes'
+    labels:
+      - 'fix'
+      - 'bugfix'
+      - 'bug'
+  - title: '🔧 Maintenance'
+    labels: 
+       - 'refactor'
+       - 'test'
+       - 'tests'
+exclude-labels:
+  - 'skip-changelog'  
+  - 'build'
+change-template: '- $TITLE @$AUTHOR (#$NUMBER)'
+template: |
+  $CHANGES
