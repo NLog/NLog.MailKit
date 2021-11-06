@@ -4,12 +4,12 @@ using System.IO;
 using System.Threading;
 using System.Threading.Tasks;
 using NLog.Config;
-using NLog.MailKit.Tests.Util;
+using NLog.MailKit.Tests.IntegrationTests.Util;
 using SmtpServer;
 using SmtpServer.Authentication;
 using SmtpServer.Mail;
 using Xunit;
-using UserAuthenticator = NLog.MailKit.Tests.Util.UserAuthenticator;
+using UserAuthenticator = NLog.MailKit.Tests.IntegrationTests.Util.UserAuthenticator;
 
 namespace NLog.MailKit.Tests.IntegrationTests
 {
