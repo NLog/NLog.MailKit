@@ -30,6 +30,8 @@ this package will overwrite the original Mail Target.
     <DelaySign>false</DelaySign>
     <PackageReleaseNotes>
 - .NET Standard 2.0 only
+- Updated MailKit dependency
+- CLSCompliant
 
 See https://github.com/NLog/NLog.MailKit/releases
       
