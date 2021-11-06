@@ -27,7 +27,7 @@ this package will overwrite the original Mail Target.
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>False</DelaySign>
+    <DelaySign>false</DelaySign>
     <PackageReleaseNotes>
 - .NET Standard 2.0 only
 

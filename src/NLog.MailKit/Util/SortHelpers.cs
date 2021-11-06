@@ -31,13 +31,13 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
-namespace NLog.Internal
-{
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using NLog.Common;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using NLog.Common;
 
+namespace NLog.MailKit.Util
+{
     /// <summary>
     /// Provides helpers to sort log events and associated continuations.
     /// </summary>
@@ -50,37 +50,7 @@ namespace NLog.Internal
         /// <typeparam name="TKey">The type of the key.</typeparam>
         /// <param name="value">Value to extract key information from.</param>
         /// <returns>Key selected from log event.</returns>
-        internal delegate TKey KeySelector<TValue, TKey>(TValue value);
-
-        /// <summary>
-        /// Performs bucket sort (group by) on an array of items and returns a dictionary for easy traversal of the result set.
-        /// </summary>
-        /// <typeparam name="TValue">The type of the value.</typeparam>
-        /// <typeparam name="TKey">The type of the key.</typeparam>
-        /// <param name="inputs">The inputs.</param>
-        /// <param name="keySelector">The key selector function.</param>
-        /// <returns>
-        /// Dictionary where keys are unique input keys, and values are lists of <see cref="AsyncLogEventInfo"/>.
-        /// </returns>
-        public static Dictionary<TKey, List<TValue>> BucketSort<TValue, TKey>(this IEnumerable<TValue> inputs, KeySelector<TValue, TKey> keySelector)
-        {
-            var buckets = new Dictionary<TKey, List<TValue>>();
-
-            foreach (var input in inputs)
-            {
-                var keyValue = keySelector(input);
-                List<TValue> eventsInBucket;
-                if (!buckets.TryGetValue(keyValue, out eventsInBucket))
-                {
-                    eventsInBucket = new List<TValue>();
-                    buckets.Add(keyValue, eventsInBucket);
-                }
-
-                eventsInBucket.Add(input);
-            }
-
-            return buckets;
-        }
+        internal delegate TKey KeySelector<in TValue, out TKey>(TValue value);
 
         /// <summary>
         /// Performs bucket sort (group by) on an array of items and returns a dictionary for easy traversal of the result set.
@@ -118,15 +88,13 @@ namespace NLog.Internal
                             bucket.Add(inputs[j]);
                         }
                         buckets[singleBucketKey] = bucket;
-                        bucket = new List<TValue>();
-                        bucket.Add(inputs[i]);
+                        bucket = new List<TValue> { inputs[i] };
                         buckets[keyValue] = bucket;
                     }
                 }
                 else
                 {
-                    IList<TValue> eventsInBucket;
-                    if (!buckets.TryGetValue(keyValue, out eventsInBucket))
+                    if (!buckets.TryGetValue(keyValue, out var eventsInBucket))
                     {
                         eventsInBucket = new List<TValue>();
                         buckets.Add(keyValue, eventsInBucket);
@@ -193,10 +161,9 @@ namespace NLog.Internal
                 {
                     if (_multiBucket != null)
                         return _multiBucket.Keys;
-                    else if (_singleBucket.HasValue)
+                    if (_singleBucket.HasValue)
                         return new[] { _singleBucket.Value.Key };
-                    else
-                        return Array.Empty<TKey>();
+                    return Array.Empty<TKey>();
                 }
             }
 
@@ -207,15 +174,14 @@ namespace NLog.Internal
                 {
                     if (_multiBucket != null)
                         return _multiBucket.Values;
-                    else if (_singleBucket.HasValue)
-                        return new TValue[] { _singleBucket.Value.Value };
-                    else
-                        return Array.Empty<TValue>();
+                    if (_singleBucket.HasValue)
+                        return new[] { _singleBucket.Value.Value };
+                    return Array.Empty<TValue>();
                 }
             }
 
             /// <inheritDoc/>
-            public bool IsReadOnly { get { return true; } }
+            public bool IsReadOnly => true;
 
             /// <summary>
             /// Allows direct lookup of existing keys. If trying to access non-existing key exception is thrown.
@@ -229,10 +195,9 @@ namespace NLog.Internal
                 {
                     if (_multiBucket != null)
                         return _multiBucket[key];
-                    else if (_singleBucket.HasValue && _comparer.Equals(_singleBucket.Value.Key, key))
+                    if (_singleBucket.HasValue && _comparer.Equals(_singleBucket.Value.Key, key))
                         return _singleBucket.Value.Value;
-                    else
-                        throw new System.Collections.Generic.KeyNotFoundException();
+                    throw new KeyNotFoundException();
                 }
                 set
                 {

@@ -42,8 +42,8 @@ using MimeKit;
 using MimeKit.Text;
 using NLog.Common;
 using NLog.Config;
-using NLog.Internal;
 using NLog.Layouts;
+using NLog.MailKit.Util;
 using NLog.Targets;
 
 namespace NLog.MailKit
@@ -333,7 +333,7 @@ namespace NLog.MailKit
                     var secureSocketOptions = EnableSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOption;
                     InternalLogger.Debug("Sending mail to {0} using {1}:{2} (socket option={3})", message.To, renderedHost, SmtpPort, secureSocketOptions);
                     InternalLogger.Trace("  Subject: '{0}'", message.Subject);
-                    InternalLogger.Trace("  From: '{0}'", message.From.ToString());
+                    InternalLogger.Trace("  From: '{0}'", message.From);
 
                     if (SkipCertificateValidation)
                         client.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
@@ -505,9 +505,7 @@ namespace NLog.MailKit
             if (Priority != null)
             {
                 var renderedPriority = Priority.Render(lastEvent);
-                MessagePriority messagePriority;
-                messagePriority = ParseMessagePriority(renderedPriority);
-                msg.Priority = messagePriority;
+                msg.Priority = ParseMessagePriority(renderedPriority);
             }
 
             TextPart CreateBodyPart()
@@ -529,7 +527,7 @@ namespace NLog.MailKit
             return msg;
         }
 
-        public static MessagePriority ParseMessagePriority(string priority)
+        internal static MessagePriority ParseMessagePriority(string priority)
         {
             if (string.IsNullOrWhiteSpace(priority))
             {

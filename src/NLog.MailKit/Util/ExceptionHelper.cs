@@ -31,12 +31,11 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
-namespace NLog.Internal
-{
-    using System;
-    using Common;
-    using System.Threading;
+using System;
+using NLog.Common;
 
+namespace NLog.MailKit.Util
+{
     /// <summary>
     /// Helper class for dealing with exceptions.
     /// </summary>
