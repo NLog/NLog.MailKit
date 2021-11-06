@@ -13,7 +13,7 @@ variables:
   Solution: 'src/NLog.MailKit.sln'
   BuildPlatform: 'Any CPU'
   BuildConfiguration: 'Release'
-  Version: '3.4.0'
+  Version: '4.0.0'
   FullVersion: '$(Version).$(Build.BuildId)'
 
 steps:
@@ -54,6 +54,7 @@ steps:
     testAssemblyVer2: |
      **\*.tests.dll
      !**\obj\**
+     !**\ref\**
     codeCoverageEnabled: true
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'

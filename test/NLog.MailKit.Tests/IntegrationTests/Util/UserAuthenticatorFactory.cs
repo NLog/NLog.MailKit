@@ -1,7 +1,7 @@
 using SmtpServer;
 using SmtpServer.Authentication;
 
-namespace NLog.MailKit.Tests.Util
+namespace NLog.MailKit.Tests.IntegrationTests.Util
 {
     internal class UserAuthenticatorFactory : IUserAuthenticatorFactory
     {

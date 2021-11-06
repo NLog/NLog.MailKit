@@ -1,5 +1,5 @@
 ﻿// 
-// Copyright (c) 2004-2016 Jaroslaw Kowalski <jaak@jkowalski.net>, Kim Christensen, Julian Verdurmen
+// Copyright (c) 2004-2021 Jaroslaw Kowalski <jaak@jkowalski.net>, Kim Christensen, Julian Verdurmen
 // 
 // All rights reserved.
 // 
@@ -31,7 +31,6 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
-
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -42,8 +41,8 @@ using MimeKit;
 using MimeKit.Text;
 using NLog.Common;
 using NLog.Config;
-using NLog.Internal;
 using NLog.Layouts;
+using NLog.MailKit.Util;
 using NLog.Targets;
 
 namespace NLog.MailKit
@@ -54,7 +53,7 @@ namespace NLog.MailKit
     /// <seealso href="https://github.com/nlog/nlog/wiki/Mail-target">Documentation on NLog Wiki</seealso>
     /// <example>
     /// <p>
-    /// To set up the target in the <a href="config.html">configuration file</a>, 
+    /// To set up the target in the <a href="config.html">configuration file</a>,
     /// use the following syntax:
     /// </p>
     /// <code lang="XML" source="examples/targets/Configuration File/Mail/Simple/NLog.config" />
@@ -71,7 +70,7 @@ namespace NLog.MailKit
     /// which lets you send multiple log messages in single mail
     /// </p>
     /// <p>
-    /// To set up the buffered mail target in the <a href="config.html">configuration file</a>, 
+    /// To set up the buffered mail target in the <a href="config.html">configuration file</a>,
     /// use the following syntax:
     /// </p>
     /// <code lang="XML" source="examples/targets/Configuration File/Mail/Buffered/NLog.config" />
@@ -91,7 +90,6 @@ namespace NLog.MailKit
         /// <remarks>
         /// The default value of the layout is: <code>${longdate}|${level:uppercase=true}|${logger}|${message}</code>
         /// </remarks>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "This one is safe.")]
         public MailTarget()
         {
             Body = "${message}${newline}";
@@ -209,18 +207,20 @@ namespace NLog.MailKit
         /// <summary>
         /// Gets or sets a value indicating whether SSL (secure sockets layer) should be used when communicating with SMTP server.
         /// 
-        /// See also <see cref="SecureSocketOption"/>
+        /// See also <see cref="SecureSocketOption" />
         /// </summary>
-        /// <docgen category='SMTP Options' order='14' />.
+        /// <docgen category='SMTP Options' order='14' />
+        /// .
         [DefaultValue(false)]
         public bool EnableSsl { get; set; }
 
         /// <summary>
-        /// Provides a way of specifying the SSL and/or TLS encryption 
+        /// Provides a way of specifying the SSL and/or TLS encryption
         /// 
-        /// If <see cref="EnableSsl"/> is <c>true</c>, then <see cref="SecureSocketOptions.SslOnConnect"/> will be used.
+        /// If <see cref="EnableSsl" /> is <c>true</c>, then <see cref="SecureSocketOptions.SslOnConnect" /> will be used.
         /// </summary>
         [DefaultValue(SecureSocketOptions.StartTlsWhenAvailable)]
+        [CLSCompliant(false)]
         public SecureSocketOptions SecureSocketOption { get; set; }
 
         /// <summary>
@@ -233,7 +233,8 @@ namespace NLog.MailKit
         /// <summary>
         /// Gets or sets a value indicating whether SmtpClient should ignore invalid certificate.
         /// </summary>
-        /// <docgen category='SMTP Options' order='16' />.
+        /// <docgen category='SMTP Options' order='16' />
+        /// .
         [DefaultValue(false)]
         public bool SkipCertificateValidation { get; set; }
 
@@ -243,9 +244,9 @@ namespace NLog.MailKit
         public Layout Priority { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating whether NewLine characters in the body should be replaced with <br/> tags.
+        /// Gets or sets a value indicating whether NewLine characters in the body should be replaced with <br /> tags.
         /// </summary>
-        /// <remarks>Only happens when <see cref="Html"/> is set to true.</remarks>
+        /// <remarks>Only happens when <see cref="Html" /> is set to true.</remarks>
         [DefaultValue(false)]
         public bool ReplaceNewlineWithBrTagInHtml { get; set; }
 
@@ -264,24 +265,6 @@ namespace NLog.MailKit
         {
             Write((IList<AsyncLogEventInfo>)new[] { logEvent });
         }
-
-#if !NETSTANDARD2_0
-
-        /// <summary>
-        /// NOTE! Will soon be marked obsolete. Instead override Write(IList{AsyncLogEventInfo} logEvents)
-        /// 
-        /// Writes an array of logging events to the log target. By default it iterates on all
-        /// events and passes them to "Write" method. Inheriting classes can use this method to
-        /// optimize batch writes.
-        /// </summary>
-        /// <param name="logEvents">Logging events to be written out.</param>
-        [Obsolete("Write(AsyncLogEventInfo[]) is obsolete. Override Write(IList{AsyncLogEventInfo} logEvents) instead.", true)]
-        protected override void Write(AsyncLogEventInfo[] logEvents)
-        {
-            Write((IList<AsyncLogEventInfo>)logEvents);
-        }
-
-#endif
 
         /// <summary>
         /// Renders an array logging events.
@@ -306,15 +289,13 @@ namespace NLog.MailKit
             InternalLogger.Debug("Init mailtarget with mailkit");
             CheckRequiredParameters();
 
-            if (this.SmtpAuthentication == SmtpAuthenticationMode.Ntlm)
+            if (SmtpAuthentication == SmtpAuthenticationMode.Ntlm)
             {
                 throw new NLogConfigurationException("Ntlm not yet supported");
             }
 
             base.InitializeTarget();
         }
-
-
 
         /// <summary>
         /// Create mail and send with SMTP
@@ -329,8 +310,8 @@ namespace NLog.MailKit
                     throw new NLogRuntimeException("We need at least one event.");
                 }
 
-                LogEventInfo firstEvent = events[0].LogEvent;
-                LogEventInfo lastEvent = events[events.Count - 1].LogEvent;
+                var firstEvent = events[0].LogEvent;
+                var lastEvent = events[events.Count - 1].LogEvent;
 
                 // unbuffered case, create a local buffer, append header, body and footer
                 var bodyBuffer = CreateBodyBuffer(events, firstEvent, lastEvent);
@@ -351,10 +332,12 @@ namespace NLog.MailKit
                     var secureSocketOptions = EnableSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOption;
                     InternalLogger.Debug("Sending mail to {0} using {1}:{2} (socket option={3})", message.To, renderedHost, SmtpPort, secureSocketOptions);
                     InternalLogger.Trace("  Subject: '{0}'", message.Subject);
-                    InternalLogger.Trace("  From: '{0}'", message.From.ToString());
+                    InternalLogger.Trace("  From: '{0}'", message.From);
 
                     if (SkipCertificateValidation)
+                    {
                         client.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
+                    }
 
 
                     client.Connect(renderedHost, SmtpPort, secureSocketOptions);
@@ -366,7 +349,7 @@ namespace NLog.MailKit
 
                     // Note: only needed if the SMTP server requires authentication
 
-                    if (this.SmtpAuthentication == SmtpAuthenticationMode.Basic)
+                    if (SmtpAuthentication == SmtpAuthenticationMode.Basic)
                     {
                         var userName = SmtpUserName?.Render(lastEvent);
                         var password = SmtpPassword?.Render(lastEvent);
@@ -423,7 +406,7 @@ namespace NLog.MailKit
                 }
             }
 
-            foreach (AsyncLogEventInfo eventInfo in events)
+            foreach (var eventInfo in events)
             {
                 bodyBuffer.Append(Layout.Render(eventInfo.LogEvent));
                 if (AddNewLines)
@@ -440,6 +423,7 @@ namespace NLog.MailKit
                     bodyBuffer.Append("\n");
                 }
             }
+
             return bodyBuffer;
         }
 
@@ -459,8 +443,8 @@ namespace NLog.MailKit
         /// <summary>
         /// Create key for grouping. Needed for multiple events in one mailmessage
         /// </summary>
-        /// <param name="logEvent">event for rendering layouts   </param>  
-        ///<returns>string to group on</returns>
+        /// <param name="logEvent">event for rendering layouts   </param>
+        /// <returns>string to group on</returns>
         private string GetSmtpSettingsKey(LogEventInfo logEvent)
         {
             var sb = new StringBuilder();
@@ -472,8 +456,7 @@ namespace NLog.MailKit
             AppendLayout(sb, logEvent, SmtpServer);
             AppendLayout(sb, logEvent, SmtpPassword);
             AppendLayout(sb, logEvent, SmtpUserName);
-
-
+            
             return sb.ToString();
         }
 
@@ -481,16 +464,16 @@ namespace NLog.MailKit
         /// Append rendered layout to the stringbuilder
         /// </summary>
         /// <param name="sb">append to this</param>
-        /// <param name="logEvent">event for rendering <paramref name="layout"/></param>
+        /// <param name="logEvent">event for rendering <paramref name="layout" /></param>
         /// <param name="layout">append if not <c>null</c></param>
         private static void AppendLayout(StringBuilder sb, LogEventInfo logEvent, Layout layout)
         {
             sb.Append("|");
             if (layout != null)
+            {
                 sb.Append(layout.Render(logEvent));
+            }
         }
-
-
 
         /// <summary>
         /// Create the mailmessage with the addresses, properties and body.
@@ -505,6 +488,7 @@ namespace NLog.MailKit
             {
                 throw new NLogRuntimeException(RequiredPropertyIsEmptyFormat, "From");
             }
+
             msg.From.Add(MailboxAddress.Parse(renderedFrom));
 
             var addedTo = AddAddresses(msg.To, To, lastEvent);
@@ -523,22 +507,21 @@ namespace NLog.MailKit
             if (Priority != null)
             {
                 var renderedPriority = Priority.Render(lastEvent);
-                MessagePriority messagePriority;
-                messagePriority = ParseMessagePriority(renderedPriority);
-                msg.Priority = messagePriority;
+                msg.Priority = ParseMessagePriority(renderedPriority);
             }
 
             TextPart CreateBodyPart()
             {
                 var newBody = body;
                 if (Html && ReplaceNewlineWithBrTagInHtml)
+                {
                     newBody = newBody?.Replace(Environment.NewLine, "<br/>");
+                }
+
                 return new TextPart(Html ? TextFormat.Html : TextFormat.Plain)
                 {
                     Text = newBody,
                     ContentType = { Charset = Encoding?.WebName }
-
-
                 };
             }
 
@@ -547,7 +530,7 @@ namespace NLog.MailKit
             return msg;
         }
 
-        public static MessagePriority ParseMessagePriority(string priority)
+        internal static MessagePriority ParseMessagePriority(string priority)
         {
             if (string.IsNullOrWhiteSpace(priority))
             {
@@ -559,10 +542,12 @@ namespace NLog.MailKit
             {
                 return MessagePriority.Urgent;
             }
+
             if (priority.Equals("Low", StringComparison.OrdinalIgnoreCase))
             {
                 return MessagePriority.NonUrgent;
             }
+
             MessagePriority messagePriority;
             try
             {
@@ -580,26 +565,27 @@ namespace NLog.MailKit
         }
 
         /// <summary>
-        /// Render  <paramref name="layout"/> and add the addresses to <paramref name="mailAddressCollection"/>
+        /// Render  <paramref name="layout" /> and add the addresses to <paramref name="mailAddressCollection" />
         /// </summary>
         /// <param name="mailAddressCollection">Addresses appended to this list</param>
         /// <param name="layout">layout with addresses, ; separated</param>
-        /// <param name="logEvent">event for rendering the <paramref name="layout"/></param>
+        /// <param name="logEvent">event for rendering the <paramref name="layout" /></param>
         /// <returns>added a address?</returns>
         private static bool AddAddresses(InternetAddressList mailAddressCollection, Layout layout, LogEventInfo logEvent)
         {
-            var added = false;
-            if (layout != null)
+            if (layout == null)
             {
-                foreach (string mail in layout.Render(logEvent).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    mailAddressCollection.Add(MailboxAddress.Parse(mail));
-                    added = true;
-                }
+                return false;
+            }
+
+            var added = false;
+            foreach (var mail in layout.Render(logEvent).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                mailAddressCollection.Add(MailboxAddress.Parse(mail));
+                added = true;
             }
 
             return added;
         }
     }
 }
-

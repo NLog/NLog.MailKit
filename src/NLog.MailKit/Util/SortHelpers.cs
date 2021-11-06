@@ -1,5 +1,5 @@
 ﻿// 
-// Copyright (c) 2004-2016 Jaroslaw Kowalski <jaak@jkowalski.net>, Kim Christensen, Julian Verdurmen
+// Copyright (c) 2004-2021 Jaroslaw Kowalski <jaak@jkowalski.net>, Kim Christensen, Julian Verdurmen
 // 
 // All rights reserved.
 // 
@@ -31,13 +31,13 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
-namespace NLog.Internal
-{
-    using System;
-    using System.Collections;
-    using System.Collections.Generic;
-    using NLog.Common;
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using NLog.Common;
 
+namespace NLog.MailKit.Util
+{
     /// <summary>
     /// Provides helpers to sort log events and associated continuations.
     /// </summary>
@@ -50,37 +50,7 @@ namespace NLog.Internal
         /// <typeparam name="TKey">The type of the key.</typeparam>
         /// <param name="value">Value to extract key information from.</param>
         /// <returns>Key selected from log event.</returns>
-        internal delegate TKey KeySelector<TValue, TKey>(TValue value);
-
-        /// <summary>
-        /// Performs bucket sort (group by) on an array of items and returns a dictionary for easy traversal of the result set.
-        /// </summary>
-        /// <typeparam name="TValue">The type of the value.</typeparam>
-        /// <typeparam name="TKey">The type of the key.</typeparam>
-        /// <param name="inputs">The inputs.</param>
-        /// <param name="keySelector">The key selector function.</param>
-        /// <returns>
-        /// Dictionary where keys are unique input keys, and values are lists of <see cref="AsyncLogEventInfo"/>.
-        /// </returns>
-        public static Dictionary<TKey, List<TValue>> BucketSort<TValue, TKey>(this IEnumerable<TValue> inputs, KeySelector<TValue, TKey> keySelector)
-        {
-            var buckets = new Dictionary<TKey, List<TValue>>();
-
-            foreach (var input in inputs)
-            {
-                var keyValue = keySelector(input);
-                List<TValue> eventsInBucket;
-                if (!buckets.TryGetValue(keyValue, out eventsInBucket))
-                {
-                    eventsInBucket = new List<TValue>();
-                    buckets.Add(keyValue, eventsInBucket);
-                }
-
-                eventsInBucket.Add(input);
-            }
-
-            return buckets;
-        }
+        internal delegate TKey KeySelector<in TValue, out TKey>(TValue value);
 
         /// <summary>
         /// Performs bucket sort (group by) on an array of items and returns a dictionary for easy traversal of the result set.
@@ -96,7 +66,7 @@ namespace NLog.Internal
         {
             Dictionary<TKey, IList<TValue>> buckets = null;
             bool singleBucketFirstKey = false;
-            TKey singleBucketKey = default(TKey);
+            TKey singleBucketKey = default;
             EqualityComparer<TKey> c = EqualityComparer<TKey>.Default;
             for (int i = 0; i < inputs.Count; i++)
             {
@@ -118,15 +88,13 @@ namespace NLog.Internal
                             bucket.Add(inputs[j]);
                         }
                         buckets[singleBucketKey] = bucket;
-                        bucket = new List<TValue>();
-                        bucket.Add(inputs[i]);
+                        bucket = new List<TValue> { inputs[i] };
                         buckets[keyValue] = bucket;
                     }
                 }
                 else
                 {
-                    IList<TValue> eventsInBucket;
-                    if (!buckets.TryGetValue(keyValue, out eventsInBucket))
+                    if (!buckets.TryGetValue(keyValue, out var eventsInBucket))
                     {
                         eventsInBucket = new List<TValue>();
                         buckets.Add(keyValue, eventsInBucket);
@@ -157,7 +125,6 @@ namespace NLog.Internal
             readonly KeyValuePair<TKey, TValue>? _singleBucket;
             readonly Dictionary<TKey, TValue> _multiBucket;
             readonly IEqualityComparer<TKey> _comparer;
-            public IEqualityComparer<TKey> Comparer { get { return _comparer; } }
 
             public ReadOnlySingleBucketDictionary(KeyValuePair<TKey, TValue> singleBucket)
                 : this(singleBucket, EqualityComparer<TKey>.Default)
@@ -180,7 +147,7 @@ namespace NLog.Internal
             {
                 _comparer = comparer;
                 _multiBucket = multiBucket;
-                _singleBucket = default(KeyValuePair<TKey, TValue>);
+                _singleBucket = default;
             }
 
             /// <inheritDoc/>
@@ -193,10 +160,9 @@ namespace NLog.Internal
                 {
                     if (_multiBucket != null)
                         return _multiBucket.Keys;
-                    else if (_singleBucket.HasValue)
+                    if (_singleBucket.HasValue)
                         return new[] { _singleBucket.Value.Key };
-                    else
-                        return ArrayHelper.Empty<TKey>();
+                    return Array.Empty<TKey>();
                 }
             }
 
@@ -207,15 +173,14 @@ namespace NLog.Internal
                 {
                     if (_multiBucket != null)
                         return _multiBucket.Values;
-                    else if (_singleBucket.HasValue)
-                        return new TValue[] { _singleBucket.Value.Value };
-                    else
-                        return ArrayHelper.Empty<TValue>();
+                    if (_singleBucket.HasValue)
+                        return new[] { _singleBucket.Value.Value };
+                    return Array.Empty<TValue>();
                 }
             }
 
             /// <inheritDoc/>
-            public bool IsReadOnly { get { return true; } }
+            public bool IsReadOnly => true;
 
             /// <summary>
             /// Allows direct lookup of existing keys. If trying to access non-existing key exception is thrown.
@@ -229,10 +194,9 @@ namespace NLog.Internal
                 {
                     if (_multiBucket != null)
                         return _multiBucket[key];
-                    else if (_singleBucket.HasValue && _comparer.Equals(_singleBucket.Value.Key, key))
+                    if (_singleBucket.HasValue && _comparer.Equals(_singleBucket.Value.Key, key))
                         return _singleBucket.Value.Value;
-                    else
-                        throw new System.Collections.Generic.KeyNotFoundException();
+                    throw new KeyNotFoundException();
                 }
                 set
                 {
@@ -252,7 +216,7 @@ namespace NLog.Internal
                 internal Enumerator(Dictionary<TKey, TValue> multiBucket)
                 {
                     _singleBucketFirstRead = false;
-                    _singleBucket = default(KeyValuePair<TKey, TValue>);
+                    _singleBucket = default;
                     _multiBuckets = multiBucket.GetEnumerator();
                 }
 
@@ -274,12 +238,11 @@ namespace NLog.Internal
                     }
                 }
 
-                object IEnumerator.Current { get { return Current; } }
+                object IEnumerator.Current => Current;
 
                 public void Dispose()
                 {
-                    if (_multiBuckets != null)
-                        _multiBuckets.Dispose();
+                    _multiBuckets?.Dispose();
                 }
 
                 public bool MoveNext()
@@ -306,10 +269,9 @@ namespace NLog.Internal
             {
                 if (_multiBucket != null)
                     return new Enumerator(_multiBucket);
-                else if (_singleBucket.HasValue)
+                if (_singleBucket.HasValue)
                     return new Enumerator(_singleBucket.Value);
-                else
-                    return new Enumerator(new Dictionary<TKey, TValue>());
+                return new Enumerator(new Dictionary<TKey, TValue>());
             }
 
             /// <inheritDoc/>
@@ -329,10 +291,9 @@ namespace NLog.Internal
             {
                 if (_multiBucket != null)
                     return _multiBucket.ContainsKey(key);
-                else if (_singleBucket.HasValue)
+                if (_singleBucket.HasValue)
                     return _comparer.Equals(_singleBucket.Value.Key, key);
-                else
-                    return false;
+                return false;
             }
 
             /// <summary>Will always throw, as dictionary is readonly</summary>
@@ -354,16 +315,14 @@ namespace NLog.Internal
                 {
                     return _multiBucket.TryGetValue(key, out value);
                 }
-                else if (_singleBucket.HasValue && _comparer.Equals(_singleBucket.Value.Key, key))
+                if (_singleBucket.HasValue && _comparer.Equals(_singleBucket.Value.Key, key))
                 {
                     value = _singleBucket.Value.Value;
                     return true;
                 }
-                else
-                {
-                    value = default(TValue);
-                    return false;
-                }
+
+                value = default;
+                return false;
             }
 
             /// <summary>Will always throw, as dictionary is readonly</summary>
@@ -383,10 +342,9 @@ namespace NLog.Internal
             {
                 if (_multiBucket != null)
                     return ((IDictionary<TKey, TValue>)_multiBucket).Contains(item);
-                else if (_singleBucket.HasValue)
+                if (_singleBucket.HasValue)
                     return _comparer.Equals(_singleBucket.Value.Key, item.Key) && EqualityComparer<TValue>.Default.Equals(_singleBucket.Value.Value, item.Value);
-                else
-                    return false;
+                return false;
             }
 
             /// <inheritDoc/>

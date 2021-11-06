@@ -6,7 +6,7 @@ using SmtpServer;
 using SmtpServer.Protocol;
 using SmtpServer.Storage;
 
-namespace NLog.MailKit.Tests.Util
+namespace NLog.MailKit.Tests.IntegrationTests.Util
 {
     public class MessageStore : IMessageStore, IMessageStoreFactory
     {
@@ -23,7 +23,6 @@ namespace NLog.MailKit.Tests.Util
         {
             return this;
         }
-
 
         #region Implementation of IMessageStore
 

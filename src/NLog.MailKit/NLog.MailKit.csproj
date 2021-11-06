@@ -1,14 +1,13 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard1.5;net45;netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Julian Verdurmen</Authors>
     <Company>NLog</Company>
-    <Description>NLog Mail Target for .NET Core &amp; .NET Standard, and .NET 4.5+ using MailKit.
+    <Description>NLog Mail Target for .NET Core &amp; .NET Standard 2.0+ using MailKit.
 
 This package add the mail target to NLog and has the same options* as the original Mail Target.
 
-If the mail target was already available on your platform (.NET Standard 2+, .NET 4.5),
-this package will overwrite the original Mail Target.
+If the mail target was already available on your platform, this package will overwrite the original Mail Target.
 
 * Compared to the original MailTarget, the following options aren't implemented:
 
@@ -27,22 +26,17 @@ this package will overwrite the original Mail Target.
     <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
     <SignAssembly>True</SignAssembly>
     <AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>False</DelaySign>
+    <DelaySign>false</DelaySign>
     <PackageReleaseNotes>
-# 🍩 Package improvements
-- Enable deterministic build @304NotModified (#124)
-- Enabled SourceLink @304NotModified (#127)
-- Create and publish snupkg @304NotModified (#123)
-
-# ↜ Dependencies
-- Bump MailKit to 2.9.0 @304NotModified (#128)
-- Bump NLog from 4.7.4 to 4.7.12 @304NotModified @dependabot-preview (#96, #112, #125)
+- .NET Standard 2.0 only
+- Updated MailKit dependency
+- CLSCompliant (expect SecureSocketOption)
 
 See https://github.com/NLog/NLog.MailKit/releases
       
 </PackageReleaseNotes>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <!--AssemblyVersion: keep 2.0.0.0-->
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <!--AssemblyVersion: keep 4.0.0.0-->
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\$(TargetFramework)\NLog.MailKit.xml</DocumentationFile>
@@ -50,7 +44,7 @@ See https://github.com/NLog/NLog.MailKit/releases
     <DefineConstants>RELEASE</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <PackageReference Include="MailKit" Version="2.9.0" />
+    <PackageReference Include="MailKit" Version="2.15.0" />
     <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>

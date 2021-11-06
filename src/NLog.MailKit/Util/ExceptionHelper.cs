@@ -1,5 +1,5 @@
 ﻿// 
-// Copyright (c) 2004-2016 Jaroslaw Kowalski <jaak@jkowalski.net>, Kim Christensen, Julian Verdurmen
+// Copyright (c) 2004-2021 Jaroslaw Kowalski <jaak@jkowalski.net>, Kim Christensen, Julian Verdurmen
 // 
 // All rights reserved.
 // 
@@ -31,31 +31,17 @@
 // THE POSSIBILITY OF SUCH DAMAGE.
 // 
 
-namespace NLog.Internal
-{
-    using System;
-    using Common;
-    using System.Threading;
+using System;
+using NLog.Common;
 
+namespace NLog.MailKit.Util
+{
     /// <summary>
     /// Helper class for dealing with exceptions.
     /// </summary>
     internal static class ExceptionHelper
     {
         private const string LoggedKey = "NLog.ExceptionLoggedToInternalLogger";
-
-        /// <summary>
-        /// Mark this exception as logged to the <see cref="InternalLogger"/>.
-        /// </summary>
-        /// <param name="exception"></param>
-        /// <returns></returns>
-        public static void MarkAsLoggedToInternalLogger(this Exception exception)
-        {
-            if (exception != null)
-            {
-                exception.Data[LoggedKey] = true;
-            }
-        }
 
         /// <summary>
         /// Is this exception logged to the <see cref="InternalLogger"/>? 
