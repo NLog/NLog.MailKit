@@ -222,6 +222,7 @@ namespace NLog.MailKit
         /// If <see cref="EnableSsl" /> is <c>true</c>, then <see cref="SecureSocketOptions.SslOnConnect" /> will be used.
         /// </summary>
         [DefaultValue(SecureSocketOptions.StartTlsWhenAvailable)]
+        [CLSCompliant(false)]
         public SecureSocketOptions SecureSocketOption { get; set; }
 
         /// <summary>
