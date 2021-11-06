@@ -3,12 +3,11 @@
     <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Julian Verdurmen</Authors>
     <Company>NLog</Company>
-    <Description>NLog Mail Target for .NET Core &amp; .NET Standard, and .NET 4.5+ using MailKit.
+    <Description>NLog Mail Target for .NET Core &amp; .NET Standard 2.0+ using MailKit.
 
 This package add the mail target to NLog and has the same options* as the original Mail Target.
 
-If the mail target was already available on your platform (.NET Standard 2+, .NET 4.5),
-this package will overwrite the original Mail Target.
+If the mail target was already available on your platform, this package will overwrite the original Mail Target.
 
 * Compared to the original MailTarget, the following options aren't implemented:
 
