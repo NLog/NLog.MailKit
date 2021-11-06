@@ -239,7 +239,7 @@ namespace NLog.MailKit.Util
                     }
                 }
 
-                object IEnumerator.Current { get { return Current; } }
+                object IEnumerator.Current => Current;
 
                 public void Dispose()
                 {
@@ -271,10 +271,9 @@ namespace NLog.MailKit.Util
             {
                 if (_multiBucket != null)
                     return new Enumerator(_multiBucket);
-                else if (_singleBucket.HasValue)
+                if (_singleBucket.HasValue)
                     return new Enumerator(_singleBucket.Value);
-                else
-                    return new Enumerator(new Dictionary<TKey, TValue>());
+                return new Enumerator(new Dictionary<TKey, TValue>());
             }
 
             /// <inheritDoc/>
@@ -294,10 +293,9 @@ namespace NLog.MailKit.Util
             {
                 if (_multiBucket != null)
                     return _multiBucket.ContainsKey(key);
-                else if (_singleBucket.HasValue)
+                if (_singleBucket.HasValue)
                     return _comparer.Equals(_singleBucket.Value.Key, key);
-                else
-                    return false;
+                return false;
             }
 
             /// <summary>Will always throw, as dictionary is readonly</summary>
@@ -319,16 +317,14 @@ namespace NLog.MailKit.Util
                 {
                     return _multiBucket.TryGetValue(key, out value);
                 }
-                else if (_singleBucket.HasValue && _comparer.Equals(_singleBucket.Value.Key, key))
+                if (_singleBucket.HasValue && _comparer.Equals(_singleBucket.Value.Key, key))
                 {
                     value = _singleBucket.Value.Value;
                     return true;
                 }
-                else
-                {
-                    value = default(TValue);
-                    return false;
-                }
+
+                value = default;
+                return false;
             }
 
             /// <summary>Will always throw, as dictionary is readonly</summary>
@@ -348,10 +344,9 @@ namespace NLog.MailKit.Util
             {
                 if (_multiBucket != null)
                     return ((IDictionary<TKey, TValue>)_multiBucket).Contains(item);
-                else if (_singleBucket.HasValue)
+                if (_singleBucket.HasValue)
                     return _comparer.Equals(_singleBucket.Value.Key, item.Key) && EqualityComparer<TValue>.Default.Equals(_singleBucket.Value.Value, item.Value);
-                else
-                    return false;
+                return false;
             }
 
             /// <inheritDoc/>

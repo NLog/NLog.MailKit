@@ -1,9 +1,8 @@
-using NLog.MailKit;
 using System;
 using MimeKit;
 using Xunit;
 
-namespace NLog.MailKit.Tests
+namespace NLog.MailKit.Tests.UnitTests
 {
     public class MailTargetTests
     {
