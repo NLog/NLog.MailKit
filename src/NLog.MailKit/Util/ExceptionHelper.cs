@@ -45,19 +45,6 @@ namespace NLog.Internal
         private const string LoggedKey = "NLog.ExceptionLoggedToInternalLogger";
 
         /// <summary>
-        /// Mark this exception as logged to the <see cref="InternalLogger"/>.
-        /// </summary>
-        /// <param name="exception"></param>
-        /// <returns></returns>
-        public static void MarkAsLoggedToInternalLogger(this Exception exception)
-        {
-            if (exception != null)
-            {
-                exception.Data[LoggedKey] = true;
-            }
-        }
-
-        /// <summary>
         /// Is this exception logged to the <see cref="InternalLogger"/>? 
         /// </summary>
         /// <param name="exception"></param>

@@ -265,24 +265,6 @@ namespace NLog.MailKit
             Write((IList<AsyncLogEventInfo>)new[] { logEvent });
         }
 
-#if !NETSTANDARD2_0
-
-        /// <summary>
-        /// NOTE! Will soon be marked obsolete. Instead override Write(IList{AsyncLogEventInfo} logEvents)
-        /// 
-        /// Writes an array of logging events to the log target. By default it iterates on all
-        /// events and passes them to "Write" method. Inheriting classes can use this method to
-        /// optimize batch writes.
-        /// </summary>
-        /// <param name="logEvents">Logging events to be written out.</param>
-        [Obsolete("Write(AsyncLogEventInfo[]) is obsolete. Override Write(IList{AsyncLogEventInfo} logEvents) instead.", true)]
-        protected override void Write(AsyncLogEventInfo[] logEvents)
-        {
-            Write((IList<AsyncLogEventInfo>)logEvents);
-        }
-
-#endif
-
         /// <summary>
         /// Renders an array logging events.
         /// </summary>
