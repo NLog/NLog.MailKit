@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard1.3;netstandard1.5;net45;netstandard2.0</TargetFrameworks>
+    <TargetFrameworks>netstandard2.0</TargetFrameworks>
     <Authors>Julian Verdurmen</Authors>
     <Company>NLog</Company>
     <Description>NLog Mail Target for .NET Core &amp; .NET Standard, and .NET 4.5+ using MailKit.
@@ -29,20 +29,13 @@ this package will overwrite the original Mail Target.
     <AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
     <DelaySign>False</DelaySign>
     <PackageReleaseNotes>
-# 🍩 Package improvements
-- Enable deterministic build @304NotModified (#124)
-- Enabled SourceLink @304NotModified (#127)
-- Create and publish snupkg @304NotModified (#123)
-
-# ↜ Dependencies
-- Bump MailKit to 2.9.0 @304NotModified (#128)
-- Bump NLog from 4.7.4 to 4.7.12 @304NotModified @dependabot-preview (#96, #112, #125)
+- .NET Standard 2.0 only
 
 See https://github.com/NLog/NLog.MailKit/releases
       
 </PackageReleaseNotes>
-    <AssemblyVersion>2.0.0.0</AssemblyVersion>
-    <!--AssemblyVersion: keep 2.0.0.0-->
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
+    <!--AssemblyVersion: keep 4.0.0.0-->
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
     <DocumentationFile>bin\Release\$(TargetFramework)\NLog.MailKit.xml</DocumentationFile>

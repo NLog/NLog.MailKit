@@ -196,7 +196,7 @@ namespace NLog.Internal
                     else if (_singleBucket.HasValue)
                         return new[] { _singleBucket.Value.Key };
                     else
-                        return ArrayHelper.Empty<TKey>();
+                        return Array.Empty<TKey>();
                 }
             }
 
@@ -210,7 +210,7 @@ namespace NLog.Internal
                     else if (_singleBucket.HasValue)
                         return new TValue[] { _singleBucket.Value.Value };
                     else
-                        return ArrayHelper.Empty<TValue>();
+                        return Array.Empty<TValue>();
                 }
             }
 
