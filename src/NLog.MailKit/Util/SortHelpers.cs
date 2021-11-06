@@ -66,7 +66,7 @@ namespace NLog.MailKit.Util
         {
             Dictionary<TKey, IList<TValue>> buckets = null;
             bool singleBucketFirstKey = false;
-            TKey singleBucketKey = default(TKey);
+            TKey singleBucketKey = default;
             EqualityComparer<TKey> c = EqualityComparer<TKey>.Default;
             for (int i = 0; i < inputs.Count; i++)
             {
@@ -125,7 +125,6 @@ namespace NLog.MailKit.Util
             readonly KeyValuePair<TKey, TValue>? _singleBucket;
             readonly Dictionary<TKey, TValue> _multiBucket;
             readonly IEqualityComparer<TKey> _comparer;
-            public IEqualityComparer<TKey> Comparer { get { return _comparer; } }
 
             public ReadOnlySingleBucketDictionary(KeyValuePair<TKey, TValue> singleBucket)
                 : this(singleBucket, EqualityComparer<TKey>.Default)
@@ -148,7 +147,7 @@ namespace NLog.MailKit.Util
             {
                 _comparer = comparer;
                 _multiBucket = multiBucket;
-                _singleBucket = default(KeyValuePair<TKey, TValue>);
+                _singleBucket = default;
             }
 
             /// <inheritDoc/>
@@ -217,7 +216,7 @@ namespace NLog.MailKit.Util
                 internal Enumerator(Dictionary<TKey, TValue> multiBucket)
                 {
                     _singleBucketFirstRead = false;
-                    _singleBucket = default(KeyValuePair<TKey, TValue>);
+                    _singleBucket = default;
                     _multiBuckets = multiBucket.GetEnumerator();
                 }
 
@@ -243,8 +242,7 @@ namespace NLog.MailKit.Util
 
                 public void Dispose()
                 {
-                    if (_multiBuckets != null)
-                        _multiBuckets.Dispose();
+                    _multiBuckets?.Dispose();
                 }
 
                 public bool MoveNext()

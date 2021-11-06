@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
   <PropertyGroup>
-    <TargetFrameworks>netstandard2.0</TargetFrameworks>
+    <TargetFramework>netstandard2.0</TargetFramework>
     <Authors>Julian Verdurmen</Authors>
     <Company>NLog</Company>
     <Description>NLog Mail Target for .NET Core &amp; .NET Standard, and .NET 4.5+ using MailKit.
