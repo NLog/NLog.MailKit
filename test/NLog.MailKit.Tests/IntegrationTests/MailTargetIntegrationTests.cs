@@ -18,19 +18,19 @@ namespace NLog.MailKit.Tests.IntegrationTests
         [Fact]
         public void SendUnauthenticationMail()
         {
-           SendTest(() =>
-           {
-               CreateNLogConfig();
-           }, 1);
+            SendTest(() =>
+            {
+                CreateNLogConfig();
+            }, 1);
         }
 
         [Fact]
         public void SendAuthenticationMail()
         {
-           SendTest(() =>
-           {
-               CreateNLogConfig("user1", "myPassw0rd");
-           }, 1);
+            SendTest(() =>
+            {
+                CreateNLogConfig("user1", "myPassw0rd");
+            }, 1);
         }
 
         [Fact]
@@ -42,7 +42,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
                 mailTarget.Cc = "no reply <do_not_reply@domain.com>";
             }, 2);
 
-            //2nd is cc
+            // 2nd is cc
             AssertMailBox("do_not_reply@domain.com", transactions[0].To[1]);
         }
 
@@ -79,7 +79,6 @@ namespace NLog.MailKit.Tests.IntegrationTests
             Assert.Equal(toCount, recievedMesssage.To.Count);
 
             return recievedTransactions;
-
         }
 
         private static void AssertMailBox(string expected, IMailbox mailbox)
@@ -107,7 +106,6 @@ namespace NLog.MailKit.Tests.IntegrationTests
                 .Port(25, 587)
                 .MessageStore(store)
                 .UserAuthenticator(userAuthenticatorFactory)
-
                 .Build();
 
             var smtpServer = new SmtpServer.SmtpServer(options);

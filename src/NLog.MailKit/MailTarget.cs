@@ -1,5 +1,5 @@
 ﻿// 
-// Copyright (c) 2004-2016 Jaroslaw Kowalski <jaak@jkowalski.net>, Kim Christensen, Julian Verdurmen
+// Copyright (c) 2004-2021 Jaroslaw Kowalski <jaak@jkowalski.net>, Kim Christensen, Julian Verdurmen
 // 
 // All rights reserved.
 // 
@@ -34,7 +34,6 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -91,7 +90,6 @@ namespace NLog.MailKit
         /// <remarks>
         /// The default value of the layout is: <code>${longdate}|${level:uppercase=true}|${logger}|${message}</code>
         /// </remarks>
-        [SuppressMessage("Microsoft.Usage", "CA2214:DoNotCallOverridableMethodsInConstructors", Justification = "This one is safe.")]
         public MailTarget()
         {
             Body = "${message}${newline}";
@@ -458,8 +456,7 @@ namespace NLog.MailKit
             AppendLayout(sb, logEvent, SmtpServer);
             AppendLayout(sb, logEvent, SmtpPassword);
             AppendLayout(sb, logEvent, SmtpUserName);
-
-
+            
             return sb.ToString();
         }
 
@@ -576,14 +573,16 @@ namespace NLog.MailKit
         /// <returns>added a address?</returns>
         private static bool AddAddresses(InternetAddressList mailAddressCollection, Layout layout, LogEventInfo logEvent)
         {
-            var added = false;
-            if (layout != null)
+            if (layout == null)
             {
-                foreach (var mail in layout.Render(logEvent).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
-                {
-                    mailAddressCollection.Add(MailboxAddress.Parse(mail));
-                    added = true;
-                }
+                return false;
+            }
+
+            var added = false;
+            foreach (var mail in layout.Render(logEvent).Split(new[] { ';' }, StringSplitOptions.RemoveEmptyEntries))
+            {
+                mailAddressCollection.Add(MailboxAddress.Parse(mail));
+                added = true;
             }
 
             return added;

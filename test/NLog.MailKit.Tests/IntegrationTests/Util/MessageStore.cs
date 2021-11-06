@@ -24,7 +24,6 @@ namespace NLog.MailKit.Tests.IntegrationTests.Util
             return this;
         }
 
-
         #region Implementation of IMessageStore
 
         /// <inheritdoc />

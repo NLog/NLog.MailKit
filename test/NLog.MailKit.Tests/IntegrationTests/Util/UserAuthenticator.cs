@@ -17,7 +17,6 @@ namespace NLog.MailKit.Tests.IntegrationTests.Util
             _username = username;
             _pasword = pasword;
         }
-
         
         #region Implementation of IUserAuthenticator
 
