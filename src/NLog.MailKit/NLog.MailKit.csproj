@@ -31,7 +31,7 @@ this package will overwrite the original Mail Target.
     <PackageReleaseNotes>
 - .NET Standard 2.0 only
 - Updated MailKit dependency
-- CLSCompliant
+- CLSCompliant (expect SecureSocketOption)
 
 See https://github.com/NLog/NLog.MailKit/releases
       
