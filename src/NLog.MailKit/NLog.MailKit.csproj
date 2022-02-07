@@ -35,7 +35,7 @@ If the mail target was already available on your platform, this package will ove
 See https://github.com/NLog/NLog.MailKit/releases
       
 </PackageReleaseNotes>
-    <AssemblyVersion>4.1.0.0</AssemblyVersion>
+    <AssemblyVersion>4.0.0.0</AssemblyVersion>
     <!--AssemblyVersion: keep 4.0.0.0-->
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
