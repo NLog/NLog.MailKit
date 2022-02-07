@@ -28,9 +28,7 @@ If the mail target was already available on your platform, this package will ove
     <AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
     <DelaySign>false</DelaySign>
     <PackageReleaseNotes>
-- .NET Standard 2.0 only
-- Updated MailKit dependency
-- CLSCompliant (expect SecureSocketOption)
+- Updated to MailKit 3 (@LadislavBohm)
 
 See https://github.com/NLog/NLog.MailKit/releases
       
