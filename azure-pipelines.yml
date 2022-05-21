@@ -3,7 +3,7 @@ trigger:
 - master
 pool:
   name: Azure Pipelines
-  vmImage: 'windows-2019'
+  vmImage: 'windows-latest'
   demands:
   - msbuild
   - visualstudio
