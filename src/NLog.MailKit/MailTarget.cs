@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -80,6 +81,7 @@ namespace NLog.MailKit
     /// <code lang="C#" source="examples/targets/Configuration API/Mail/Buffered/Example.cs" />
     /// </example>
     [Target("Mail")]
+    [SuppressMessage("ReSharper", "RedundantStringFormatCall")]
     public class MailTarget : TargetWithLayoutHeaderAndFooter
     {
         private const string RequiredPropertyIsEmptyFormat = "After the processing of the MailTarget's '{0}' property it appears to be empty. The email message will not be sent.";
@@ -253,7 +255,7 @@ namespace NLog.MailKit
         /// <summary>
         /// Gets or sets a value indicating the SMTP client timeout.
         /// </summary>
-        /// <remarks>Warning: zero is not infinit waiting</remarks>
+        /// <remarks>Warning: zero is not infinite waiting</remarks>
         [DefaultValue(10000)]
         public int Timeout { get; set; }
 
@@ -263,7 +265,7 @@ namespace NLog.MailKit
         /// <param name="logEvent">The logging event.</param>
         protected override void Write(AsyncLogEventInfo logEvent)
         {
-            Write((IList<AsyncLogEventInfo>)new[] { logEvent });
+            Write(new[] { logEvent });
         }
 
         /// <summary>
@@ -291,7 +293,7 @@ namespace NLog.MailKit
 
             if (SmtpAuthentication == SmtpAuthenticationMode.Ntlm)
             {
-                throw new NLogConfigurationException("Ntlm not yet supported");
+                throw new NLogConfigurationException("NTLM not yet supported");
             }
 
             base.InitializeTarget();
@@ -326,7 +328,7 @@ namespace NLog.MailKit
                     var renderedHost = SmtpServer.Render(lastEvent);
                     if (string.IsNullOrEmpty(renderedHost))
                     {
-                        throw new NLogRuntimeException(RequiredPropertyIsEmptyFormat, nameof(SmtpServer));
+                        throw new NLogRuntimeException(string.Format(RequiredPropertyIsEmptyFormat, nameof(SmtpServer)));
                     }
 
                     var secureSocketOptions = EnableSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOption;
@@ -431,17 +433,17 @@ namespace NLog.MailKit
         {
             if (SmtpServer == null)
             {
-                throw new NLogConfigurationException(RequiredPropertyIsEmptyFormat, nameof(SmtpServer));
+                throw new NLogConfigurationException(string.Format(RequiredPropertyIsEmptyFormat, nameof(SmtpServer)));
             }
 
             if (From == null)
             {
-                throw new NLogConfigurationException(RequiredPropertyIsEmptyFormat, nameof(From));
+                throw new NLogConfigurationException(string.Format(RequiredPropertyIsEmptyFormat, nameof(From)));
             }
         }
 
         /// <summary>
-        /// Create key for grouping. Needed for multiple events in one mailmessage
+        /// Create key for grouping. Needed for multiple events in one mail message
         /// </summary>
         /// <param name="logEvent">event for rendering layouts   </param>
         /// <returns>string to group on</returns>
@@ -476,7 +478,7 @@ namespace NLog.MailKit
         }
 
         /// <summary>
-        /// Create the mailmessage with the addresses, properties and body.
+        /// Create the mail message with the addresses, properties and body.
         /// </summary>
         private MimeMessage CreateMailMessage(LogEventInfo lastEvent, string body)
         {
@@ -486,7 +488,7 @@ namespace NLog.MailKit
 
             if (string.IsNullOrEmpty(renderedFrom))
             {
-                throw new NLogRuntimeException(RequiredPropertyIsEmptyFormat, "From");
+                throw new NLogRuntimeException(string.Format(RequiredPropertyIsEmptyFormat, "From"));
             }
 
             msg.From.Add(MailboxAddress.Parse(renderedFrom));
@@ -497,12 +499,10 @@ namespace NLog.MailKit
 
             if (!addedTo && !addedCc && !addedBcc)
             {
-                throw new NLogRuntimeException(RequiredPropertyIsEmptyFormat, "To/Cc/Bcc");
+                throw new NLogRuntimeException(string.Format(RequiredPropertyIsEmptyFormat, "To/Cc/Bcc"));
             }
 
             msg.Subject = Subject == null ? string.Empty : Subject.Render(lastEvent).Trim();
-
-            //todo msg.BodyEncoding = Encoding;
 
             if (Priority != null)
             {
