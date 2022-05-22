@@ -29,6 +29,7 @@ If the mail target was already available on your platform, this package will ove
     <DelaySign>false</DelaySign>
     <PackageReleaseNotes>
 - NLog 5 compatible
+- All properties are now layoutable. See NLog Layout for everything on https://nlog-project.org/2021/08/25/nlog-5-0-preview1-ready.html
 - Updated MailKit
 
 See https://github.com/NLog/NLog.MailKit/releases
