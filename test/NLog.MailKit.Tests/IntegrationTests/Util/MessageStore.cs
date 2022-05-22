@@ -10,7 +10,7 @@ namespace NLog.MailKit.Tests.IntegrationTests.Util
 {
     public class MessageStore : IMessageStore, IMessageStoreFactory
     {
-        public IList<IMessageTransaction> RecievedTransactions { get; } = new List<IMessageTransaction>();
+        public IList<IMessageTransaction> ReceivedTransactions { get; } = new List<IMessageTransaction>();
 
         private readonly CountdownEvent _countdownEvent;
 
@@ -29,7 +29,7 @@ namespace NLog.MailKit.Tests.IntegrationTests.Util
         /// <inheritdoc />
         public Task<SmtpResponse> SaveAsync(ISessionContext context, IMessageTransaction transaction, CancellationToken cancellationToken)
         {
-            RecievedTransactions.Add(transaction);
+            ReceivedTransactions.Add(transaction);
             _countdownEvent.Signal();
             return Task.FromResult(SmtpResponse.Ok);
         }
