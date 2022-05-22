@@ -37,6 +37,7 @@ See https://github.com/NLog/NLog.MailKit/releases
       
 </PackageReleaseNotes>
 		<AssemblyVersion>5.0.0.0</AssemblyVersion>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
 		<!--AssemblyVersion: keep 5.0.0.0-->
 	</PropertyGroup>
 	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
@@ -52,6 +53,10 @@ See https://github.com/NLog/NLog.MailKit/releases
 		<PackageReference Include="NLog" Version="5.0.0" />
 	</ItemGroup>
 	<ItemGroup>
+		<None Include="..\..\README.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
 		<None Include="N.png" Pack="true" PackagePath="" Visible="false" />
 	</ItemGroup>
 	<Target Name="DownloadMissingContent" BeforeTargets="GenerateNuspec">
