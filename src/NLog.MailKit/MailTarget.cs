@@ -295,7 +295,7 @@ namespace NLog.MailKit
             InternalLogger.Debug("Init mailtarget with mailkit");
             CheckRequiredParameters();
 
-            var smtpAuthentication = SmtpAuthentication.RenderValue(LogEventInfo.CreateNullEvent());
+            var smtpAuthentication = RenderLogEvent(SmtpAuthentication, LogEventInfo.CreateNullEvent());
             if (smtpAuthentication == SmtpAuthenticationMode.Ntlm)
             {
                 throw new NLogConfigurationException("NTLM not yet supported");
@@ -328,7 +328,7 @@ namespace NLog.MailKit
                 using (var client = new SmtpClient())
                 {
                     CheckRequiredParameters();
-                    client.Timeout = Timeout.RenderValue(lastEvent);
+                    client.Timeout = RenderLogEvent(Timeout, lastEvent);
 
                     var renderedHost = SmtpServer.Render(lastEvent);
                     if (string.IsNullOrEmpty(renderedHost))
@@ -336,14 +336,14 @@ namespace NLog.MailKit
                         throw new NLogRuntimeException(string.Format(RequiredPropertyIsEmptyFormat, nameof(SmtpServer)));
                     }
 
-                    var enableSsl = EnableSsl.RenderValue(lastEvent);
-                    var secureSocketOptions = enableSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOption.RenderValue(lastEvent, DefaultSecureSocketOption);
-                    var smtpPort = SmtpPort.RenderValue(lastEvent);
+                    var enableSsl = RenderLogEvent(EnableSsl, lastEvent);
+                    var secureSocketOptions = enableSsl ? SecureSocketOptions.SslOnConnect : RenderLogEvent(SecureSocketOption, lastEvent, DefaultSecureSocketOption);
+                    var smtpPort = RenderLogEvent(SmtpPort, lastEvent);
                     InternalLogger.Debug("Sending mail to {0} using {1}:{2} (socket option={3})", message.To, renderedHost, smtpPort, secureSocketOptions);
                     InternalLogger.Trace("  Subject: '{0}'", message.Subject);
                     InternalLogger.Trace("  From: '{0}'", message.From);
 
-                    var skipCertificateValidation = SkipCertificateValidation.RenderValue(lastEvent);
+                    var skipCertificateValidation = RenderLogEvent(SkipCertificateValidation, lastEvent);
                     if (skipCertificateValidation)
                     {
                         client.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
@@ -359,7 +359,7 @@ namespace NLog.MailKit
 
                     // Note: only needed if the SMTP server requires authentication
 
-                    var smtpAuthentication = SmtpAuthentication.RenderValue(LogEventInfo.CreateNullEvent());
+                    var smtpAuthentication = RenderLogEvent(SmtpAuthentication, LogEventInfo.CreateNullEvent());
                     if (smtpAuthentication == SmtpAuthenticationMode.Basic)
                     {
                         var userName = SmtpUserName?.Render(lastEvent);
@@ -408,7 +408,7 @@ namespace NLog.MailKit
         private StringBuilder CreateBodyBuffer(IEnumerable<AsyncLogEventInfo> events, LogEventInfo firstEvent, LogEventInfo lastEvent)
         {
             var bodyBuffer = new StringBuilder();
-            var addNewLines = AddNewLines.RenderValue(firstEvent, false);
+            var addNewLines = RenderLogEvent(AddNewLines, firstEvent, false);
             if (Header != null)
             {
                 bodyBuffer.Append(Header.Render(firstEvent));
@@ -523,14 +523,14 @@ namespace NLog.MailKit
             TextPart CreateBodyPart()
             {
                 var newBody = body;
-                var html = Html.RenderValue(lastEvent);
-                var replaceNewlineWithBrTagInHtml = ReplaceNewlineWithBrTagInHtml.RenderValue(lastEvent);
+                var html = RenderLogEvent(Html, lastEvent);
+                var replaceNewlineWithBrTagInHtml = RenderLogEvent(ReplaceNewlineWithBrTagInHtml, lastEvent);
                 if (html && replaceNewlineWithBrTagInHtml)
                 {
                     newBody = newBody?.Replace(Environment.NewLine, "<br/>");
                 }
 
-                var encoding = Encoding.RenderValue(lastEvent, DefaultEncoding);
+                var encoding = RenderLogEvent(Encoding, lastEvent, DefaultEncoding);
                 return new TextPart(html ? TextFormat.Html : TextFormat.Plain)
                 {
                     Text = newBody,
