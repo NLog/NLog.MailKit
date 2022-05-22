@@ -29,7 +29,7 @@ If the mail target was already available on your platform, this package will ove
     <DelaySign>false</DelaySign>
     <PackageReleaseNotes>
 - NLog 5 compatible
-- All properties are now layoutable. See NLog Layout for everything on https://nlog-project.org/2021/08/25/nlog-5-0-preview1-ready.html
+- All properties are now layoutable. See 'NLog Layout for everything' on https://nlog-project.org/2021/08/25/nlog-5-0-preview1-ready.html
 - Updated MailKit
 
 See https://github.com/NLog/NLog.MailKit/releases
@@ -45,7 +45,7 @@ See https://github.com/NLog/NLog.MailKit/releases
   </PropertyGroup>
   <ItemGroup>
     <PackageReference Include="MailKit" Version="3.2.0" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
+    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
   </ItemGroup>
   <ItemGroup>
     <PackageReference Include="NLog" Version="5.0.0" />
