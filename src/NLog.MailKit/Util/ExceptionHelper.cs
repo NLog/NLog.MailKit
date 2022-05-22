@@ -1,5 +1,5 @@
 ﻿// 
-// Copyright (c) 2004-2021 Jaroslaw Kowalski <jaak@jkowalski.net>, Kim Christensen, Julian Verdurmen
+// Copyright (c) 2004-2022 Jaroslaw Kowalski <jaak@jkowalski.net>, Kim Christensen, Julian Verdurmen
 // 
 // All rights reserved.
 // 
@@ -69,7 +69,7 @@ namespace NLog.MailKit.Util
         {
             if (exception.MustBeRethrownImmediately())
             {
-                //no futher logging, because it can make servere exceptions only worse.
+                //no further logging, because it can make severe exceptions only worse.
                 return true;
             }
 

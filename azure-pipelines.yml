@@ -3,7 +3,7 @@ trigger:
 - master
 pool:
   name: Azure Pipelines
-  vmImage: 'windows-2019'
+  vmImage: 'windows-latest'
   demands:
   - msbuild
   - visualstudio
@@ -13,14 +13,14 @@ variables:
   Solution: 'src/NLog.MailKit.sln'
   BuildPlatform: 'Any CPU'
   BuildConfiguration: 'Release'
-  Version: '4.1.0'
+  Version: '5.0.0'
   FullVersion: '$(Version).$(Build.BuildId)'
 
 steps:
 - task: NuGetToolInstaller@0
-  displayName: 'Use NuGet 5.x'
+  displayName: 'Use NuGet 6.x'
   inputs:
-    versionSpec: 5.x
+    versionSpec: 6.x
 
 - task: DotNetCoreCLI@2
   displayName: 'dotnet restore'

@@ -1,5 +1,5 @@
 ﻿// 
-// Copyright (c) 2004-2021 Jaroslaw Kowalski <jaak@jkowalski.net>, Kim Christensen, Julian Verdurmen
+// Copyright (c) 2004-2022 Jaroslaw Kowalski <jaak@jkowalski.net>, Kim Christensen, Julian Verdurmen
 // 
 // All rights reserved.
 // 
@@ -34,6 +34,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Diagnostics.CodeAnalysis;
 using System.Text;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -80,8 +81,12 @@ namespace NLog.MailKit
     /// <code lang="C#" source="examples/targets/Configuration API/Mail/Buffered/Example.cs" />
     /// </example>
     [Target("Mail")]
+    [SuppressMessage("ReSharper", "RedundantStringFormatCall")]
     public class MailTarget : TargetWithLayoutHeaderAndFooter
     {
+        private static readonly Encoding DefaultEncoding = System.Text.Encoding.UTF8;
+        private const SecureSocketOptions DefaultSecureSocketOption = SecureSocketOptions.StartTlsWhenAvailable;
+
         private const string RequiredPropertyIsEmptyFormat = "After the processing of the MailTarget's '{0}' property it appears to be empty. The email message will not be sent.";
 
         /// <summary>
@@ -94,10 +99,10 @@ namespace NLog.MailKit
         {
             Body = "${message}${newline}";
             Subject = "Message from NLog on ${machinename}";
-            Encoding = Encoding.UTF8;
+            Encoding = DefaultEncoding;
             SmtpPort = 25;
             SmtpAuthentication = SmtpAuthenticationMode.None;
-            SecureSocketOption = SecureSocketOptions.StartTlsWhenAvailable;
+            SecureSocketOption = DefaultSecureSocketOption;
             Timeout = 10000;
         }
 
@@ -143,7 +148,8 @@ namespace NLog.MailKit
         /// </summary>
         /// <value>A value of <c>true</c> if new lines should be added; otherwise, <c>false</c>.</value>
         /// <docgen category='Layout Options' order='99' />
-        public bool AddNewLines { get; set; }
+        [DefaultValue(false)]
+        public Layout<bool> AddNewLines { get; set; }
 
         /// <summary>
         /// Gets or sets the mail subject.
@@ -170,14 +176,14 @@ namespace NLog.MailKit
         /// </summary>
         /// <docgen category='Layout Options' order='20' />
         [DefaultValue("UTF8")]
-        public Encoding Encoding { get; set; }
+        public Layout<Encoding> Encoding { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether to send message as HTML instead of plain text.
         /// </summary>
         /// <docgen category='Layout Options' order='11' />
         [DefaultValue(false)]
-        public bool Html { get; set; }
+        public Layout<bool> Html { get; set; }
 
         /// <summary>
         /// Gets or sets SMTP Server to be used for sending.
@@ -190,16 +196,16 @@ namespace NLog.MailKit
         /// </summary>
         /// <docgen category='SMTP Options' order='11' />
         [DefaultValue("None")]
-        public SmtpAuthenticationMode SmtpAuthentication { get; set; }
+        public Layout<SmtpAuthenticationMode> SmtpAuthentication { get; set; }
 
         /// <summary>
-        /// Gets or sets the username used to connect to SMTP server (used when SmtpAuthentication is set to "basic").
+        /// Gets or sets the username used to connect to SMTP server (used when <see cref="SmtpAuthentication"/> is set to "basic").
         /// </summary>
         /// <docgen category='SMTP Options' order='12' />
         public Layout SmtpUserName { get; set; }
 
         /// <summary>
-        /// Gets or sets the password used to authenticate against SMTP server (used when SmtpAuthentication is set to "basic").
+        /// Gets or sets the password used to authenticate against SMTP server (used when  <see cref="SmtpAuthentication"/> is set to "basic").
         /// </summary>
         /// <docgen category='SMTP Options' order='13' />
         public Layout SmtpPassword { get; set; }
@@ -212,23 +218,23 @@ namespace NLog.MailKit
         /// <docgen category='SMTP Options' order='14' />
         /// .
         [DefaultValue(false)]
-        public bool EnableSsl { get; set; }
+        public Layout<bool> EnableSsl { get; set; }
 
         /// <summary>
         /// Provides a way of specifying the SSL and/or TLS encryption
         /// 
         /// If <see cref="EnableSsl" /> is <c>true</c>, then <see cref="SecureSocketOptions.SslOnConnect" /> will be used.
         /// </summary>
-        [DefaultValue(SecureSocketOptions.StartTlsWhenAvailable)]
+        [DefaultValue(DefaultSecureSocketOption)]
         [CLSCompliant(false)]
-        public SecureSocketOptions SecureSocketOption { get; set; }
+        public Layout<SecureSocketOptions> SecureSocketOption { get; set; }
 
         /// <summary>
         /// Gets or sets the port number that SMTP Server is listening on.
         /// </summary>
         /// <docgen category='SMTP Options' order='15' />
         [DefaultValue(25)]
-        public int SmtpPort { get; set; }
+        public Layout<int> SmtpPort { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether SmtpClient should ignore invalid certificate.
@@ -236,7 +242,7 @@ namespace NLog.MailKit
         /// <docgen category='SMTP Options' order='16' />
         /// .
         [DefaultValue(false)]
-        public bool SkipCertificateValidation { get; set; }
+        public Layout<bool> SkipCertificateValidation { get; set; }
 
         /// <summary>
         /// Gets or sets the priority used for sending mails.
@@ -248,14 +254,14 @@ namespace NLog.MailKit
         /// </summary>
         /// <remarks>Only happens when <see cref="Html" /> is set to true.</remarks>
         [DefaultValue(false)]
-        public bool ReplaceNewlineWithBrTagInHtml { get; set; }
+        public Layout<bool> ReplaceNewlineWithBrTagInHtml { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating the SMTP client timeout.
         /// </summary>
-        /// <remarks>Warning: zero is not infinit waiting</remarks>
+        /// <remarks>Warning: zero is not infinite waiting</remarks>
         [DefaultValue(10000)]
-        public int Timeout { get; set; }
+        public Layout<int> Timeout { get; set; }
 
         /// <summary>
         /// Renders the logging event message and adds it to the internal ArrayList of log messages.
@@ -263,7 +269,7 @@ namespace NLog.MailKit
         /// <param name="logEvent">The logging event.</param>
         protected override void Write(AsyncLogEventInfo logEvent)
         {
-            Write((IList<AsyncLogEventInfo>)new[] { logEvent });
+            Write(new[] { logEvent });
         }
 
         /// <summary>
@@ -289,9 +295,10 @@ namespace NLog.MailKit
             InternalLogger.Debug("Init mailtarget with mailkit");
             CheckRequiredParameters();
 
-            if (SmtpAuthentication == SmtpAuthenticationMode.Ntlm)
+            var smtpAuthentication = RenderLogEvent(SmtpAuthentication, LogEventInfo.CreateNullEvent());
+            if (smtpAuthentication == SmtpAuthenticationMode.Ntlm)
             {
-                throw new NLogConfigurationException("Ntlm not yet supported");
+                throw new NLogConfigurationException("NTLM not yet supported");
             }
 
             base.InitializeTarget();
@@ -321,26 +328,29 @@ namespace NLog.MailKit
                 using (var client = new SmtpClient())
                 {
                     CheckRequiredParameters();
-                    client.Timeout = Timeout;
+                    client.Timeout = RenderLogEvent(Timeout, lastEvent);
 
                     var renderedHost = SmtpServer.Render(lastEvent);
                     if (string.IsNullOrEmpty(renderedHost))
                     {
-                        throw new NLogRuntimeException(RequiredPropertyIsEmptyFormat, nameof(SmtpServer));
+                        throw new NLogRuntimeException(string.Format(RequiredPropertyIsEmptyFormat, nameof(SmtpServer)));
                     }
 
-                    var secureSocketOptions = EnableSsl ? SecureSocketOptions.SslOnConnect : SecureSocketOption;
-                    InternalLogger.Debug("Sending mail to {0} using {1}:{2} (socket option={3})", message.To, renderedHost, SmtpPort, secureSocketOptions);
+                    var enableSsl = RenderLogEvent(EnableSsl, lastEvent);
+                    var secureSocketOptions = enableSsl ? SecureSocketOptions.SslOnConnect : RenderLogEvent(SecureSocketOption, lastEvent, DefaultSecureSocketOption);
+                    var smtpPort = RenderLogEvent(SmtpPort, lastEvent);
+                    InternalLogger.Debug("Sending mail to {0} using {1}:{2} (socket option={3})", message.To, renderedHost, smtpPort, secureSocketOptions);
                     InternalLogger.Trace("  Subject: '{0}'", message.Subject);
                     InternalLogger.Trace("  From: '{0}'", message.From);
 
-                    if (SkipCertificateValidation)
+                    var skipCertificateValidation = RenderLogEvent(SkipCertificateValidation, lastEvent);
+                    if (skipCertificateValidation)
                     {
                         client.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
                     }
 
 
-                    client.Connect(renderedHost, SmtpPort, secureSocketOptions);
+                    client.Connect(renderedHost, smtpPort, secureSocketOptions);
                     InternalLogger.Trace("  Connecting succesfull");
 
                     // Note: since we don't have an OAuth2 token, disable
@@ -349,7 +359,8 @@ namespace NLog.MailKit
 
                     // Note: only needed if the SMTP server requires authentication
 
-                    if (SmtpAuthentication == SmtpAuthenticationMode.Basic)
+                    var smtpAuthentication = RenderLogEvent(SmtpAuthentication, LogEventInfo.CreateNullEvent());
+                    if (smtpAuthentication == SmtpAuthenticationMode.Basic)
                     {
                         var userName = SmtpUserName?.Render(lastEvent);
                         var password = SmtpPassword?.Render(lastEvent);
@@ -397,10 +408,11 @@ namespace NLog.MailKit
         private StringBuilder CreateBodyBuffer(IEnumerable<AsyncLogEventInfo> events, LogEventInfo firstEvent, LogEventInfo lastEvent)
         {
             var bodyBuffer = new StringBuilder();
+            var addNewLines = RenderLogEvent(AddNewLines, firstEvent, false);
             if (Header != null)
             {
                 bodyBuffer.Append(Header.Render(firstEvent));
-                if (AddNewLines)
+                if (addNewLines)
                 {
                     bodyBuffer.Append("\n");
                 }
@@ -409,7 +421,7 @@ namespace NLog.MailKit
             foreach (var eventInfo in events)
             {
                 bodyBuffer.Append(Layout.Render(eventInfo.LogEvent));
-                if (AddNewLines)
+                if (addNewLines)
                 {
                     bodyBuffer.Append("\n");
                 }
@@ -418,7 +430,7 @@ namespace NLog.MailKit
             if (Footer != null)
             {
                 bodyBuffer.Append(Footer.Render(lastEvent));
-                if (AddNewLines)
+                if (addNewLines)
                 {
                     bodyBuffer.Append("\n");
                 }
@@ -431,17 +443,17 @@ namespace NLog.MailKit
         {
             if (SmtpServer == null)
             {
-                throw new NLogConfigurationException(RequiredPropertyIsEmptyFormat, nameof(SmtpServer));
+                throw new NLogConfigurationException(string.Format(RequiredPropertyIsEmptyFormat, nameof(SmtpServer)));
             }
 
             if (From == null)
             {
-                throw new NLogConfigurationException(RequiredPropertyIsEmptyFormat, nameof(From));
+                throw new NLogConfigurationException(string.Format(RequiredPropertyIsEmptyFormat, nameof(From)));
             }
         }
 
         /// <summary>
-        /// Create key for grouping. Needed for multiple events in one mailmessage
+        /// Create key for grouping. Needed for multiple events in one mail message
         /// </summary>
         /// <param name="logEvent">event for rendering layouts   </param>
         /// <returns>string to group on</returns>
@@ -456,7 +468,7 @@ namespace NLog.MailKit
             AppendLayout(sb, logEvent, SmtpServer);
             AppendLayout(sb, logEvent, SmtpPassword);
             AppendLayout(sb, logEvent, SmtpUserName);
-            
+
             return sb.ToString();
         }
 
@@ -476,7 +488,7 @@ namespace NLog.MailKit
         }
 
         /// <summary>
-        /// Create the mailmessage with the addresses, properties and body.
+        /// Create the mail message with the addresses, properties and body.
         /// </summary>
         private MimeMessage CreateMailMessage(LogEventInfo lastEvent, string body)
         {
@@ -486,7 +498,7 @@ namespace NLog.MailKit
 
             if (string.IsNullOrEmpty(renderedFrom))
             {
-                throw new NLogRuntimeException(RequiredPropertyIsEmptyFormat, "From");
+                throw new NLogRuntimeException(string.Format(RequiredPropertyIsEmptyFormat, "From"));
             }
 
             msg.From.Add(MailboxAddress.Parse(renderedFrom));
@@ -497,12 +509,10 @@ namespace NLog.MailKit
 
             if (!addedTo && !addedCc && !addedBcc)
             {
-                throw new NLogRuntimeException(RequiredPropertyIsEmptyFormat, "To/Cc/Bcc");
+                throw new NLogRuntimeException(string.Format(RequiredPropertyIsEmptyFormat, "To/Cc/Bcc"));
             }
 
             msg.Subject = Subject == null ? string.Empty : Subject.Render(lastEvent).Trim();
-
-            //todo msg.BodyEncoding = Encoding;
 
             if (Priority != null)
             {
@@ -513,15 +523,18 @@ namespace NLog.MailKit
             TextPart CreateBodyPart()
             {
                 var newBody = body;
-                if (Html && ReplaceNewlineWithBrTagInHtml)
+                var html = RenderLogEvent(Html, lastEvent);
+                var replaceNewlineWithBrTagInHtml = RenderLogEvent(ReplaceNewlineWithBrTagInHtml, lastEvent);
+                if (html && replaceNewlineWithBrTagInHtml)
                 {
                     newBody = newBody?.Replace(Environment.NewLine, "<br/>");
                 }
 
-                return new TextPart(Html ? TextFormat.Html : TextFormat.Plain)
+                var encoding = RenderLogEvent(Encoding, lastEvent, DefaultEncoding);
+                return new TextPart(html ? TextFormat.Html : TextFormat.Plain)
                 {
                     Text = newBody,
-                    ContentType = { Charset = Encoding?.WebName }
+                    ContentType = { Charset = encoding?.WebName }
                 };
             }
 

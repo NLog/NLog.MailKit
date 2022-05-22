@@ -1,9 +1,9 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
-  <PropertyGroup>
-    <TargetFramework>netstandard2.0</TargetFramework>
-    <Authors>Julian Verdurmen</Authors>
-    <Company>NLog</Company>
-    <Description>NLog Mail Target for .NET Core &amp; .NET Standard 2.0+ using MailKit.
+	<PropertyGroup>
+		<TargetFramework>netstandard2.0</TargetFramework>
+		<Authors>Julian Verdurmen</Authors>
+		<Company>NLog</Company>
+		<Description>NLog Mail Target for .NET Core &amp; .NET Standard 2.0+ using MailKit.
 
 This package add the mail target to NLog and has the same options* as the original Mail Target.
 
@@ -17,35 +17,49 @@ If the mail target was already available on your platform, this package will ove
 * MailKit gives more control of the sockets, so you get the `secureSocketOption` option for free!    
       
     </Description>
-    <PackageProjectUrl>https://github.com/NLog/NLog.MailKit</PackageProjectUrl>
-    <PackageLicenseUrl>https://raw.githubusercontent.com/NLog/NLog.MailKit/master/LICENSE</PackageLicenseUrl>
-    <PackageIconUrl>http://nlog-project.org/N.png</PackageIconUrl>
-    <RepositoryUrl>https://github.com/NLog/NLog.MailKit.git</RepositoryUrl>
-    <RepositoryType>git</RepositoryType>
-    <PackageTags>nlog mail mailkit netcore smtp</PackageTags>
-    <GeneratePackageOnBuild>True</GeneratePackageOnBuild>
-    <SignAssembly>True</SignAssembly>
-    <AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
-    <DelaySign>false</DelaySign>
-    <PackageReleaseNotes>
-- Updated to MailKit 3 (@LadislavBohm)
+		<PackageProjectUrl>https://github.com/NLog/NLog.MailKit</PackageProjectUrl>
+		<PackageLicenseExpression>BSD-3-Clause</PackageLicenseExpression>
+		<PackageIcon>N.png</PackageIcon>
+		<PackageIconUrl>http://nlog-project.org/N.png</PackageIconUrl>
+		<RepositoryUrl>https://github.com/NLog/NLog.MailKit.git</RepositoryUrl>
+		<RepositoryType>git</RepositoryType>
+		<PackageTags>nlog mail mailkit netcore smtp email</PackageTags>
+		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
+		<SignAssembly>True</SignAssembly>
+		<AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
+		<DelaySign>false</DelaySign>
+		<PackageReleaseNotes>
+- NLog 5 compatible
+- All properties are now layoutable. See 'NLog Layout for everything' on https://nlog-project.org/2021/08/25/nlog-5-0-preview1-ready.html
+- Updated MailKit
 
 See https://github.com/NLog/NLog.MailKit/releases
       
 </PackageReleaseNotes>
-    <AssemblyVersion>4.0.0.0</AssemblyVersion>
-    <!--AssemblyVersion: keep 4.0.0.0-->
-  </PropertyGroup>
-  <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-    <DocumentationFile>bin\Release\$(TargetFramework)\NLog.MailKit.xml</DocumentationFile>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>RELEASE</DefineConstants>
-  </PropertyGroup>
-  <ItemGroup>
-    <PackageReference Include="MailKit" Version="3.1.1" />
-    <PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.0.0" PrivateAssets="All" />
-  </ItemGroup>
-  <ItemGroup>
-    <PackageReference Include="NLog" Version="4.7.12" />
-  </ItemGroup>
+		<AssemblyVersion>5.0.0.0</AssemblyVersion>
+		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<!--AssemblyVersion: keep 5.0.0.0-->
+	</PropertyGroup>
+	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
+		<DocumentationFile>bin\Release\$(TargetFramework)\NLog.MailKit.xml</DocumentationFile>
+		<OutputPath>bin\Release\</OutputPath>
+		<DefineConstants>RELEASE</DefineConstants>
+	</PropertyGroup>
+	<ItemGroup>
+		<PackageReference Include="MailKit" Version="3.2.0" />
+		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
+	</ItemGroup>
+	<ItemGroup>
+		<PackageReference Include="NLog" Version="5.0.0" />
+	</ItemGroup>
+	<ItemGroup>
+		<None Include="..\..\README.md">
+		  <Pack>True</Pack>
+		  <PackagePath>\</PackagePath>
+		</None>
+		<None Include="N.png" Pack="true" PackagePath="" Visible="false" />
+	</ItemGroup>
+	<Target Name="DownloadMissingContent" BeforeTargets="GenerateNuspec">
+		<DownloadFile SourceUrl="https://nlog-project.org/N.png" DestinationFolder="$(MSBuildThisFileDirectory)" />
+	</Target>
 </Project>

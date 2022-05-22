@@ -16,7 +16,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
     public class MailTargetIntegrationTests
     {
         [Fact]
-        public void SendUnauthenticationMail()
+        public void SendUnauthenticatedMail()
         {
             SendTest(() =>
             {
@@ -29,6 +29,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
         {
             SendTest(() =>
             {
+                // ReSharper disable once StringLiteralTypo
                 CreateNLogConfig("user1", "myPassw0rd");
             }, 1);
         }
@@ -69,16 +70,16 @@ namespace NLog.MailKit.Tests.IntegrationTests
 
             cancellationToken.Cancel(false);
 
-            var recievedTransactions = messageStore.RecievedTransactions;
-            Assert.Equal(1, recievedTransactions.Count);
-            var recievedMesssage = recievedTransactions[0];
-            AssertMailBox("hi@unittest.com", recievedMesssage.From);
-            var recievedBody = GetRecievedBody(recievedMesssage);
-            Assert.Contains("hello first mail!", recievedBody);
+            var receivedTransactions = messageStore.ReceivedTransactions;
+            Assert.Equal(1, receivedTransactions.Count);
+            var receivedMessage = receivedTransactions[0];
+            AssertMailBox("hi@unittest.com", receivedMessage.From);
+            var receivedBody = GetReceivedBody(receivedMessage);
+            Assert.Contains("hello first mail!", receivedBody);
 
-            Assert.Equal(toCount, recievedMesssage.To.Count);
+            Assert.Equal(toCount, receivedMessage.To.Count);
 
-            return recievedTransactions;
+            return receivedTransactions;
         }
 
         private static void AssertMailBox(string expected, IMailbox mailbox)
@@ -86,9 +87,9 @@ namespace NLog.MailKit.Tests.IntegrationTests
             Assert.Equal(expected, mailbox.User + "@" + mailbox.Host);
         }
 
-        private static string GetRecievedBody(IMessageTransaction recievedMesssage)
+        private static string GetReceivedBody(IMessageTransaction receivedMessage)
         {
-            if (recievedMesssage.Message is ITextMessage textMessage)
+            if (receivedMessage.Message is ITextMessage textMessage)
             {
                 var streamReader = new StreamReader(textMessage.Content);
                 return streamReader.ReadToEnd();
@@ -98,6 +99,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
 
         private static SmtpServer.SmtpServer CreateSmtpServer(MessageStore store)
         {
+            // ReSharper disable once StringLiteralTypo
             var userAuthenticator = new UserAuthenticator("user1", "myPassw0rd");
 
             IUserAuthenticatorFactory userAuthenticatorFactory = new UserAuthenticatorFactory(userAuthenticator);
