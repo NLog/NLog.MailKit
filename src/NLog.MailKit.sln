@@ -1,11 +1,16 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 15
-VisualStudioVersion = 15.0.26403.7
+# Visual Studio Version 17
+VisualStudioVersion = 17.3.32929.385
 MinimumVisualStudioVersion = 10.0.40219.1
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLog.MailKit", "NLog.MailKit\NLog.MailKit.csproj", "{ADB14D32-DE12-4443-8234-21A11EADDFC0}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NLog.MailKit", "NLog.MailKit\NLog.MailKit.csproj", "{ADB14D32-DE12-4443-8234-21A11EADDFC0}"
 EndProject
-Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "NLog.MailKit.Tests", "..\test\NLog.MailKit.Tests\NLog.MailKit.Tests.csproj", "{BE92EAA4-AB09-4C61-913D-19C0D9FD9FFD}"
+Project("{9A19103F-16F7-4668-BE54-9A1E7A4F7556}") = "NLog.MailKit.Tests", "..\test\NLog.MailKit.Tests\NLog.MailKit.Tests.csproj", "{BE92EAA4-AB09-4C61-913D-19C0D9FD9FFD}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Solution Items", "Solution Items", "{C5050808-B92D-44C2-9EA4-24E4533325C9}"
+	ProjectSection(SolutionItems) = preProject
+		..\azure-pipelines.yml = ..\azure-pipelines.yml
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -24,5 +29,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {0D655042-BF92-497B-8301-5CC02E367710}
 	EndGlobalSection
 EndGlobal
