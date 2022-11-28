@@ -50,7 +50,7 @@ See https://github.com/NLog/NLog.MailKit/releases
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="NLog" Version="5.0.2" />
+		<PackageReference Include="NLog" Version="5.1.0" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\..\README.md">
