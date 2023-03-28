@@ -29,9 +29,9 @@ If the mail target was already available on your platform, this package will ove
 		<AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
 		<PackageReleaseNotes>
-- NLog 5 compatible
-- All properties are now layoutable. See 'NLog Layout for everything' on https://nlog-project.org/2021/08/25/nlog-5-0-preview1-ready.html
-- Updated MailKit
+- Added support for email headers
+- Added target-alias mailkit
+- Updated to NLog v5.1.3
 
 See https://github.com/NLog/NLog.MailKit/releases
       
@@ -50,7 +50,7 @@ See https://github.com/NLog/NLog.MailKit/releases
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="NLog" Version="5.0.2" />
+		<PackageReference Include="NLog" Version="5.1.3" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\..\README.md">
