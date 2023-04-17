@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFramework>netstandard2.0</TargetFramework>
 		<Authors>Julian Verdurmen</Authors>
@@ -46,7 +46,7 @@ See https://github.com/NLog/NLog.MailKit/releases
 		<DefineConstants>RELEASE</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="MailKit" Version="3.2.0" />
+		<PackageReference Include="MailKit" Version="4.0.0" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
 	<ItemGroup>
