@@ -1,6 +1,6 @@
 ﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFramework>netstandard2.0</TargetFramework>
+		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
 		<Authors>Julian Verdurmen</Authors>
 		<Company>NLog</Company>
 		<Description>NLog Mail Target for .NET Core &amp; .NET Standard 2.0+ using MailKit.
@@ -31,7 +31,8 @@ If the mail target was already available on your platform, this package will ove
 		<PackageReleaseNotes>
 - Added support for email headers
 - Added target-alias mailkit
-- Updated to NLog v5.1.3
+- Updated to NLog v5.2.2
+- Updated to MailKit v3.3.0
 
 See https://github.com/NLog/NLog.MailKit/releases
       
@@ -46,11 +47,11 @@ See https://github.com/NLog/NLog.MailKit/releases
 		<DefineConstants>RELEASE</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="MailKit" Version="3.2.0" />
+		<PackageReference Include="MailKit" Version="3.3.0" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="NLog" Version="5.1.3" />
+		<PackageReference Include="NLog" Version="5.2.2" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\..\README.md">
