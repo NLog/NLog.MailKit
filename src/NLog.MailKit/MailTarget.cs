@@ -91,7 +91,7 @@ namespace NLog.MailKit
         /// Initializes a new instance of the <see cref="MailTarget" /> class.
         /// </summary>
         /// <remarks>
-        /// The default value of the layout is: <code>${longdate}|${level:uppercase=true}|${logger}|${message:withexception=true}</code>
+        /// The default value of the Body-Layout is: <code>${message}${newline}</code>
         /// </remarks>
         public MailTarget()
         {
@@ -102,7 +102,7 @@ namespace NLog.MailKit
         /// Initializes a new instance of the <see cref="MailTarget" /> class.
         /// </summary>
         /// <remarks>
-        /// The default value of the layout is: <code>${longdate}|${level:uppercase=true}|${logger}|${message:withexception=true}</code>
+        /// The default value of the Body-Layout is: <code>${message}${newline}</code>
         /// </remarks>
         /// <param name="name">Name of the target.</param>
         public MailTarget(string name) : this()
@@ -309,7 +309,7 @@ namespace NLog.MailKit
                 {
                     client.Timeout = RenderLogEvent(Timeout, lastEvent);
 
-                    var renderedHost = SmtpServer.Render(lastEvent);
+                    var renderedHost = RenderLogEvent(SmtpServer, lastEvent);
                     if (string.IsNullOrEmpty(renderedHost))
                     {
                         throw new NLogRuntimeException(string.Format(RequiredPropertyIsEmptyFormat, nameof(SmtpServer)));
@@ -341,8 +341,8 @@ namespace NLog.MailKit
                     var smtpAuthentication = RenderLogEvent(SmtpAuthentication, LogEventInfo.CreateNullEvent());
                     if (smtpAuthentication == SmtpAuthenticationMode.Basic)
                     {
-                        var userName = SmtpUserName?.Render(lastEvent);
-                        var password = SmtpPassword?.Render(lastEvent);
+                        var userName = RenderLogEvent(SmtpUserName, lastEvent);
+                        var password = RenderLogEvent(SmtpPassword, lastEvent);
 
                         InternalLogger.Debug("Authenticate with username '{0}'", userName);
                         client.Authenticate(userName, password);
@@ -465,9 +465,9 @@ namespace NLog.MailKit
 
             msg.Subject = (RenderLogEvent(Subject, lastEvent) ?? string.Empty).Trim();
 
-            if (Priority != null)
+            var renderedPriority = RenderLogEvent(Priority, lastEvent);
+            if (!string.IsNullOrEmpty(renderedPriority))
             {
-                var renderedPriority = Priority.Render(lastEvent);
                 msg.Priority = ParseMessagePriority(renderedPriority);
             }
 
@@ -477,6 +477,10 @@ namespace NLog.MailKit
             if (html && replaceNewlineWithBrTagInHtml)
             {
                 newBody = newBody?.Replace(Environment.NewLine, "<br/>");
+                if (newBody?.IndexOf('\n') >= 0)
+                {
+                    newBody = newBody?.Replace("\n", "<br/>");
+                }
             }
 
             var encoding = RenderLogEvent(Encoding, lastEvent, DefaultEncoding);
@@ -486,16 +490,19 @@ namespace NLog.MailKit
                 ContentType = { Charset = encoding?.WebName }
             };
 
-
             if (MailHeaders?.Count > 0)
             {
                 for (int i = 0; i < MailHeaders.Count; i++)
                 {
+                    var headerName = MailHeaders[i].Name;
+                    if (string.IsNullOrEmpty(headerName))
+                        continue;
+
                     string headerValue = RenderLogEvent(MailHeaders[i].Layout, lastEvent);
                     if (headerValue is null)
                         continue;
 
-                    msg.Headers.Add(MailHeaders[i].Name, headerValue);
+                    msg.Headers.Add(headerName, headerValue);
                 }
             }
 
