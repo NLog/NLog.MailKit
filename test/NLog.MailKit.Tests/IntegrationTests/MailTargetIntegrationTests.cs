@@ -31,7 +31,9 @@ namespace NLog.MailKit.Tests.IntegrationTests
             SendTest(() =>
             {
                 // ReSharper disable once StringLiteralTypo
-                CreateNLogConfig("user1", "myPassw0rd");
+                var mailTarget = CreateNLogConfig();
+                mailTarget.SmtpUserName = "user1";
+                mailTarget.SmtpPassword = "myPassw0rd";
             }, 1);
         }
 
@@ -53,7 +55,8 @@ namespace NLog.MailKit.Tests.IntegrationTests
         {
             SendTest(() =>
             {
-                CreateNLogConfig(priority: MimeKit.MessagePriority.Urgent.ToString());
+                var mailTarget = CreateNLogConfig();
+                mailTarget.Priority = MimeKit.MessagePriority.Urgent.ToString();
             }, 1);
         }
 
@@ -62,8 +65,28 @@ namespace NLog.MailKit.Tests.IntegrationTests
         {
             SendTest(() =>
             {
-                CreateNLogConfig(headerName: "FooHeader");
+                var mailTarget = CreateNLogConfig();
+                mailTarget.MailHeaders.Add(new Targets.MethodCallParameter("FooHeader", ""));
             }, 1);
+        }
+
+        [Fact]
+        public void SendMailWithHeaderFooter()
+        {
+            var transactions = SendTest(() =>
+            {
+                var mailTarget = CreateNLogConfig();
+                mailTarget.Header = " *** Begin *** ";
+                mailTarget.Footer = " *** End *** ";
+            }, 1);
+
+            var mailMessage = transactions.LastOrDefault()?.Message as SmtpServer.Mail.ITextMessage;
+            Assert.NotNull(mailMessage);
+            mailMessage.Content.Position = 0;
+            var mailBody = new StreamReader(mailMessage.Content).ReadToEnd();
+            Assert.NotNull(mailBody);
+            Assert.Contains("*** Begin ***", mailBody);
+            Assert.Contains("*** End ***", mailBody);
         }
 
         [Fact]
@@ -154,7 +177,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
             return smtpServer;
         }
 
-        private static MailTarget CreateNLogConfig(string username = null, string password = null, string priority = null, string headerName = null)
+        private static MailTarget CreateNLogConfig()
         {
             var target = new MailTarget("mail1")
             {
@@ -162,15 +185,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
                 SmtpServer = "localhost",
                 To = "mock@mock.com",
                 From = "hi@unittest.com",
-                SmtpUserName = username,
-                SmtpPassword = password,
-                Priority = priority,
             };
-
-            if (headerName != null)
-            {
-                target.MailHeaders.Add(new Targets.MethodCallParameter(headerName, ""));
-            }
 
             var loggingConfiguration = new LoggingConfiguration();
             loggingConfiguration.AddRuleForAllLevels(target);
