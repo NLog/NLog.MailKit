@@ -48,6 +48,15 @@ namespace NLog.MailKit.Tests.IntegrationTests
         }
 
         [Fact]
+        public void SendMailWithPriority()
+        {
+            SendTest(() =>
+            {
+                CreateNLogConfig(priority: MimeKit.MessagePriority.Urgent.ToString());
+            }, 1);
+        }
+
+        [Fact]
         public void SendMailWithHeader()
         {
             SendTest(() =>
@@ -121,7 +130,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
             return smtpServer;
         }
 
-        private static MailTarget CreateNLogConfig(string username = null, string password = null, string headerName = null)
+        private static MailTarget CreateNLogConfig(string username = null, string password = null, string priority = null, string headerName = null)
         {
             var target = new MailTarget("mail1")
             {
@@ -130,7 +139,8 @@ namespace NLog.MailKit.Tests.IntegrationTests
                 To = "mock@mock.com",
                 From = "hi@unittest.com",
                 SmtpUserName = username,
-                SmtpPassword = password
+                SmtpPassword = password,
+                Priority = priority,
             };
 
             if (headerName != null)

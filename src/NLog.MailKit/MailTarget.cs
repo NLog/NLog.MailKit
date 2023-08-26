@@ -318,7 +318,7 @@ namespace NLog.MailKit
                     var enableSsl = RenderLogEvent(EnableSsl, lastEvent);
                     var secureSocketOptions = enableSsl ? SecureSocketOptions.SslOnConnect : RenderLogEvent(SecureSocketOption, lastEvent, DefaultSecureSocketOption);
                     var smtpPort = RenderLogEvent(SmtpPort, lastEvent);
-                    InternalLogger.Debug("Sending mail to {0} using {1}:{2} (socket option={3})", message.To, renderedHost, smtpPort, secureSocketOptions);
+                    InternalLogger.Debug("Sending mail to {0} using {1}:{2}", message.To, renderedHost, smtpPort);
                     InternalLogger.Trace("  Subject: '{0}'", message.Subject);
                     InternalLogger.Trace("  From: '{0}'", message.From);
 
@@ -330,7 +330,7 @@ namespace NLog.MailKit
 
 
                     client.Connect(renderedHost, smtpPort, secureSocketOptions);
-                    InternalLogger.Trace("  Connecting succesfull");
+                    InternalLogger.Trace("{0}: Connecting succesfull", this);
 
                     // Note: since we don't have an OAuth2 token, disable
                     // the XOAUTH2 authentication mechanism.
@@ -338,20 +338,20 @@ namespace NLog.MailKit
 
                     // Note: only needed if the SMTP server requires authentication
 
-                    var smtpAuthentication = RenderLogEvent(SmtpAuthentication, LogEventInfo.CreateNullEvent());
+                    var smtpAuthentication = RenderLogEvent(SmtpAuthentication, lastEvent);
                     if (smtpAuthentication == SmtpAuthenticationMode.Basic)
                     {
                         var userName = RenderLogEvent(SmtpUserName, lastEvent);
                         var password = RenderLogEvent(SmtpPassword, lastEvent);
 
-                        InternalLogger.Debug("Authenticate with username '{0}'", userName);
+                        InternalLogger.Trace("{0}: Authenticate with username '{1}'", this, userName);
                         client.Authenticate(userName, password);
                     }
 
                     client.Send(message);
-                    InternalLogger.Debug("Sending mail done. Disconnecting");
+                    InternalLogger.Trace("{0}: Sending mail done. Disconnecting", this);
                     client.Disconnect(true);
-                    InternalLogger.Debug("Disconnected");
+                    InternalLogger.Trace("{0}: Disconnected", this);
 
                     foreach (var ev in events)
                     {
