@@ -16,7 +16,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
     public class MailTargetIntegrationTests
     {
         [Fact]
-        public void SendUnauthenticatedMail()
+        public void SendSimpleMail()
         {
             SendTest(() =>
             {
@@ -25,7 +25,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
         }
 
         [Fact]
-        public void SendAuthenticationMail()
+        public void SendMailWihAuthentication()
         {
             SendTest(() =>
             {
@@ -35,7 +35,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
         }
 
         [Fact]
-        public void SendAuthenticationMail_cc_with_name()
+        public void SendMailWithCC()
         {
             var transactions = SendTest(() =>
             {
@@ -47,6 +47,15 @@ namespace NLog.MailKit.Tests.IntegrationTests
             AssertMailBox("do_not_reply@domain.com", transactions[0].To[1]);
         }
 
+        [Fact]
+        public void SendMailWithHeader()
+        {
+            SendTest(() =>
+            {
+                CreateNLogConfig(headerName: "FooHeader");
+            }, 1);
+        }
+
         private static IList<IMessageTransaction> SendTest(Action createConfig, int toCount)
         {
             var countdownEvent = new CountdownEvent(1);
@@ -55,8 +64,6 @@ namespace NLog.MailKit.Tests.IntegrationTests
             var smtpServer = CreateSmtpServer(messageStore);
 
             var cancellationToken = new CancellationTokenSource();
-
-
 
             Task.Run(async () => await smtpServer.StartAsync(cancellationToken.Token), cancellationToken.Token);
             {
@@ -114,7 +121,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
             return smtpServer;
         }
 
-        private static MailTarget CreateNLogConfig(string username = null, string password = null)
+        private static MailTarget CreateNLogConfig(string username = null, string password = null, string headerName = null)
         {
             var target = new MailTarget("mail1")
             {
@@ -125,6 +132,11 @@ namespace NLog.MailKit.Tests.IntegrationTests
                 SmtpUserName = username,
                 SmtpPassword = password
             };
+
+            if (headerName != null)
+            {
+                target.MailHeaders.Add(new Targets.MethodCallParameter(headerName, ""));
+            }
 
             var loggingConfiguration = new LoggingConfiguration();
             loggingConfiguration.AddRuleForAllLevels(target);
