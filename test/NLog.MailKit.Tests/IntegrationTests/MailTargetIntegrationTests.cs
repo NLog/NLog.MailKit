@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
 using NLog.Config;
@@ -65,6 +66,29 @@ namespace NLog.MailKit.Tests.IntegrationTests
             }, 1);
         }
 
+        [Fact]
+        public void SendMailBatch()
+        {
+            var transactions = SendTest(() =>
+            {
+                var mailTarget = CreateNLogConfig();
+                var loggingConfiguration = new LoggingConfiguration();
+                loggingConfiguration.AddRuleForAllLevels(new NLog.Targets.Wrappers.BufferingTargetWrapper(mailTarget));
+                NLog.LogManager.Configuration = loggingConfiguration;
+
+                var logger = LogManager.GetLogger("logger1");
+                logger.Info("hello starting mail!");
+            }, 1);
+
+            var mailMessage = transactions.LastOrDefault()?.Message as SmtpServer.Mail.ITextMessage;
+            Assert.NotNull(mailMessage);
+            mailMessage.Content.Position = 0;
+            var mailBody = new StreamReader(mailMessage.Content).ReadToEnd();
+            Assert.NotNull(mailBody);
+            Assert.Contains("hello starting mail!", mailBody);
+            Assert.Contains("hello first mail!", mailBody);
+        }
+
         private static IList<IMessageTransaction> SendTest(Action createConfig, int toCount)
         {
             var countdownEvent = new CountdownEvent(1);
@@ -75,15 +99,15 @@ namespace NLog.MailKit.Tests.IntegrationTests
             var cancellationToken = new CancellationTokenSource();
 
             Task.Run(async () => await smtpServer.StartAsync(cancellationToken.Token), cancellationToken.Token);
-            {
-                createConfig();
 
-                var logger = LogManager.GetLogger("logger1");
-                logger.Info("hello first mail!");
+            createConfig();
 
-                countdownEvent.Wait(TimeSpan.FromSeconds(10));
-            }
+            var logger = LogManager.GetLogger("logger1");
+            logger.Info("hello first mail!");
 
+            LogManager.Flush();
+
+            countdownEvent.Wait(TimeSpan.FromSeconds(10));
             cancellationToken.Cancel(false);
 
             var receivedTransactions = messageStore.ReceivedTransactions;

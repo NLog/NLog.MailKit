@@ -240,7 +240,7 @@ namespace NLog.MailKit
         public Layout<bool> ReplaceNewlineWithBrTagInHtml { get; set; }
 
         /// <summary>
-        /// Gets or sets a value indicating the SMTP client timeout.
+        /// Gets or sets a value indicating the SMTP client timeout (in milliseconds)
         /// </summary>
         /// <remarks>Warning: zero is not infinite waiting</remarks>
         public Layout<int> Timeout { get; set; } = 10000;
