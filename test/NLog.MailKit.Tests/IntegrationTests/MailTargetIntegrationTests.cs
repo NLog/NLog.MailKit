@@ -90,6 +90,34 @@ namespace NLog.MailKit.Tests.IntegrationTests
         }
 
         [Fact]
+        public void SendMailWitPickupFolder()
+        {
+            // Arrange
+            var tempFolder = Path.Combine(Path.GetTempPath(), "NLog_MailKit_" + Guid.NewGuid().ToString());
+            try
+            {
+                Directory.CreateDirectory(tempFolder);
+
+                // Act
+                var mailTarget = CreateNLogConfig();
+                mailTarget.PickupDirectoryLocation = tempFolder;
+                var logger = LogManager.GetLogger("logger1");
+                var expectedMessage = "hello first mail!";
+                logger.Info(expectedMessage);
+
+                // Assert 
+                var files = Directory.GetFiles(tempFolder);
+                Assert.Single(files);
+                var msg = MimeKit.MimeMessage.Load(files[0]);
+                Assert.Contains(expectedMessage, msg.Body.ToString());
+            }
+            finally
+            {
+                Directory.Delete(tempFolder, true);
+            }
+        }
+
+        [Fact]
         public void SendMailBatch()
         {
             var transactions = SendTest(() =>

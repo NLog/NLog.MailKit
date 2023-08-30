@@ -12,7 +12,6 @@ same options as the original mail target, see [docs of the original mailTarget](
 
 Currently not implemented:
 
-- PickupDirectory
 - NTLM auth
 
 This library is integration tested with the [SmtpServer NuGet package](https://www.nuget.org/packages/SmtpServer/)

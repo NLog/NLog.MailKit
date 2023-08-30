@@ -11,7 +11,6 @@ If the mail target was already available on your platform, this package will ove
 
 * Compared to the original MailTarget, the following options aren't implemented:
 
-- PickupDirectory
 - NTLM auth
       
 * MailKit gives more control of the sockets, so you get the `secureSocketOption` option for free!    
@@ -29,6 +28,7 @@ If the mail target was already available on your platform, this package will ove
 		<AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
 		<PackageReleaseNotes>
+- Added support for PickupDirectoryLocation
 - Added support for email headers
 - Added target-alias mailkit
 - Updated to NLog v5.2.2
