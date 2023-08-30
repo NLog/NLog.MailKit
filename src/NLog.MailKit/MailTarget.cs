@@ -246,6 +246,12 @@ namespace NLog.MailKit
         public Layout<int> Timeout { get; set; } = 10000;
 
         /// <summary>
+        /// Gets or sets the folder where applications save mail messages to be processed by the local SMTP server.
+        /// </summary>
+        /// <docgen category='SMTP Options' order='17' />
+        public Layout PickupDirectoryLocation { get; set; }
+
+        /// <summary>
         /// Gets the array of email headers that are transmitted with this email message
         /// </summary>
         /// <docgen category='Message Options' order='100' />
@@ -305,58 +311,20 @@ namespace NLog.MailKit
 
                 var message = CreateMailMessage(lastEvent, bodyBuffer.ToString());
 
-                using (var client = new SmtpClient())
+                var pickupFolder = RenderLogEvent(PickupDirectoryLocation, lastEvent);
+                if (!string.IsNullOrEmpty(pickupFolder))
                 {
-                    client.Timeout = RenderLogEvent(Timeout, lastEvent);
+                    var emailFilePath = ResolvePickupDirectoryLocationFilePath(pickupFolder);
+                    message.WriteTo(emailFilePath);
+                }
+                else
+                {
+                    SendMailMessage(message, lastEvent);
+                }
 
-                    var renderedHost = RenderLogEvent(SmtpServer, lastEvent);
-                    if (string.IsNullOrEmpty(renderedHost))
-                    {
-                        throw new NLogRuntimeException(string.Format(RequiredPropertyIsEmptyFormat, nameof(SmtpServer)));
-                    }
-
-                    var enableSsl = RenderLogEvent(EnableSsl, lastEvent);
-                    var secureSocketOptions = enableSsl ? SecureSocketOptions.SslOnConnect : RenderLogEvent(SecureSocketOption, lastEvent, DefaultSecureSocketOption);
-                    var smtpPort = RenderLogEvent(SmtpPort, lastEvent);
-                    InternalLogger.Debug("Sending mail to {0} using {1}:{2}", message.To, renderedHost, smtpPort);
-                    InternalLogger.Trace("  Subject: '{0}'", message.Subject);
-                    InternalLogger.Trace("  From: '{0}'", message.From);
-
-                    var skipCertificateValidation = RenderLogEvent(SkipCertificateValidation, lastEvent);
-                    if (skipCertificateValidation)
-                    {
-                        client.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
-                    }
-
-
-                    client.Connect(renderedHost, smtpPort, secureSocketOptions);
-                    InternalLogger.Trace("{0}: Connecting succesfull", this);
-
-                    // Note: since we don't have an OAuth2 token, disable
-                    // the XOAUTH2 authentication mechanism.
-                    client.AuthenticationMechanisms.Remove("XOAUTH2");
-
-                    // Note: only needed if the SMTP server requires authentication
-
-                    var smtpAuthentication = RenderLogEvent(SmtpAuthentication, lastEvent);
-                    if (smtpAuthentication == SmtpAuthenticationMode.Basic)
-                    {
-                        var userName = RenderLogEvent(SmtpUserName, lastEvent);
-                        var password = RenderLogEvent(SmtpPassword, lastEvent);
-
-                        InternalLogger.Trace("{0}: Authenticate with username '{1}'", this, userName);
-                        client.Authenticate(userName, password);
-                    }
-
-                    client.Send(message);
-                    InternalLogger.Trace("{0}: Sending mail done. Disconnecting", this);
-                    client.Disconnect(true);
-                    InternalLogger.Trace("{0}: Disconnected", this);
-
-                    foreach (var ev in events)
-                    {
-                        ev.Continuation(null);
-                    }
+                foreach (var ev in events)
+                {
+                    ev.Continuation(null);
                 }
             }
             catch (Exception exception)
@@ -371,6 +339,57 @@ namespace NLog.MailKit
                 {
                     ev.Continuation(exception);
                 }
+            }
+        }
+
+        private void SendMailMessage(MimeMessage message, LogEventInfo lastEvent)
+        {
+            using (var client = new SmtpClient())
+            {
+                client.Timeout = RenderLogEvent(Timeout, lastEvent);
+
+                var renderedHost = RenderLogEvent(SmtpServer, lastEvent);
+                if (string.IsNullOrEmpty(renderedHost))
+                {
+                    throw new NLogRuntimeException(string.Format(RequiredPropertyIsEmptyFormat, nameof(SmtpServer)));
+                }
+
+                var enableSsl = RenderLogEvent(EnableSsl, lastEvent);
+                var secureSocketOptions = enableSsl ? SecureSocketOptions.SslOnConnect : RenderLogEvent(SecureSocketOption, lastEvent, DefaultSecureSocketOption);
+                var smtpPort = RenderLogEvent(SmtpPort, lastEvent);
+                InternalLogger.Debug("Sending mail to {0} using {1}:{2}", message.To, renderedHost, smtpPort);
+                InternalLogger.Trace("  Subject: '{0}'", message.Subject);
+                InternalLogger.Trace("  From: '{0}'", message.From);
+
+                var skipCertificateValidation = RenderLogEvent(SkipCertificateValidation, lastEvent);
+                if (skipCertificateValidation)
+                {
+                    client.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
+                }
+
+                client.Connect(renderedHost, smtpPort, secureSocketOptions);
+                InternalLogger.Trace("{0}: Connecting succesfull", this);
+
+                // Note: since we don't have an OAuth2 token, disable
+                // the XOAUTH2 authentication mechanism.
+                client.AuthenticationMechanisms.Remove("XOAUTH2");
+
+                // Note: only needed if the SMTP server requires authentication
+
+                var smtpAuthentication = RenderLogEvent(SmtpAuthentication, lastEvent);
+                if (smtpAuthentication == SmtpAuthenticationMode.Basic)
+                {
+                    var userName = RenderLogEvent(SmtpUserName, lastEvent);
+                    var password = RenderLogEvent(SmtpPassword, lastEvent);
+
+                    InternalLogger.Trace("{0}: Authenticate with username '{1}'", this, userName);
+                    client.Authenticate(userName, password);
+                }
+
+                client.Send(message);
+                InternalLogger.Trace("{0}: Sending mail done. Disconnecting", this);
+                client.Disconnect(true);
+                InternalLogger.Trace("{0}: Disconnected", this);
             }
         }
 
@@ -412,6 +431,35 @@ namespace NLog.MailKit
                 }
             }
             return bodyBuffer;
+        }
+
+        /// <summary>
+        /// Handle <paramref name="pickupDirectoryLocation"/> if it is a virtual directory.
+        /// </summary>
+        internal string ResolvePickupDirectoryLocationFilePath(string pickupDirectoryLocation)
+        {
+            const string virtualPathPrefix = "~/";
+
+            if (pickupDirectoryLocation.StartsWith(virtualPathPrefix, StringComparison.Ordinal))
+            {
+                // Support for Virtual Paths
+                var root = AppDomain.CurrentDomain.BaseDirectory;
+                var directory = pickupDirectoryLocation.Substring(virtualPathPrefix.Length).Replace('/', System.IO.Path.DirectorySeparatorChar);
+                pickupDirectoryLocation = System.IO.Path.Combine(root, directory);
+            }
+
+            string filename;
+            string pathAndFilename;
+            while (true)
+            {
+                filename = Guid.NewGuid().ToString() + ".eml";
+                pathAndFilename = System.IO.Path.Combine(pickupDirectoryLocation, filename);
+                if (!System.IO.File.Exists(pathAndFilename))
+                    break;
+            }
+
+            InternalLogger.Debug("{0}: Writing mail to file: {1}", this, pathAndFilename);
+            return pathAndFilename;
         }
 
         private void CheckRequiredParameters()
@@ -479,7 +527,7 @@ namespace NLog.MailKit
                 newBody = newBody?.Replace(Environment.NewLine, "<br/>");
                 if (newBody?.IndexOf('\n') >= 0)
                 {
-                    newBody = newBody?.Replace("\n", "<br/>");
+                    newBody = newBody.Replace("\n", "<br/>");
                 }
             }
 
