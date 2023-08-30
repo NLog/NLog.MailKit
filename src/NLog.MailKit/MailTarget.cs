@@ -177,7 +177,6 @@ namespace NLog.MailKit
         /// Gets or sets SMTP Server to be used for sending.
         /// </summary>
         /// <docgen category='SMTP Options' order='10' />
-        [RequiredParameter]
         public Layout SmtpServer { get; set; }
 
         /// <summary>
@@ -467,7 +466,12 @@ namespace NLog.MailKit
             var smtpAuthentication = RenderLogEvent(SmtpAuthentication, LogEventInfo.CreateNullEvent());
             if (smtpAuthentication == SmtpAuthenticationMode.Ntlm)
             {
-                throw new NLogConfigurationException("NTLM not yet supported");
+                throw new NLogConfigurationException("SmtpAuthentication NTLM not yet supported");
+            }
+
+            if (PickupDirectoryLocation is null && SmtpServer is null)
+            {
+                throw new NLogConfigurationException("SmtpServer is required");
             }
         }
 
