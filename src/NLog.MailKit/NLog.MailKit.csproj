@@ -1,4 +1,4 @@
-﻿<Project Sdk="Microsoft.NET.Sdk">
+<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
 		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
 		<Authors>Julian Verdurmen</Authors>
@@ -51,7 +51,7 @@ See https://github.com/NLog/NLog.MailKit/releases
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="1.1.1" PrivateAssets="All" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="NLog" Version="5.2.2" />
+		<PackageReference Include="NLog" Version="5.2.3" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\..\README.md">
