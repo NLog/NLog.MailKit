@@ -92,7 +92,7 @@ steps:
     publishFeedCredentials: 'NLog new'
     verbosityPush: 'Normal'
     arguments: '-SkipDuplicate'
-  condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
+  # condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   continueOnError: true
  
 
