@@ -90,8 +90,8 @@ steps:
     packagesToPush: '$(Build.ArtifactStagingDirectory)/**/*.nupkg' # will also push the snupkg
     nuGetFeedType: 'external'
     publishFeedCredentials: 'NLog new'
-    allowPackageConflicts: true
     verbosityPush: 'Normal'
+    arguments: '-SkipDuplicate'
   condition: eq(variables['Build.SourceBranch'], 'refs/heads/master')
   continueOnError: true
  
