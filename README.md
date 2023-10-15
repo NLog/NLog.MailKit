@@ -35,11 +35,15 @@ This library is integration tested with the [SmtpServer NuGet package](https://w
     </extensions>
     ```
 
-Use the target "mail"
-and config options can be found here: https://github.com/NLog/NLog/wiki/Mail-Target
+   Alternative register from code using [fluent configuration API](https://github.com/NLog/NLog/wiki/Fluent-Configuration-API):
 
-Use `skipCertificateValidation="true"` for prevent `AuthenticationException` if your remote certificate for smtpServer is invalid - not recommend! 
+    ```xml
+    LogManager.Setup().SetupExtensions(ext => ext.RegisterTarget<NLog.MailKit.MailTarget>());
+    ```
 
+See the [NLog Wiki](https://github.com/NLog/NLog/wiki/Mail-Target) for available options and examples.
+
+Note that the option `skipCertificateValidation="true"` can prevent `AuthenticationException` if your remote certificate for smtpServer is invalid - not recommend!
 
 ### License
 BSD. License of MailKit is MIT
