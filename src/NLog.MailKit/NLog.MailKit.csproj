@@ -47,7 +47,7 @@ See https://github.com/NLog/NLog.MailKit/releases
 		<DefineConstants>RELEASE</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="MailKit" Version="3.3.0" />
+		<PackageReference Include="MailKit" Version="4.6.0" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 	</ItemGroup>
 	<ItemGroup>
