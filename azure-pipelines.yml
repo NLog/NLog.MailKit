@@ -29,7 +29,7 @@ steps:
     projects: '$(Solution)'
     verbosityRestore: Minimal
 
-- task: SonarCloudPrepare@1
+- task: SonarCloudPrepare@2
   displayName: 'Prepare SonarCloud analysis'
   inputs:
     SonarCloud: 'Sonarcloud'
@@ -60,10 +60,10 @@ steps:
     configuration: '$(BuildConfiguration)'
     rerunFailedTests: true
 
-- task: SonarCloudAnalyze@1
+- task: SonarCloudAnalyze@2
   displayName: 'Run SonarCloud Analysis'
 
-- task: SonarCloudPublish@1
+- task: SonarCloudPublish@2
   displayName: 'Publish SonarCloud Quality Gate'
 
 - task: CopyFiles@2
