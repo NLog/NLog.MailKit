@@ -4,6 +4,8 @@
 [![Build Status](https://dev.azure.com/NLogLogging/NLog/_apis/build/status/NLog.MailKit?branchName=master)](https://dev.azure.com/NLogLogging/NLog/_build/latest?definitionId=25&branchName=master)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=bugs)](https://sonarcloud.io/summary/new_code?id=nlog.mailkit)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=nlog.mailkit)
+[![](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=code_smells)](https://sonarcloud.io/project/issues?id=nlog.mailkit&resolved=false&types=CODE_SMELL) 
+[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=coverage)](https://sonarcloud.io/component_measures?id=nlog.mailkit&metric=coverage)
 
 Alternative Mail target for [NLog](https://github.com/nlog/nlog) using [MailKit](https://github.com/jstedfast/MailKit). Compatible with .NET standard 2+ 
 

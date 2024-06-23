@@ -162,7 +162,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
             cancellationToken.Cancel(false);
 
             var receivedTransactions = messageStore.ReceivedTransactions;
-            Assert.Equal(1, receivedTransactions.Count);
+            Assert.Single(receivedTransactions);
             var receivedMessage = receivedTransactions[0];
             AssertMailBox("hi@unittest.com", receivedMessage.From);
             var receivedBody = GetReceivedBody(receivedMessage);
