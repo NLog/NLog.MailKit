@@ -13,7 +13,7 @@ variables:
   Solution: 'src/NLog.MailKit.sln'
   BuildPlatform: 'Any CPU'
   BuildConfiguration: 'Release'
-  Version: '5.2.0'
+  Version: '5.2.1'
   FullVersion: '$(Version).$(Build.BuildId)'
 
 steps:
@@ -29,7 +29,7 @@ steps:
     projects: '$(Solution)'
     verbosityRestore: Minimal
 
-- task: SonarCloudPrepare@2
+- task: SonarCloudPrepare@3
   displayName: 'Prepare SonarCloud analysis'
   inputs:
     SonarCloud: 'Sonarcloud'
@@ -60,10 +60,10 @@ steps:
     configuration: '$(BuildConfiguration)'
     rerunFailedTests: true
 
-- task: SonarCloudAnalyze@2
+- task: SonarCloudAnalyze@3
   displayName: 'Run SonarCloud Analysis'
 
-- task: SonarCloudPublish@2
+- task: SonarCloudPublish@3
   displayName: 'Publish SonarCloud Quality Gate'
 
 - task: CopyFiles@2
