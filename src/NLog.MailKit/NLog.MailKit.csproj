@@ -1,6 +1,6 @@
-<Project Sdk="Microsoft.NET.Sdk">
+﻿<Project Sdk="Microsoft.NET.Sdk">
 	<PropertyGroup>
-		<TargetFrameworks>netstandard2.0;netstandard2.1</TargetFrameworks>
+		<TargetFrameworks>net462;netstandard2.0;netstandard2.1</TargetFrameworks>
 		<Authors>Julian Verdurmen</Authors>
 		<Company>NLog</Company>
 		<Description>NLog Mail Target for .NET Core &amp; .NET Standard 2.0+ using MailKit.
@@ -28,11 +28,8 @@ If the mail target was already available on your platform, this package will ove
 		<AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
 		<PackageReleaseNotes>
-- Added support for PickupDirectoryLocation
-- Added support for email headers
-- Added target-alias mailkit
-- Updated to NLog v5.2.2
-- Updated to MailKit v3.3.0
+- Updated to MailKit v4.7.1.1 (Fix security issue)
+- Added option RequireTLS
 
 See https://github.com/NLog/NLog.MailKit/releases
       
@@ -47,7 +44,7 @@ See https://github.com/NLog/NLog.MailKit/releases
 		<DefineConstants>RELEASE</DefineConstants>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="MailKit" Version="3.3.0" />
+		<PackageReference Include="MailKit" Version="4.7.1.1" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 	</ItemGroup>
 	<ItemGroup>

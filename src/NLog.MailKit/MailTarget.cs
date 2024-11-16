@@ -206,6 +206,19 @@ namespace NLog.MailKit
         public Layout<bool> EnableSsl { get; set; }
 
         /// <summary>
+        /// Get or set whether the client should use the REQUIRETLS extension if it is available.
+        /// </summary>
+        /// <remarks>
+        /// <para>Gets or sets whether the client should use the REQUIRETLS extension if it is available.</para>
+        /// <para>The REQUIRETLS extension (as defined in rfc8689) is a way to ensure that every SMTP server
+        /// that a message passes through on its way to the recipient is required to use a TLS connection in
+        /// order to transfer the message to the next SMTP server.</para>
+        /// <note type="note">This feature is only available if connected SMTP server supports capability
+        /// <see cref="SmtpCapabilities.RequireTLS"/> flag when sending the message.</note>
+        /// </remarks>
+        public Layout<bool> RequireTLS { get; set; }
+
+        /// <summary>
         /// Provides a way of specifying the SSL and/or TLS encryption
         /// 
         /// If <see cref="EnableSsl" /> is <c>true</c>, then <see cref="SecureSocketOptions.SslOnConnect" /> will be used.
@@ -354,6 +367,8 @@ namespace NLog.MailKit
                 }
 
                 var enableSsl = RenderLogEvent(EnableSsl, lastEvent);
+                var requireTLS = RenderLogEvent(RequireTLS, lastEvent);
+
                 var secureSocketOptions = enableSsl ? SecureSocketOptions.SslOnConnect : RenderLogEvent(SecureSocketOption, lastEvent, DefaultSecureSocketOption);
                 var smtpPort = RenderLogEvent(SmtpPort, lastEvent);
                 InternalLogger.Debug("Sending mail to {0} using {1}:{2}", message.To, renderedHost, smtpPort);
@@ -366,8 +381,13 @@ namespace NLog.MailKit
                     client.ServerCertificateValidationCallback += (s, cert, chain, sslPolicyErrors) => true;
                 }
 
+                if (requireTLS)
+                {
+                    client.RequireTLS = true;   // Requires SMTP Server capability SmtpCapabilities.RequireTLS
+                }
+
                 client.Connect(renderedHost, smtpPort, secureSocketOptions);
-                InternalLogger.Trace("{0}: Connecting succesfull", this);
+                InternalLogger.Trace("{0}: Connecting succesfull with SmtpCapabilities={1}", this, client.Capabilities);
 
                 // Note: since we don't have an OAuth2 token, disable
                 // the XOAUTH2 authentication mechanism.
