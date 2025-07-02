@@ -28,27 +28,29 @@ If the mail target was already available on your platform, this package will ove
 		<AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
 		<PackageReleaseNotes>
-- Updated to MailKit v4.7.1.1 (Fix security issue)
-- Added option RequireTLS
+- Updated NLog v6
+- Enable Nullable API
 
 See https://github.com/NLog/NLog.MailKit/releases
       
 </PackageReleaseNotes>
-		<AssemblyVersion>5.0.0.0</AssemblyVersion>
+		<AssemblyVersion>6.0.0.0</AssemblyVersion>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
-		<!--AssemblyVersion: keep 5.0.0.0-->
-	</PropertyGroup>
-	<PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|AnyCPU'">
-		<DocumentationFile>bin\Release\$(TargetFramework)\NLog.MailKit.xml</DocumentationFile>
-		<OutputPath>bin\Release\</OutputPath>
-		<DefineConstants>RELEASE</DefineConstants>
+    
+    <GenerateDocumentationFile>true</GenerateDocumentationFile>
+    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <EnableTrimAnalyzer>true</EnableTrimAnalyzer>
+    <IsTrimmable Condition=" '$(TargetFramework)' == 'netstandard2.1' ">true</IsTrimmable>
+    <IsAotCompatible Condition=" '$(TargetFramework)' == 'netstandard2.1' ">true</IsAotCompatible>
+    <Nullable>enable</Nullable>
+    <LangVersion>9.0</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="MailKit" Version="4.7.1.1" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="NLog" Version="5.2.2" />
+		<PackageReference Include="NLog" Version="6.0.1" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\..\README.md">

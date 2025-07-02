@@ -13,15 +13,10 @@ variables:
   Solution: 'src/NLog.MailKit.sln'
   BuildPlatform: 'Any CPU'
   BuildConfiguration: 'Release'
-  Version: '5.3'
+  Version: '6.0.0'
   FullVersion: '$(Version).$(Build.BuildId)'
 
 steps:
-- task: NuGetToolInstaller@0
-  displayName: 'Use NuGet 6.x'
-  inputs:
-    versionSpec: 6.x
-
 - task: DotNetCoreCLI@2
   displayName: 'dotnet restore'
   inputs:
