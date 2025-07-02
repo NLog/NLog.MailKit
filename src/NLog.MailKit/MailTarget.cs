@@ -114,27 +114,25 @@ namespace NLog.MailKit
         /// Gets or sets sender's email address (e.g. joe@domain.com).
         /// </summary>
         /// <docgen category='Message Options' order='10' />
-        [RequiredParameter]
-        public Layout From { get; set; }
+        public Layout From { get; set; } = Layout.Empty;
 
         /// <summary>
         /// Gets or sets recipients' email addresses separated by semicolons (e.g. john@domain.com;jane@domain.com).
         /// </summary>
         /// <docgen category='Message Options' order='11' />
-        [RequiredParameter]
-        public Layout To { get; set; }
+        public Layout To { get; set; } = Layout.Empty;
 
         /// <summary>
         /// Gets or sets CC email addresses separated by semicolons (e.g. john@domain.com;jane@domain.com).
         /// </summary>
         /// <docgen category='Message Options' order='12' />
-        public Layout Cc { get; set; }
+        public Layout? Cc { get; set; }
 
         /// <summary>
         /// Gets or sets BCC email addresses separated by semicolons (e.g. john@domain.com;jane@domain.com).
         /// </summary>
         /// <docgen category='Message Options' order='13' />
-        public Layout Bcc { get; set; }
+        public Layout? Bcc { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether to add new lines between log entries.
@@ -147,7 +145,6 @@ namespace NLog.MailKit
         /// Gets or sets the mail subject.
         /// </summary>
         /// <docgen category='Message Options' order='5' />
-        [RequiredParameter]
         public Layout Subject { get; set; } = "Message from NLog on ${machinename}";
 
         /// <summary>
@@ -171,13 +168,13 @@ namespace NLog.MailKit
         /// Gets or sets a value indicating whether to send message as HTML instead of plain text.
         /// </summary>
         /// <docgen category='Message Options' order='11' />
-        public Layout<bool> Html { get; set; }
+        public Layout<bool> Html { get; set; } = false;
 
         /// <summary>
         /// Gets or sets SMTP Server to be used for sending.
         /// </summary>
         /// <docgen category='SMTP Options' order='10' />
-        public Layout SmtpServer { get; set; }
+        public Layout SmtpServer { get; set; } = Layout.Empty;
 
         /// <summary>
         /// Gets or sets SMTP Authentication mode.
@@ -189,13 +186,13 @@ namespace NLog.MailKit
         /// Gets or sets the username used to connect to SMTP server (used when <see cref="SmtpAuthentication"/> is set to "basic").
         /// </summary>
         /// <docgen category='SMTP Options' order='12' />
-        public Layout SmtpUserName { get; set; }
+        public Layout? SmtpUserName { get; set; }
 
         /// <summary>
         /// Gets or sets the password used to authenticate against SMTP server (used when  <see cref="SmtpAuthentication"/> is set to "basic").
         /// </summary>
         /// <docgen category='SMTP Options' order='13' />
-        public Layout SmtpPassword { get; set; }
+        public Layout? SmtpPassword { get; set; }
 
         /// <summary>
         /// Gets or sets a value indicating whether SSL (secure sockets layer) should be used when communicating with SMTP server.
@@ -203,7 +200,7 @@ namespace NLog.MailKit
         /// See also <see cref="SecureSocketOption" />
         /// </summary>
         /// <docgen category='SMTP Options' order='14' />.
-        public Layout<bool> EnableSsl { get; set; }
+        public Layout<bool> EnableSsl { get; set; } = false;
 
         /// <summary>
         /// Get or set whether the client should use the REQUIRETLS extension if it is available.
@@ -216,7 +213,7 @@ namespace NLog.MailKit
         /// <note type="note">This feature is only available if connected SMTP server supports capability
         /// <see cref="SmtpCapabilities.RequireTLS"/> flag when sending the message.</note>
         /// </remarks>
-        public Layout<bool> RequireTLS { get; set; }
+        public Layout<bool> RequireTLS { get; set; } = false;
 
         /// <summary>
         /// Provides a way of specifying the SSL and/or TLS encryption
@@ -237,19 +234,19 @@ namespace NLog.MailKit
         /// Gets or sets a value indicating whether SmtpClient should ignore invalid certificate.
         /// </summary>
         /// <docgen category='SMTP Options' order='16' />
-        public Layout<bool> SkipCertificateValidation { get; set; }
+        public Layout<bool> SkipCertificateValidation { get; set; } = false;
 
         /// <summary>
         /// Gets or sets the priority used for sending mails.
         /// </summary>
         /// <docgen category='Message Options' order='100' />
-        public Layout Priority { get; set; }
+        public Layout Priority { get; set; } = Layout.Empty;
 
         /// <summary>
         /// Gets or sets a value indicating whether NewLine characters in the body should be replaced with <br/> tags.
         /// </summary>
         /// <remarks>Only happens when <see cref="Html"/> is set to true.</remarks>
-        public Layout<bool> ReplaceNewlineWithBrTagInHtml { get; set; }
+        public Layout<bool> ReplaceNewlineWithBrTagInHtml { get; set; } = false;
 
         /// <summary>
         /// Gets or sets a value indicating the SMTP client timeout (in milliseconds)
@@ -261,7 +258,7 @@ namespace NLog.MailKit
         /// Gets or sets the folder where applications save mail messages to be processed by the local SMTP server.
         /// </summary>
         /// <docgen category='SMTP Options' order='17' />
-        public Layout PickupDirectoryLocation { get; set; }
+        public Layout? PickupDirectoryLocation { get; set; }
 
         /// <summary>
         /// Gets the array of email headers that are transmitted with this email message
@@ -483,15 +480,25 @@ namespace NLog.MailKit
 
         private void CheckRequiredParameters()
         {
+            if (From is null || ReferenceEquals(From, Layout.Empty))
+            {
+                throw new NLogConfigurationException("MailTarget - From address is required");
+            }
+
+            if (To is null || ReferenceEquals(To, Layout.Empty))
+            {
+                throw new NLogConfigurationException("MailTarget - To address is required");
+            }
+
             var smtpAuthentication = RenderLogEvent(SmtpAuthentication, LogEventInfo.CreateNullEvent());
             if (smtpAuthentication == SmtpAuthenticationMode.Ntlm)
             {
-                throw new NLogConfigurationException("SmtpAuthentication NTLM not yet supported");
+                throw new NLogConfigurationException("MailTarget - SmtpAuthentication NTLM not yet supported");
             }
 
-            if (PickupDirectoryLocation is null && SmtpServer is null)
+            if ((PickupDirectoryLocation is null || ReferenceEquals(PickupDirectoryLocation, Layout.Empty)) && (SmtpServer is null || ReferenceEquals(SmtpServer, Layout.Empty)))
             {
-                throw new NLogConfigurationException("SmtpServer is required");
+                throw new NLogConfigurationException("MailTarget - SmtpServer is required");
             }
         }
 
@@ -622,7 +629,7 @@ namespace NLog.MailKit
         /// <param name="layout">layout with addresses, ; separated</param>
         /// <param name="logEvent">event for rendering the <paramref name="layout" /></param>
         /// <returns>added a address?</returns>
-        private bool AddAddresses(InternetAddressList mailAddressCollection, Layout layout, LogEventInfo logEvent)
+        private bool AddAddresses(InternetAddressList mailAddressCollection, Layout? layout, LogEventInfo logEvent)
         {
             var added = false;
             var mailAddresses = RenderLogEvent(layout, logEvent);
