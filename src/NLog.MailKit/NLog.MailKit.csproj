@@ -51,7 +51,7 @@ See https://github.com/NLog/NLog.MailKit/releases
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="NLog" Version="6.0.1" />
+		<PackageReference Include="NLog" Version="6.0.2" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\..\README.md">
