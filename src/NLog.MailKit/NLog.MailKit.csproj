@@ -31,7 +31,7 @@ If the mail target was already available on your platform, this package will ove
 Changelog:
 
 - SmtpAuthenticationMode.OAuth2 with SmtpUserName (OAuth UserName) and SmtpPassword (OAuth AccessToken)
-- Updated NLog v6.0.4
+- Updated NLog v6.0.5
 
 See https://github.com/NLog/NLog.MailKit/releases
       
@@ -52,7 +52,7 @@ See https://github.com/NLog/NLog.MailKit/releases
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="NLog" Version="6.0.2" />
+		<PackageReference Include="NLog" Version="6.0.5" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\..\README.md">
