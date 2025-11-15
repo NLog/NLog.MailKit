@@ -21,5 +21,10 @@ namespace NLog.MailKit
         /// NTLM Authentication.
         /// </summary>
         Ntlm,
+
+        /// <summary>
+        /// OAuth 2.0 (XOAUTH2) Authentication
+        /// </summary>
+        OAuth2
     }
 }

@@ -29,8 +29,9 @@ If the mail target was already available on your platform, this package will ove
 		<DelaySign>false</DelaySign>
 		<PackageReleaseNotes>
 Changelog:
-      
-- Updated NLog v6.0.2
+
+- SmtpAuthenticationMode.OAuth2 with SmtpUserName (OAuth UserName) and SmtpPassword (OAuth AccessToken)
+- Updated NLog v6.0.4
 
 See https://github.com/NLog/NLog.MailKit/releases
       

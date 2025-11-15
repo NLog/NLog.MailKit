@@ -10,14 +10,10 @@
 Alternative Mail target for [NLog](https://github.com/nlog/nlog) using [MailKit](https://github.com/jstedfast/MailKit). Compatible with .NET standard 2+ 
 
 Including this package will replace the original mail target and has the
-same options as the original mail target, see [docs of the original mailTarget](https://github.com/NLog/NLog/wiki/Mail-Target)
-
-Currently not implemented:
-
-- NTLM auth
+same options as the original mail target, see [docs of the original mailTarget](https://github.com/NLog/NLog/wiki/Mail-Target).
+But Mailkit does not yet support `SmtpAuthentication = NTLM`.
 
 This library is integration tested with the [SmtpServer NuGet package](https://www.nuget.org/packages/SmtpServer/)
-
 
 ### How to use
 
@@ -46,6 +42,18 @@ This library is integration tested with the [SmtpServer NuGet package](https://w
 See the [NLog Wiki](https://github.com/NLog/NLog/wiki/Mail-Target) for available options and examples.
 
 Note that the option `skipCertificateValidation="true"` can prevent `AuthenticationException` if your remote certificate for smtpServer is invalid - not recommend!
+
+### OAuth2 Authentication
+
+Mailkit supports `OAuth2` authentication by specifying `SmtpAuthentication = OAuth2` together with:
+- `SmtpUserName = ${gdc:OAuthClientId}`
+- `SmtpPassword = ${gdc:OAuthClientSecret}`
+ 
+Before using OAuth2 authentication, make sure to acquire an access token from your email provider (e.g., Gmail, Outlook) and store it in the [Global Diagnostics Context (GDC)](https://github.com/NLog/NLog/wiki/Gdc-layout-renderer) with the key `OAuthClientSecret` (And ensure it is refreshed before expiry).
+Alternative store the access token in an environment variable and use the NLog [${environment:variable=OAuthClientSecret}](https://github.com/NLog/NLog/wiki/Environment-layout-renderer) instead of NLog GDC.
+
+- [Using OAuth2 With Microsoft Outlook Exchange](https://github.com/jstedfast/MailKit/blob/master/ExchangeOAuth2.md)
+- [Using OAuth2 With Google GMail](https://github.com/jstedfast/MailKit/blob/master/GMailOAuth2.md)
 
 ### License
 BSD. License of MailKit is MIT
