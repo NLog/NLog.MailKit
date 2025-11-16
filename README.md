@@ -13,6 +13,11 @@ Including this package will replace the original mail target and has the
 same options as the original mail target, see [docs of the original mailTarget](https://github.com/NLog/NLog/wiki/Mail-Target).
 But Mailkit does not yet support `SmtpAuthentication = NTLM`.
 
+- Can also be combined with [FallbackGroup](https://github.com/NLog/NLog/wiki/FallbackGroup-target) to fallback to alternative SMTP-server on error.
+- Can also be combined with [BufferingWrapper](https://github.com/nlog/NLog/wiki/BufferingWrapper-target) to group multiple logevents into a single email.
+- Can also be combined with [LimitingWrapper](https://github.com/NLog/NLog/wiki/LimitingWrapper-target) to throttle the number of emails.
+- Can also be combined with [FilteringWrapper](https://github.com/NLog/NLog/wiki/FilteringWrapper-target) to avoid repeating identical emails.
+
 This library is integration tested with the [SmtpServer NuGet package](https://www.nuget.org/packages/SmtpServer/)
 
 ### How to use
