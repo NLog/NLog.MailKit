@@ -49,9 +49,10 @@ Mailkit supports `OAuth2` authentication by specifying `SmtpAuthentication = OAu
 - `SmtpUserName = ${gdc:OAuthClientId}`
 - `SmtpPassword = ${gdc:OAuthClientSecret}`
  
-Before using OAuth2 authentication, make sure to acquire an access token from your email provider (e.g., Gmail, Outlook) and store it in the [Global Diagnostics Context (GDC)](https://github.com/NLog/NLog/wiki/Gdc-layout-renderer) with the key `OAuthClientSecret` (And ensure it is refreshed before expiry).
-Alternative store the access token in an environment variable and use the NLog [${environment:variable=OAuthClientSecret}](https://github.com/NLog/NLog/wiki/Environment-layout-renderer) instead of NLog GDC.
-
+Before using OAuth2 authentication, make sure to acquire an access token from your email provider (e.g., Gmail, Outlook).
+This can be implemented with a [Custom NLog Layout Renderer](https://github.com/NLog/NLog/wiki/How-to-write-a-custom-layout-renderer),
+or by storing the details in [environment variable](https://github.com/NLog/NLog/wiki/Environment-layout-renderer) or [NLog Global Diagnostics Context (GDC)](https://github.com/NLog/NLog/wiki/Gdc-layout-renderer)
+and point `SmtpUserName` and `SmtpPassword` to these locations.
 - [Using OAuth2 With Microsoft Outlook Exchange](https://github.com/jstedfast/MailKit/blob/master/ExchangeOAuth2.md)
 - [Using OAuth2 With Google GMail](https://github.com/jstedfast/MailKit/blob/master/GMailOAuth2.md)
 
