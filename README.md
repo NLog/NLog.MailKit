@@ -9,7 +9,7 @@
 
 Alternative Mail target for [NLog](https://github.com/nlog/nlog) using [MailKit](https://github.com/jstedfast/MailKit). Compatible with .NET standard 2+ 
 
-The NLog MailKit Target is able to replace the original NLog Mail Target and have the same options. See [Wiki: NLog Mail Target](https://github.com/NLog/NLog/wiki/Mail-Target).
+The NLog MailKit Target is able to replace the original NLog Mail Target and have the same options. See docs for [NLog Mail Target](https://github.com/NLog/NLog/wiki/Mail-Target).
 But Mailkit does not yet support `SmtpAuthentication = NTLM`.
 
 - Can also be combined with [FallbackGroup](https://github.com/NLog/NLog/wiki/FallbackGroup-target) to fallback to alternative SMTP-server on error.
