@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net;
 using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
@@ -20,19 +21,19 @@ namespace NLog.MailKit.Tests.IntegrationTests
         [Fact]
         public void SendSimpleMail()
         {
-            SendTest(() =>
+            SendTest(port =>
             {
-                CreateNLogConfig();
+                CreateNLogConfig(port);
             }, 1);
         }
 
         [Fact]
         public void SendMailWihAuthentication()
         {
-            SendTest(() =>
+            SendTest(port =>
             {
                 // ReSharper disable once StringLiteralTypo
-                var mailTarget = CreateNLogConfig();
+                var mailTarget = CreateNLogConfig(port);
                 mailTarget.SmtpUserName = "user1";
                 mailTarget.SmtpPassword = "myPassw0rd";
             }, 1);
@@ -41,9 +42,9 @@ namespace NLog.MailKit.Tests.IntegrationTests
         [Fact]
         public void SendMailWithCC()
         {
-            var transactions = SendTest(() =>
+            var transactions = SendTest(port =>
             {
-                var mailTarget = CreateNLogConfig();
+                var mailTarget = CreateNLogConfig(port);
                 mailTarget.Cc = "no reply <do_not_reply@domain.com>";
             }, 2);
 
@@ -54,9 +55,9 @@ namespace NLog.MailKit.Tests.IntegrationTests
         [Fact]
         public void SendMailWithPriority()
         {
-            SendTest(() =>
+            SendTest(port =>
             {
-                var mailTarget = CreateNLogConfig();
+                var mailTarget = CreateNLogConfig(port);
                 mailTarget.Priority = MimeKit.MessagePriority.Urgent.ToString();
             }, 1);
         }
@@ -64,9 +65,9 @@ namespace NLog.MailKit.Tests.IntegrationTests
         [Fact]
         public void SendMailWithHeader()
         {
-            SendTest(() =>
+            SendTest(port =>
             {
-                var mailTarget = CreateNLogConfig();
+                var mailTarget = CreateNLogConfig(port);
                 mailTarget.MailHeaders.Add(new Targets.MethodCallParameter("FooHeader", ""));
             }, 1);
         }
@@ -74,9 +75,9 @@ namespace NLog.MailKit.Tests.IntegrationTests
         [Fact]
         public void SendMailWithHeaderFooter()
         {
-            var transactions = SendTest(() =>
+            var transactions = SendTest(port =>
             {
-                var mailTarget = CreateNLogConfig();
+                var mailTarget = CreateNLogConfig(port);
                 mailTarget.Header = " *** Begin *** ";
                 mailTarget.Footer = " *** End *** ";
             }, 1);
@@ -120,9 +121,9 @@ namespace NLog.MailKit.Tests.IntegrationTests
         [Fact]
         public void SendMailBatch()
         {
-            var transactions = SendTest(() =>
+            var transactions = SendTest(port =>
             {
-                var mailTarget = CreateNLogConfig();
+                var mailTarget = CreateNLogConfig(port);
                 var loggingConfiguration = new LoggingConfiguration();
                 loggingConfiguration.AddRuleForAllLevels(new NLog.Targets.Wrappers.BufferingTargetWrapper(mailTarget));
                 NLog.LogManager.Configuration = loggingConfiguration;
@@ -139,20 +140,21 @@ namespace NLog.MailKit.Tests.IntegrationTests
             Assert.Contains("hello first mail!", mailBody);
         }
 
-        private static IList<ReceivedMessage> SendTest(Action createConfig, int toCount)
+        private static IList<ReceivedMessage> SendTest(Action<int> createConfig, int toCount)
         {
             var countdownEvent = new CountdownEvent(1);
 
+            var port = GetFreePort();
             var messageStore = new MessageStore(countdownEvent);
-            var smtpServer = CreateSmtpServer(messageStore);
+            var smtpServer = CreateSmtpServer(messageStore, port);
 
             var cancellationToken = new CancellationTokenSource();
 
             Task.Run(async () => await smtpServer.StartAsync(cancellationToken.Token), cancellationToken.Token);
 
-            WaitForSmtpServer();
+            WaitForSmtpServer(port);
 
-            createConfig();
+            createConfig(port);
 
             var logger = LogManager.GetLogger("logger1");
             logger.Info("hello first mail!");
@@ -184,7 +186,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
             return receivedMessage.GetBodyAsString();
         }
 
-        private static void WaitForSmtpServer(int port = 587, int maxAttempts = 50)
+        private static void WaitForSmtpServer(int port, int maxAttempts = 50)
         {
             for (var i = 0; i < maxAttempts; i++)
             {
@@ -201,7 +203,16 @@ namespace NLog.MailKit.Tests.IntegrationTests
             }
         }
 
-        private static SmtpServer.SmtpServer CreateSmtpServer(MessageStore store)
+        private static int GetFreePort()
+        {
+            var listener = new TcpListener(IPAddress.Loopback, 0);
+            listener.Start();
+            var port = ((IPEndPoint)listener.LocalEndpoint).Port;
+            listener.Stop();
+            return port;
+        }
+
+        private static SmtpServer.SmtpServer CreateSmtpServer(MessageStore store, int port)
         {
             // ReSharper disable once StringLiteralTypo
             var userAuthenticator = new UserAuthenticator("user1", "myPassw0rd");
@@ -209,7 +220,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
             IUserAuthenticatorFactory userAuthenticatorFactory = new UserAuthenticatorFactory(userAuthenticator);
             var options = new SmtpServerOptionsBuilder()
                 .ServerName("localhost")
-                .Port(25, 587)
+                .Port(port)
                 .Build();
 
             var serviceProvider = new SmtpServer.ComponentModel.ServiceProvider();
@@ -219,12 +230,13 @@ namespace NLog.MailKit.Tests.IntegrationTests
             return new SmtpServer.SmtpServer(options, serviceProvider);
         }
 
-        private static MailTarget CreateNLogConfig()
+        private static MailTarget CreateNLogConfig(int smtpPort = 25)
         {
             var target = new MailTarget("mail1")
             {
                 SmtpAuthentication = SmtpAuthenticationMode.None,
                 SmtpServer = "localhost",
+                SmtpPort = smtpPort,
                 To = "mock@mock.com",
                 From = "hi@unittest.com",
             };
