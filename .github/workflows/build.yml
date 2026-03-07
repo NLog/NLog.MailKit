@@ -34,9 +34,28 @@ jobs:
       - name: Test
         run: dotnet test src/NLog.MailKit.sln --configuration Release --no-build
 
+      - name: Determine version suffix
+        if: matrix.os == 'windows-latest'
+        id: version
+        shell: bash
+        run: |
+          if [[ "$GITHUB_REF" == "refs/heads/master" ]]; then
+            echo "suffix=" >> $GITHUB_OUTPUT
+          else
+            CLEAN=$(echo "$GITHUB_REF_NAME" | sed 's/[^a-zA-Z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//;s/-$//')
+            echo "suffix=$CLEAN" >> $GITHUB_OUTPUT
+          fi
+
       - name: Pack
         if: matrix.os == 'windows-latest'
-        run: dotnet pack src/NLog.MailKit.sln --no-build --configuration Release --output artifacts
+        shell: bash
+        run: |
+          VERSION_SUFFIX="${{ steps.version.outputs.suffix }}"
+          if [ -n "$VERSION_SUFFIX" ]; then
+            dotnet pack src/NLog.MailKit.sln --no-build --configuration Release --output artifacts --version-suffix "$VERSION_SUFFIX"
+          else
+            dotnet pack src/NLog.MailKit.sln --no-build --configuration Release --output artifacts
+          fi
 
       - name: Upload nuget package
         if: matrix.os == 'windows-latest'

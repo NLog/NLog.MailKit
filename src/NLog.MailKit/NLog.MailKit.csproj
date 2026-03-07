@@ -36,8 +36,9 @@ Changelog:
 See https://github.com/NLog/NLog.MailKit/releases
       
 </PackageReleaseNotes>
-		<Version>6.0.5</Version>
+		<VersionPrefix>6.0.5</VersionPrefix>
 		<AssemblyVersion>6.0.0.0</AssemblyVersion>
+		<FileVersion>$(VersionPrefix).0</FileVersion>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
     
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
