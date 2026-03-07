@@ -53,7 +53,7 @@ jobs:
         uses: actions/upload-artifact@v4
         with:
           name: nupkg
-          path: artifacts/*.nupkg
+          path: artifacts/*pkg
 
       - name: NuGet login
         if: github.ref == 'refs/heads/master'
@@ -65,4 +65,6 @@ jobs:
       - name: Push to NuGet.org
         if: github.ref == 'refs/heads/master'
         shell: bash
-        run: dotnet nuget push artifacts/*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: |
+          dotnet nuget push artifacts/*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+          dotnet nuget push artifacts/*.snupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
