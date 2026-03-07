@@ -54,4 +54,5 @@ jobs:
 
       - name: Push to NuGet.org
         if: github.ref == 'refs/heads/master' && matrix.os == 'windows-latest'
+        shell: bash
         run: dotnet nuget push artifacts/*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
