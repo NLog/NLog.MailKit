@@ -36,8 +36,15 @@ Changelog:
 See https://github.com/NLog/NLog.MailKit/releases
       
 </PackageReleaseNotes>
+		<VersionPrefix>6.0.5</VersionPrefix>
 		<AssemblyVersion>6.0.0.0</AssemblyVersion>
+		<FileVersion>$(VersionPrefix).0</FileVersion>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
+		<PublishRepositoryUrl>true</PublishRepositoryUrl>
+		<EmbedUntrackedSources>true</EmbedUntrackedSources>
+		<IncludeSymbols>true</IncludeSymbols>
+		<SymbolPackageFormat>snupkg</SymbolPackageFormat>
+		<ContinuousIntegrationBuild Condition="'$(GITHUB_ACTIONS)' == 'true'">true</ContinuousIntegrationBuild>
     
     <GenerateDocumentationFile>true</GenerateDocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
