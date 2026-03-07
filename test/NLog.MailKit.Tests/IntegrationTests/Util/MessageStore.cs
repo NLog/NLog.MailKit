@@ -1,4 +1,5 @@
 using System;
+using System.Buffers;
 using System.Collections.Generic;
 using System.Threading;
 using System.Threading.Tasks;
@@ -10,7 +11,7 @@ namespace NLog.MailKit.Tests.IntegrationTests.Util
 {
     public class MessageStore : IMessageStore, IMessageStoreFactory
     {
-        public IList<IMessageTransaction> ReceivedTransactions { get; } = new List<IMessageTransaction>();
+        public IList<ReceivedMessage> ReceivedTransactions { get; } = new List<ReceivedMessage>();
 
         private readonly CountdownEvent _countdownEvent;
 
@@ -27,9 +28,9 @@ namespace NLog.MailKit.Tests.IntegrationTests.Util
         #region Implementation of IMessageStore
 
         /// <inheritdoc />
-        public Task<SmtpResponse> SaveAsync(ISessionContext context, IMessageTransaction transaction, CancellationToken cancellationToken)
+        public Task<SmtpResponse> SaveAsync(ISessionContext context, IMessageTransaction transaction, ReadOnlySequence<byte> buffer, CancellationToken cancellationToken)
         {
-            ReceivedTransactions.Add(transaction);
+            ReceivedTransactions.Add(new ReceivedMessage(transaction, buffer.ToArray()));
             _countdownEvent.Signal();
             return Task.FromResult(SmtpResponse.Ok);
         }

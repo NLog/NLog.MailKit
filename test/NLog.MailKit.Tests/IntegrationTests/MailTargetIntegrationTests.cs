@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Net.Sockets;
 using System.Threading;
 using System.Threading.Tasks;
 using NLog.Config;
@@ -80,10 +81,9 @@ namespace NLog.MailKit.Tests.IntegrationTests
                 mailTarget.Footer = " *** End *** ";
             }, 1);
 
-            var mailMessage = transactions.LastOrDefault()?.Message as SmtpServer.Mail.ITextMessage;
-            Assert.NotNull(mailMessage);
-            mailMessage.Content.Position = 0;
-            var mailBody = new StreamReader(mailMessage.Content).ReadToEnd();
+            var receivedMessage = transactions.LastOrDefault();
+            Assert.NotNull(receivedMessage);
+            var mailBody = receivedMessage.GetBodyAsString();
             Assert.NotNull(mailBody);
             Assert.Contains("*** Begin ***", mailBody);
             Assert.Contains("*** End ***", mailBody);
@@ -131,16 +131,15 @@ namespace NLog.MailKit.Tests.IntegrationTests
                 logger.Info("hello starting mail!");
             }, 1);
 
-            var mailMessage = transactions.LastOrDefault()?.Message as SmtpServer.Mail.ITextMessage;
-            Assert.NotNull(mailMessage);
-            mailMessage.Content.Position = 0;
-            var mailBody = new StreamReader(mailMessage.Content).ReadToEnd();
+            var receivedMessage = transactions.LastOrDefault();
+            Assert.NotNull(receivedMessage);
+            var mailBody = receivedMessage.GetBodyAsString();
             Assert.NotNull(mailBody);
             Assert.Contains("hello starting mail!", mailBody);
             Assert.Contains("hello first mail!", mailBody);
         }
 
-        private static IList<IMessageTransaction> SendTest(Action createConfig, int toCount)
+        private static IList<ReceivedMessage> SendTest(Action createConfig, int toCount)
         {
             var countdownEvent = new CountdownEvent(1);
 
@@ -150,6 +149,8 @@ namespace NLog.MailKit.Tests.IntegrationTests
             var cancellationToken = new CancellationTokenSource();
 
             Task.Run(async () => await smtpServer.StartAsync(cancellationToken.Token), cancellationToken.Token);
+
+            WaitForSmtpServer();
 
             createConfig();
 
@@ -178,14 +179,26 @@ namespace NLog.MailKit.Tests.IntegrationTests
             Assert.Equal(expected, mailbox.User + "@" + mailbox.Host);
         }
 
-        private static string GetReceivedBody(IMessageTransaction receivedMessage)
+        private static string GetReceivedBody(ReceivedMessage receivedMessage)
         {
-            if (receivedMessage.Message is ITextMessage textMessage)
+            return receivedMessage.GetBodyAsString();
+        }
+
+        private static void WaitForSmtpServer(int port = 587, int maxAttempts = 50)
+        {
+            for (var i = 0; i < maxAttempts; i++)
             {
-                var streamReader = new StreamReader(textMessage.Content);
-                return streamReader.ReadToEnd();
+                try
+                {
+                    using var client = new TcpClient();
+                    client.Connect("127.0.0.1", port);
+                    return;
+                }
+                catch (SocketException)
+                {
+                    Thread.Sleep(100);
+                }
             }
-            throw new NotSupportedException("only ITextMessage supported");
         }
 
         private static SmtpServer.SmtpServer CreateSmtpServer(MessageStore store)
@@ -197,12 +210,13 @@ namespace NLog.MailKit.Tests.IntegrationTests
             var options = new SmtpServerOptionsBuilder()
                 .ServerName("localhost")
                 .Port(25, 587)
-                .MessageStore(store)
-                .UserAuthenticator(userAuthenticatorFactory)
                 .Build();
 
-            var smtpServer = new SmtpServer.SmtpServer(options);
-            return smtpServer;
+            var serviceProvider = new SmtpServer.ComponentModel.ServiceProvider();
+            serviceProvider.Add((SmtpServer.Storage.IMessageStoreFactory)store);
+            serviceProvider.Add(userAuthenticatorFactory);
+
+            return new SmtpServer.SmtpServer(options, serviceProvider);
         }
 
         private static MailTarget CreateNLogConfig()
