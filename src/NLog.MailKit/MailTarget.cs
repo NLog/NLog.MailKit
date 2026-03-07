@@ -590,7 +590,7 @@ namespace NLog.MailKit
             var encoding = RenderLogEvent(Encoding, lastEvent, DefaultEncoding);
             msg.Body = new TextPart(html ? TextFormat.Html : TextFormat.Plain)
             {
-                Text = newBody,
+                Text = newBody ?? string.Empty,
                 ContentType = { Charset = encoding?.WebName }
             };
 

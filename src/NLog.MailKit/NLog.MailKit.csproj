@@ -28,14 +28,13 @@ If the mail target was already available on your platform, this package will ove
 		<AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
 		<PackageReleaseNotes>
-Changelog:
+			Changelog:
 
-- SmtpAuthenticationMode.OAuth2 with SmtpUserName (OAuth UserName) and SmtpPassword (OAuth AccessToken)
-- Updated NLog v6.0.5
+			- Update MailKit to v4.15.1
 
-See https://github.com/NLog/NLog.MailKit/releases
-      
-</PackageReleaseNotes>
+			See https://github.com/NLog/NLog.MailKit/releases
+
+		</PackageReleaseNotes>
 		<VersionPrefix>6.0.5</VersionPrefix>
 		<AssemblyVersion>6.0.0.0</AssemblyVersion>
 		<FileVersion>$(VersionPrefix).0</FileVersion>
@@ -55,7 +54,7 @@ See https://github.com/NLog/NLog.MailKit/releases
     <LangVersion>9.0</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="MailKit" Version="4.7.1.1" />
+		<PackageReference Include="MailKit" Version="4.15.1" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 	</ItemGroup>
 	<ItemGroup>
