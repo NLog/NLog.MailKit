@@ -87,6 +87,8 @@ namespace NLog.MailKit
 
         private const string RequiredPropertyIsEmptyFormat = "After the processing of the MailTarget's '{0}' property it appears to be empty. The email message will not be sent.";
 
+        private ISmtpClientFactory _smtpClientFactory = new SmtpClientFactory();
+
         /// <summary>
         /// Initializes a new instance of the <see cref="MailTarget" /> class.
         /// </summary>
@@ -108,6 +110,15 @@ namespace NLog.MailKit
         public MailTarget(string name) : this()
         {
             Name = name;
+        }
+
+        /// <summary>
+        /// Gets or sets the SMTP client factory. Used for testing purposes.
+        /// </summary>
+        internal ISmtpClientFactory SmtpClientFactory
+        {
+            get => _smtpClientFactory;
+            set => _smtpClientFactory = value ?? throw new ArgumentNullException(nameof(value));
         }
 
         /// <summary>
@@ -357,7 +368,7 @@ namespace NLog.MailKit
 
         private void SendMailMessage(MimeMessage message, LogEventInfo lastEvent)
         {
-            using (var client = new SmtpClient())
+            using (var client = _smtpClientFactory.Create())
             {
                 client.Timeout = RenderLogEvent(Timeout, lastEvent);
 
@@ -388,11 +399,11 @@ namespace NLog.MailKit
                 }
 
                 client.Connect(renderedHost, smtpPort, secureSocketOptions);
-                InternalLogger.Trace("{0}: Connecting succesfull with SmtpCapabilities={1}", this, client.Capabilities);
+                InternalLogger.Trace("{0}: Connecting succesfull", this);
 
                 // Note: since we don't have an OAuth2 token, disable
                 // the XOAUTH2 authentication mechanism.
-                client.AuthenticationMechanisms.Remove("XOAUTH2");
+                client.RemoveAuthenticationMechanism("XOAUTH2");
 
                 // Note: only needed if the SMTP server requires authentication
 

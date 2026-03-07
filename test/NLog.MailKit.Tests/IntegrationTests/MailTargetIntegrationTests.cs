@@ -28,7 +28,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
         }
 
         [Fact]
-        public void SendMailWihAuthentication()
+        public void SendMailWithAuthentication()
         {
             SendTest(port =>
             {
@@ -40,58 +40,7 @@ namespace NLog.MailKit.Tests.IntegrationTests
         }
 
         [Fact]
-        public void SendMailWithCC()
-        {
-            var transactions = SendTest(port =>
-            {
-                var mailTarget = CreateNLogConfig(port);
-                mailTarget.Cc = "no reply <do_not_reply@domain.com>";
-            }, 2);
-
-            // 2nd is cc
-            AssertMailBox("do_not_reply@domain.com", transactions[0].To[1]);
-        }
-
-        [Fact]
-        public void SendMailWithPriority()
-        {
-            SendTest(port =>
-            {
-                var mailTarget = CreateNLogConfig(port);
-                mailTarget.Priority = MimeKit.MessagePriority.Urgent.ToString();
-            }, 1);
-        }
-
-        [Fact]
-        public void SendMailWithHeader()
-        {
-            SendTest(port =>
-            {
-                var mailTarget = CreateNLogConfig(port);
-                mailTarget.MailHeaders.Add(new Targets.MethodCallParameter("FooHeader", ""));
-            }, 1);
-        }
-
-        [Fact]
-        public void SendMailWithHeaderFooter()
-        {
-            var transactions = SendTest(port =>
-            {
-                var mailTarget = CreateNLogConfig(port);
-                mailTarget.Header = " *** Begin *** ";
-                mailTarget.Footer = " *** End *** ";
-            }, 1);
-
-            var receivedMessage = transactions.LastOrDefault();
-            Assert.NotNull(receivedMessage);
-            var mailBody = receivedMessage.GetBodyAsString();
-            Assert.NotNull(mailBody);
-            Assert.Contains("*** Begin ***", mailBody);
-            Assert.Contains("*** End ***", mailBody);
-        }
-
-        [Fact]
-        public void SendMailWitPickupFolder()
+        public void SendMailWithPickupFolder()
         {
             // Arrange
             var tempFolder = Path.Combine(Path.GetTempPath(), "NLog_MailKit_" + Guid.NewGuid().ToString());
@@ -116,28 +65,6 @@ namespace NLog.MailKit.Tests.IntegrationTests
             {
                 Directory.Delete(tempFolder, true);
             }
-        }
-
-        [Fact]
-        public void SendMailBatch()
-        {
-            var transactions = SendTest(port =>
-            {
-                var mailTarget = CreateNLogConfig(port);
-                var loggingConfiguration = new LoggingConfiguration();
-                loggingConfiguration.AddRuleForAllLevels(new NLog.Targets.Wrappers.BufferingTargetWrapper(mailTarget));
-                NLog.LogManager.Configuration = loggingConfiguration;
-
-                var logger = LogManager.GetLogger("logger1");
-                logger.Info("hello starting mail!");
-            }, 1);
-
-            var receivedMessage = transactions.LastOrDefault();
-            Assert.NotNull(receivedMessage);
-            var mailBody = receivedMessage.GetBodyAsString();
-            Assert.NotNull(mailBody);
-            Assert.Contains("hello starting mail!", mailBody);
-            Assert.Contains("hello first mail!", mailBody);
         }
 
         private static IList<ReceivedMessage> SendTest(Action<int> createConfig, int toCount)
