@@ -5,12 +5,14 @@ on:
     branches:
       - master
   pull_request:
+  workflow_dispatch:
 
 jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
       contents: read
+      id-token: write
 
     steps:
       - uses: actions/checkout@v4
@@ -28,3 +30,23 @@ jobs:
 
       - name: Test
         run: dotnet test src/NLog.MailKit.sln --configuration Release --no-build
+
+      - name: Pack
+        run: dotnet pack src/NLog.MailKit.sln --no-build --configuration Release --output artifacts
+
+      - name: Upload nuget package
+        uses: actions/upload-artifact@v4
+        with:
+          name: nupkg
+          path: artifacts/*.nupkg
+
+      - name: NuGet login
+        if: github.ref == 'refs/heads/master'
+        uses: NuGet/login@v1
+        id: login
+        with:
+          user: ${{ secrets.NUGET_USER }}
+
+      - name: Push to NuGet.org
+        if: github.ref == 'refs/heads/master'
+        run: dotnet nuget push artifacts/*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
