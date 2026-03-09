@@ -33,24 +33,45 @@ jobs:
 
       - name: Determine version suffix
         id: version
-        shell: bash
+        shell: pwsh
         run: |
-          if [[ "$GITHUB_REF" == "refs/heads/master" ]]; then
-            echo "suffix=" >> $GITHUB_OUTPUT
-          else
-            CLEAN=$(echo "$GITHUB_REF_NAME" | sed 's/[^a-zA-Z0-9]/-/g' | sed 's/-\+/-/g' | sed 's/^-//;s/-$//')
-            echo "suffix=$CLEAN" >> $GITHUB_OUTPUT
-          fi
+          $ref = "${{ github.ref }}"
+          if ($ref -eq "refs/heads/master") {
+            echo "suffix=" >> $env:GITHUB_OUTPUT
+          } else {
+            # For a PR: use head_ref (actual branch name), otherwise the ref name
+            $branchName = "${{ github.head_ref }}"
+            if ([string]::IsNullOrEmpty($branchName)) {
+              $branchName = "${{ github.ref_name }}"
+            }
+
+            # Sanitize: non-alphanumeric -> '-', multiple '-' -> one, trim '-'
+            $clean = $branchName -replace '[^a-zA-Z0-9]', '-' `
+                                 -replace '-+', '-' `
+                                 -replace '^-|-$', ''
+            # Truncate to max 40 characters and remove trailing '-'
+            $short = if ($clean.Length -gt 0) { $clean.Substring(0, [Math]::Min(40, $clean.Length)).TrimEnd('-') } else { "" }
+
+            # PR number prefix
+            $prNumber = "${{ github.event.pull_request.number }}"
+            $prPrefix = if ($prNumber) { "pr${prNumber}-" } else { "" }
+
+            # Build number
+            $build = "${{ github.run_number }}"
+
+            $suffix = "${prPrefix}${short}.${build}"
+            echo "suffix=$suffix" >> $env:GITHUB_OUTPUT
+          }
 
       - name: Pack
-        shell: bash
+        shell: pwsh
         run: |
-          VERSION_SUFFIX="${{ steps.version.outputs.suffix }}"
-          if [ -n "$VERSION_SUFFIX" ]; then
-            dotnet pack src/NLog.MailKit.sln --no-build --configuration Release --output artifacts --version-suffix "$VERSION_SUFFIX"
-          else
+          $versionSuffix = "${{ steps.version.outputs.suffix }}"
+          if ($versionSuffix) {
+            dotnet pack src/NLog.MailKit.sln --no-build --configuration Release --output artifacts --version-suffix "$versionSuffix"
+          } else {
             dotnet pack src/NLog.MailKit.sln --no-build --configuration Release --output artifacts
-          fi
+          }
 
       - name: Upload nuget package
         uses: actions/upload-artifact@v4
@@ -67,5 +88,5 @@ jobs:
 
       - name: Push to NuGet.org
         if: github.ref == 'refs/heads/master'
-        shell: bash
+        shell: pwsh
         run: dotnet nuget push artifacts/*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
