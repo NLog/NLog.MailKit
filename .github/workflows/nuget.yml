@@ -1,14 +1,17 @@
 name: NuGet
 
 on:
-  push:
+  workflow_run:
+    workflows: ["Build and test"]
+    types:
+      - completed
     branches:
       - master
-  pull_request:
   workflow_dispatch:
 
 jobs:
   pack:
+    if: ${{ github.event.workflow_run.conclusion == 'success' || github.event_name == 'workflow_dispatch' }}
     runs-on: windows-latest
     permissions:
       contents: read
