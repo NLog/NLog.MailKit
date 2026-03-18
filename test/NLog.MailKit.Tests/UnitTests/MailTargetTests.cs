@@ -53,6 +53,46 @@ namespace NLog.MailKit.Tests.UnitTests
         }
 
         [Fact]
+        public void MailTarget_WithBlankTo_ThrowsConfigException()
+        {
+            var mmt = new MailTarget
+            {
+                From = "foo@bar.com",
+                To = " ",
+                Subject = "Hello from NLog",
+                SmtpServer = "server1",
+                SmtpPort = 27,
+            };
+
+            Assert.Throws<NLogConfigurationException>(() =>
+                new LogFactory().Setup().LoadConfiguration(cfg =>
+                {
+                    cfg.Configuration.AddRuleForAllLevels(mmt);
+                })
+            );
+        }
+
+        [Fact]
+        public void MailTarget_WithInvalidTo_ThrowsConfigException()
+        {
+            var mmt = new MailTarget
+            {
+                From = "foo@bar.com",
+                To = "@",
+                Subject = "Hello from NLog",
+                SmtpServer = "server1",
+                SmtpPort = 27,
+            };
+
+            Assert.Throws<NLogConfigurationException>(() =>
+                new LogFactory().Setup().LoadConfiguration(cfg =>
+                {
+                    cfg.Configuration.AddRuleForAllLevels(mmt);
+                })
+            );
+        }
+
+        [Fact]
         public void MailTarget_WithEmptyFrom_ThrowsConfigException()
         {
             var mmt = new MailTarget
