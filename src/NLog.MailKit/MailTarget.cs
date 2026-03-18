@@ -300,8 +300,33 @@ namespace NLog.MailKit
         {
             InternalLogger.Debug("Init mailtarget with mailkit");
             CheckRequiredParameters();
-
+            ValidateFixedEmailAddress(From, nameof(From));
+            ValidateFixedEmailAddress(To, nameof(To));
+            ValidateFixedEmailAddress(Cc, nameof(Cc));
+            ValidateFixedEmailAddress(Bcc, nameof(Bcc));
             base.InitializeTarget();
+        }
+
+        private void ValidateFixedEmailAddress(Layout? emailAddress, string emailAddressType)
+        {
+            if (!ReferenceEquals(emailAddress, Layout.Empty) && emailAddress is SimpleLayout simpleLayout && simpleLayout.IsFixedText)
+            {
+                var mailAddressCollection = new InternetAddressList();
+                try
+                {
+                    if (!AddAddresses(mailAddressCollection, emailAddress, LogEventInfo.CreateNullEvent(), allowThrow: true))
+                        throw new NLogConfigurationException(string.Format(RequiredPropertyIsEmptyFormat, emailAddressType));
+                }
+                catch (NLogConfigurationException)
+                {
+                    throw;
+                }
+                catch (Exception ex)
+                {
+                    var nlogConfigException = new NLogConfigurationException($"MailTarget: Invalid {emailAddressType}-email-address: {simpleLayout.FixedText}", ex);
+                    throw nlogConfigException;
+                }
+            }
         }
 
         /// <summary>
@@ -500,12 +525,12 @@ namespace NLog.MailKit
 
         private void CheckRequiredParameters()
         {
-            if (From is null || ReferenceEquals(From, Layout.Empty))
+            if (IsEmptyLayout(From))
             {
                 throw new NLogConfigurationException("MailTarget - From address is required");
             }
 
-            if (To is null || ReferenceEquals(To, Layout.Empty))
+            if (IsEmptyLayout(To) && IsEmptyLayout(Cc) && IsEmptyLayout(Bcc))
             {
                 throw new NLogConfigurationException("MailTarget - To address is required");
             }
@@ -516,15 +541,20 @@ namespace NLog.MailKit
                 throw new NLogConfigurationException("MailTarget - SmtpAuthentication NTLM not yet supported");
             }
 
-            if ((PickupDirectoryLocation is null || ReferenceEquals(PickupDirectoryLocation, Layout.Empty)) && (SmtpServer is null || ReferenceEquals(SmtpServer, Layout.Empty)))
+            if (IsEmptyLayout(PickupDirectoryLocation) && IsEmptyLayout(SmtpServer))
             {
                 throw new NLogConfigurationException("MailTarget - SmtpServer is required");
             }
 
-            if (smtpAuthentication == SmtpAuthenticationMode.OAuth2 && (SmtpUserName is null || ReferenceEquals(SmtpUserName, Layout.Empty) || SmtpPassword is null || ReferenceEquals(SmtpPassword, Layout.Empty)))
+            if (smtpAuthentication == SmtpAuthenticationMode.OAuth2 && (IsEmptyLayout(SmtpUserName) || IsEmptyLayout(SmtpPassword)))
             {
                 throw new NLogConfigurationException("MailTarget - SmtpUserName (OAuth UserName) and SmtpPassword (OAuth AccessToken) is required when SmtpAuthentication = OAuth2");
             }
+        }
+
+        private static bool IsEmptyLayout(Layout? layout)
+        {
+            return layout is null || ReferenceEquals(layout, Layout.Empty);
         }
 
         /// <summary>
@@ -653,8 +683,9 @@ namespace NLog.MailKit
         /// <param name="mailAddressCollection">Addresses appended to this list</param>
         /// <param name="layout">layout with addresses, ; separated</param>
         /// <param name="logEvent">event for rendering the <paramref name="layout" /></param>
+        /// <param name="allowThrow">Abort early when invalid email address format</param>
         /// <returns>added a address?</returns>
-        private bool AddAddresses(InternetAddressList mailAddressCollection, Layout? layout, LogEventInfo logEvent)
+        private bool AddAddresses(InternetAddressList mailAddressCollection, Layout? layout, LogEventInfo logEvent, bool allowThrow = false)
         {
             var added = false;
             var mailAddresses = RenderLogEvent(layout, logEvent);
@@ -667,7 +698,16 @@ namespace NLog.MailKit
                     if (string.IsNullOrEmpty(mailAddress))
                         continue;
 
-                    mailAddressCollection.Add(MailboxAddress.Parse(mail));
+                    try
+                    {
+                        mailAddressCollection.Add(MailboxAddress.Parse(mail));
+                    }
+                    catch (Exception ex)
+                    {
+                        InternalLogger.Error(ex, "{0}: Invalid email address: {1}", this, mailAddress);
+                        if (allowThrow || LogManager.ThrowExceptions)
+                            throw;
+                    }
                     added = true;
                 }
             }
