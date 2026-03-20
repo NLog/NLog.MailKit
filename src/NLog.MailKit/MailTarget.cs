@@ -701,6 +701,7 @@ namespace NLog.MailKit
                     try
                     {
                         mailAddressCollection.Add(MailboxAddress.Parse(mail));
+                        added = true;
                     }
                     catch (Exception ex)
                     {
@@ -708,7 +709,6 @@ namespace NLog.MailKit
                         if (allowThrow || LogManager.ThrowExceptions)
                             throw;
                     }
-                    added = true;
                 }
             }
 
