@@ -35,6 +35,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
+using System.Net;
 using System.Text;
 using MailKit.Net.Smtp;
 using MailKit.Security;
@@ -446,6 +447,19 @@ namespace NLog.MailKit
                     var oauth2 = new SaslMechanismOAuth2(userName, oauth2Token);
                     client.Authenticate(oauth2);
                 }
+                else if (smtpAuthentication == SmtpAuthenticationMode.Ntlm)
+                {
+                    var userName = RenderLogEvent(SmtpUserName, lastEvent);
+                    var password = RenderLogEvent(SmtpPassword, lastEvent);
+                    if (!string.IsNullOrWhiteSpace(userName))
+                    {
+                        client.Authenticate(new SaslMechanismNtlm(userName, password));
+                    }
+                    else
+                    {
+                        client.Authenticate(new SaslMechanismNtlm(CredentialCache.DefaultNetworkCredentials));
+                    }
+                }
 
                 client.Send(message);
                 InternalLogger.Trace("{0}: Sending mail done. Disconnecting", this);
@@ -535,17 +549,12 @@ namespace NLog.MailKit
                 throw new NLogConfigurationException("MailTarget - To address is required");
             }
 
-            var smtpAuthentication = RenderLogEvent(SmtpAuthentication, LogEventInfo.CreateNullEvent());
-            if (smtpAuthentication == SmtpAuthenticationMode.Ntlm)
-            {
-                throw new NLogConfigurationException("MailTarget - SmtpAuthentication NTLM not yet supported");
-            }
-
             if (IsEmptyLayout(PickupDirectoryLocation) && IsEmptyLayout(SmtpServer))
             {
                 throw new NLogConfigurationException("MailTarget - SmtpServer is required");
             }
 
+            var smtpAuthentication = RenderLogEvent(SmtpAuthentication, LogEventInfo.CreateNullEvent());
             if (smtpAuthentication == SmtpAuthenticationMode.OAuth2 && (IsEmptyLayout(SmtpUserName) || IsEmptyLayout(SmtpPassword)))
             {
                 throw new NLogConfigurationException("MailTarget - SmtpUserName (OAuth UserName) and SmtpPassword (OAuth AccessToken) is required when SmtpAuthentication = OAuth2");

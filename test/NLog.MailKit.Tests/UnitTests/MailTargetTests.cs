@@ -190,27 +190,6 @@ namespace NLog.MailKit.Tests.UnitTests
         }
 
         [Fact]
-        public void MailTargetInitialize_WithSmtpAuthenticationModeNtlm_ThrowsConfigException()
-        {
-            var mmt = new MailTarget
-            {
-                From = "foo@bar.com",
-                To = "bar@bar.com",
-                Subject = "Hello from NLog",
-                SmtpServer = "server1",
-                SmtpPort = 27,
-                SmtpAuthentication = SmtpAuthenticationMode.Ntlm,
-            };
-
-            Assert.Throws<NLogConfigurationException>(() =>
-                new LogFactory().Setup().LoadConfiguration(cfg =>
-                {
-                    cfg.Configuration.AddRuleForAllLevels(mmt);
-                })
-            );
-        }
-
-        [Fact]
         public void MailTargetInitialize_WithSmtpAuthenticationModeOAuth2_ThrowsConfigException()
         {
             var mmt = new MailTarget
