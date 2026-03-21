@@ -7,7 +7,7 @@
 [![](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=code_smells)](https://sonarcloud.io/project/issues?id=nlog.mailkit&resolved=false&types=CODE_SMELL) 
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=coverage)](https://sonarcloud.io/component_measures?id=nlog.mailkit&metric=coverage)
 
-Alternative Mail target for [NLog](https://github.com/nlog/nlog) using [MailKit](https://github.com/jstedfast/MailKit). Compatible with .NET standard 2+ 
+Alternative Mail target for [NLog](https://github.com/nlog/nlog) using [MailKit](https://github.com/jstedfast/MailKit).
 
 The NLog MailKit Target is able to replace the original NLog Mail Target and have the same options. See docs for [NLog Mail Target](https://github.com/NLog/NLog/wiki/Mail-Target).
 But Mailkit does not yet support `SmtpAuthentication = NTLM`.
@@ -42,8 +42,6 @@ This library is integration tested with the [SmtpServer NuGet package](https://w
     ```xml
     LogManager.Setup().SetupExtensions(ext => ext.RegisterTarget<NLog.MailKit.MailTarget>());
     ```
-
-See the [NLog Wiki](https://github.com/NLog/NLog/wiki/Mail-Target) for available options and examples.
 
 Note that the option `skipCertificateValidation="true"` can prevent `AuthenticationException` if your remote certificate for smtpServer is invalid - not recommend!
 
