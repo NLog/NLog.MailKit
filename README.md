@@ -9,13 +9,16 @@
 
 Alternative Mail target for [NLog](https://github.com/nlog/nlog) using [MailKit](https://github.com/jstedfast/MailKit).
 
-The NLog MailKit Target is able to replace the original NLog Mail Target and have the same options. See docs for [NLog Mail Target](https://github.com/NLog/NLog/wiki/Mail-Target).
-But Mailkit does not yet support `SmtpAuthentication = NTLM`.
+The NLog MailKit Target is able to replace the original [NLog Mail Target](https://www.nuget.org/packages/NLog.Targets.Mail) and provides the same options.
+
+See the [NLog Wiki](https://github.com/NLog/NLog/wiki/Mail-target) for available options and examples.
 
 - Can also be combined with [FallbackGroup](https://github.com/NLog/NLog/wiki/FallbackGroup-target) to fallback to alternative SMTP-server on error.
 - Can also be combined with [BufferingWrapper](https://github.com/nlog/NLog/wiki/BufferingWrapper-target) to group multiple logevents into a single email.
 - Can also be combined with [LimitingWrapper](https://github.com/NLog/NLog/wiki/LimitingWrapper-target) to throttle the number of emails.
 - Can also be combined with [FilteringWrapper](https://github.com/NLog/NLog/wiki/FilteringWrapper-target) to avoid repeating identical emails.
+
+If having trouble with output, then check [NLog InternalLogger](https://github.com/NLog/NLog/wiki/Internal-Logging) for clues. See also [Troubleshooting NLog](https://github.com/NLog/NLog/wiki/Logging-Troubleshooting)
 
 This library is integration tested with the [SmtpServer NuGet package](https://www.nuget.org/packages/SmtpServer/)
 
