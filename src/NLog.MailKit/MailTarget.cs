@@ -416,22 +416,9 @@ namespace NLog.MailKit
                 client.Connect(renderedHost, smtpPort, secureSocketOptions);
                 InternalLogger.Trace("{0}: Connecting succesfull with SmtpCapabilities={1}", this, client.Capabilities);
 
-                // Note: since we don't have an OAuth2 token, disable
-                // the XOAUTH2 authentication mechanism.
-                client.AuthenticationMechanisms.Remove("XOAUTH2");
-
                 // Note: only needed if the SMTP server requires authentication
-
                 var smtpAuthentication = RenderLogEvent(SmtpAuthentication, lastEvent);
-                if (smtpAuthentication == SmtpAuthenticationMode.Basic)
-                {
-                    var userName = RenderLogEvent(SmtpUserName, lastEvent);
-                    var password = RenderLogEvent(SmtpPassword, lastEvent);
-
-                    InternalLogger.Trace("{0}: Authenticate with username '{1}'", this, userName);
-                    client.Authenticate(userName, password);
-                }
-                else if (smtpAuthentication == SmtpAuthenticationMode.OAuth2)
+                if (smtpAuthentication == SmtpAuthenticationMode.OAuth2)
                 {
                     var userName = RenderLogEvent(SmtpUserName, lastEvent);
                     var oauth2Token = RenderLogEvent(SmtpPassword, lastEvent);
@@ -444,20 +431,40 @@ namespace NLog.MailKit
                         throw new NLogRuntimeException(string.Format(RequiredPropertyIsEmptyFormat, nameof(SmtpUserName)));
                     }
                     InternalLogger.Trace("{0}: Authenticate with OAuth2 username '{1}'", this, userName);
-                    var oauth2 = new SaslMechanismOAuth2(userName, oauth2Token);
+
+                    SaslMechanism oauth2 = client.AuthenticationMechanisms.Contains("OAUTHBEARER") ?
+                        new SaslMechanismOAuthBearer(userName, oauth2Token) :
+                        new SaslMechanismOAuth2(userName, oauth2Token);
                     client.Authenticate(oauth2);
                 }
-                else if (smtpAuthentication == SmtpAuthenticationMode.Ntlm)
+                else
                 {
-                    var userName = RenderLogEvent(SmtpUserName, lastEvent);
-                    var password = RenderLogEvent(SmtpPassword, lastEvent);
-                    if (!string.IsNullOrWhiteSpace(userName))
+                    // Note: since we don't have an OAuth2 token, disable
+                    // the XOAUTH2 authentication mechanism.
+                    client.AuthenticationMechanisms.Remove("XOAUTH2");
+                    client.AuthenticationMechanisms.Remove("OAUTHBEARER");
+
+                    if (smtpAuthentication == SmtpAuthenticationMode.Basic)
                     {
-                        client.Authenticate(new SaslMechanismNtlm(userName, password));
+                        var userName = RenderLogEvent(SmtpUserName, lastEvent);
+                        var password = RenderLogEvent(SmtpPassword, lastEvent);
+
+                        InternalLogger.Trace("{0}: Authenticate with username '{1}'", this, userName);
+                        client.Authenticate(userName, password);
                     }
-                    else
+                    else if (smtpAuthentication == SmtpAuthenticationMode.Ntlm)
                     {
-                        client.Authenticate(new SaslMechanismNtlm(CredentialCache.DefaultNetworkCredentials));
+                        var userName = RenderLogEvent(SmtpUserName, lastEvent);
+                        var password = RenderLogEvent(SmtpPassword, lastEvent);
+                        if (!string.IsNullOrWhiteSpace(userName))
+                        {
+                            client.Authenticate(new SaslMechanismNtlm(userName, password));
+                        }
+                        else
+                        {
+                            // Default NTLM credentials probably only works on Windows
+                            client.Authenticate(new SaslMechanismNtlm(CredentialCache.DefaultNetworkCredentials));
+                        }
                     }
                 }
 
