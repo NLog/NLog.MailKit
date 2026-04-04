@@ -42,7 +42,7 @@ This library is integration tested with the [SmtpServer NuGet package](https://w
 
    Alternative register from code using [fluent configuration API](https://github.com/NLog/NLog/wiki/Fluent-Configuration-API):
 
-    ```xml
+    ```csharp
     LogManager.Setup().SetupExtensions(ext => ext.RegisterTarget<NLog.MailKit.MailTarget>());
     ```
 
