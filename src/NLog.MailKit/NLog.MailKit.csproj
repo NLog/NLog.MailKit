@@ -28,15 +28,15 @@ If the mail target was already available on your platform, this package will ove
 		<AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
 		<PackageReleaseNotes>
-			Changelog:
+Changelog:
 
-			- Update MailKit to v4.15.1
-			- Update NLog to v6.1.1
+- Support SmtpAuthenticationMode.Ntlm using Windows Default Credentials
+- Improved upfront validation of configured email addresses (To / From / Cc / Bcc)
+- Improved exception handling when one or more configured email addresses are not valid.
 
-			See https://github.com/NLog/NLog.MailKit/releases
-
+See https://github.com/NLog/NLog.MailKit/releases
 		</PackageReleaseNotes>
-		<VersionPrefix>6.1.1</VersionPrefix>
+		<VersionPrefix>6.1.2</VersionPrefix>
 		<AssemblyVersion>6.0.0.0</AssemblyVersion>
 		<FileVersion>$(VersionPrefix).0</FileVersion>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
