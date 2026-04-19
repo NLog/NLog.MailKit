@@ -7,7 +7,7 @@
 [![](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=code_smells)](https://sonarcloud.io/project/issues?id=nlog.mailkit&resolved=false&types=CODE_SMELL) 
 [![Coverage](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=coverage)](https://sonarcloud.io/component_measures?id=nlog.mailkit&metric=coverage)
 
-Alternative Mail target for [NLog](https://github.com/nlog/nlog) using [MailKit](https://github.com/jstedfast/MailKit).
+Alternative Mail target for [NLog](https://github.com/NLog/NLog) using [MailKit](https://github.com/jstedfast/MailKit).
 
 The NLog MailKit Target is able to replace the original [NLog Mail Target](https://www.nuget.org/packages/NLog.Targets.Mail) and provides the same options.
 
