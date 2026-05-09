@@ -30,14 +30,12 @@ If the mail target was already available on your platform, this package will ove
 		<PackageReleaseNotes>
 Changelog:
 
-- Skip removing XOAUTH2 from AuthenticationMechanisms when OAuth2
-- Support SmtpAuthenticationMode.Ntlm using Windows Default Credentials
-- Improved upfront validation of configured email addresses (To / From / Cc / Bcc)
-- Improved exception handling when one or more configured email addresses are not valid.
+- Updated MailKit ver. 4.16.0 (Security fix)
+- Updated NLog ver. 6.1.3
 
 See https://github.com/NLog/NLog.MailKit/releases
 		</PackageReleaseNotes>
-		<VersionPrefix>6.1.3</VersionPrefix>
+		<VersionPrefix>6.1.4</VersionPrefix>
 		<AssemblyVersion>6.0.0.0</AssemblyVersion>
 		<FileVersion>$(VersionPrefix).0</FileVersion>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -60,7 +58,7 @@ See https://github.com/NLog/NLog.MailKit/releases
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="NLog" Version="6.1.1" />
+		<PackageReference Include="NLog" Version="6.1.3" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\..\README.md">
