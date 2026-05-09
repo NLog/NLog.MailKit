@@ -13,8 +13,6 @@ variables:
   Solution: 'src/NLog.MailKit.sln'
   BuildPlatform: 'Any CPU'
   BuildConfiguration: 'Release'
-  Version: '6.0.5'
-  FullVersion: '$(Version).$(Build.BuildId)'
 
 steps:
 - task: DotNetCoreCLI@2
@@ -31,13 +29,12 @@ steps:
     organization: nlog
     projectKey: nlog.mailkit
     projectName: 'NLog Mailkit'
-    projectVersion: '$(FullVersion)'
 
 - task: VSBuild@1
   displayName: 'Build'
   inputs:
     solution: '$(Solution)'
-    msbuildArgs: '-v:m -p:Version=$(Version) -p:FileVersion=$(FullVersion) -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true -p:EmbedUntrackedSources=true'
+    msbuildArgs: '-v:m -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:ContinuousIntegrationBuild=true -p:EmbedUntrackedSources=true'
     platform: '$(BuildPlatform)'
     configuration: '$(BuildConfiguration)'
     maximumCpuCount: true
