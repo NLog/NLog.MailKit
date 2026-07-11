@@ -30,12 +30,12 @@ If the mail target was already available on your platform, this package will ove
 		<PackageReleaseNotes>
 Changelog:
 
-- Updated MailKit ver. 4.16.0 (Security fix)
-- Updated NLog ver. 6.1.3
+- Updated MailKit ver. 4.17.0 (Improve Dependencies)
+- Updated NLog ver. 6.1.4
 
 See https://github.com/NLog/NLog.MailKit/releases
 		</PackageReleaseNotes>
-		<VersionPrefix>6.1.4</VersionPrefix>
+		<VersionPrefix>6.1.5</VersionPrefix>
 		<AssemblyVersion>6.0.0.0</AssemblyVersion>
 		<FileVersion>$(VersionPrefix).0</FileVersion>
 		<PackageReadmeFile>README.md</PackageReadmeFile>
@@ -54,11 +54,11 @@ See https://github.com/NLog/NLog.MailKit/releases
     <LangVersion>9.0</LangVersion>
 	</PropertyGroup>
 	<ItemGroup>
-		<PackageReference Include="MailKit" Version="4.16.0" />
+		<PackageReference Include="MailKit" Version="4.17.0" />
 		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
 	</ItemGroup>
 	<ItemGroup>
-		<PackageReference Include="NLog" Version="6.1.3" />
+		<PackageReference Include="NLog" Version="6.1.4" />
 	</ItemGroup>
 	<ItemGroup>
 		<None Include="..\..\README.md">
