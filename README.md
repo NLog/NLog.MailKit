@@ -14,7 +14,7 @@ The NLog MailKit Target is able to replace the original [NLog Mail Target](https
 See the [NLog Wiki](https://github.com/NLog/NLog/wiki/Mail-target) for available options and examples.
 
 - Can also be combined with [FallbackGroup](https://github.com/NLog/NLog/wiki/FallbackGroup-target) to fallback to alternative SMTP-server on error.
-- Can also be combined with [BufferingWrapper](https://github.com/nlog/NLog/wiki/BufferingWrapper-target) to group multiple logevents into a single email.
+- Can also be combined with [BufferingWrapper](https://github.com/NLog/NLog/wiki/BufferingWrapper-target) and [AutoFlushWrapper](https://github.com/NLog/NLog/wiki/AutoFlushWrapper-target) to group multiple logevents into a single email.
 - Can also be combined with [LimitingWrapper](https://github.com/NLog/NLog/wiki/LimitingWrapper-target) to throttle the number of emails.
 - Can also be combined with [FilteringWrapper](https://github.com/NLog/NLog/wiki/FilteringWrapper-target) to avoid repeating identical emails.
 
