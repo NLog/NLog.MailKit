@@ -83,6 +83,7 @@ namespace NLog.MailKit
     [Target("MailKit")]
     public class MailTarget : TargetWithLayoutHeaderAndFooter
     {
+        private readonly Action<MimeMessage, LogEventInfo> _mailSender;
         private static readonly Encoding DefaultEncoding = System.Text.Encoding.UTF8;
         private const SecureSocketOptions DefaultSecureSocketOption = SecureSocketOptions.StartTlsWhenAvailable;
 
@@ -95,6 +96,7 @@ namespace NLog.MailKit
         /// The default value of the Body-Layout is: <code>${message}${newline}</code>
         /// </remarks>
         public MailTarget()
+            :this(default(Action<MimeMessage, LogEventInfo>?))
         {
             Body = "${message}${newline}";
         }
@@ -109,6 +111,14 @@ namespace NLog.MailKit
         public MailTarget(string name) : this()
         {
             Name = name;
+        }
+
+        /// <summary>
+        /// Initializes a new instance of the <see cref="MailTarget" /> class.
+        /// </summary>
+        internal MailTarget(Action<MimeMessage, LogEventInfo>? mailSender)
+        {
+            _mailSender = mailSender ?? SendMailMessage;
         }
 
         /// <summary>
@@ -358,7 +368,7 @@ namespace NLog.MailKit
                 }
                 else
                 {
-                    SendMailMessage(message, lastEvent);
+                    _mailSender(message, lastEvent);
                 }
 
                 foreach (var ev in events)
