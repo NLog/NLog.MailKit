@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       force_nuget_publish:
-        description: Force NuGet publish # for non-master. The package version get the PR number of branch name, see Create NuGet Package step
+        description: Force NuGet publish # for non-master. The package version gets a suffix. See Create NuGet Package step
         type: boolean
         default: false
 
@@ -61,9 +61,9 @@ jobs:
           if ($env:REF -eq "refs/heads/master") {
             echo "suffix=" >> $env:GITHUB_OUTPUT
           } elseif ($env:PR_NUMBER) {
-            echo "suffix=PR$($env:PR_NUMBER)-ci.$($env:RUN_NUMBER)" >> $env:GITHUB_OUTPUT
+            echo "suffix=pr.$($env:PR_NUMBER).ci.$($env:RUN_NUMBER)" >> $env:GITHUB_OUTPUT
           } else {
-            echo "suffix=-ci.$($env:RUN_NUMBER)" >> $env:GITHUB_OUTPUT
+            echo "suffix=ci.$($env:RUN_NUMBER)" >> $env:GITHUB_OUTPUT
           }
 
       - name: Create NuGet package
@@ -83,7 +83,9 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: NuGetPackages
-          path: artifacts/*.*nupkg # also upload snupkg
+          path: |
+            artifacts/*.nupkg
+            artifacts/*.snupkg
           if-no-files-found: error
 
   publish:
