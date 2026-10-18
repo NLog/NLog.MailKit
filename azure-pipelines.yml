@@ -22,7 +22,7 @@ steps:
     projects: '$(Solution)'
     verbosityRestore: Minimal
 
-- task: SonarCloudPrepare@3.1.1
+- task: SonarCloudPrepare@4
   displayName: 'Prepare SonarCloud analysis'
   inputs:
     SonarCloud: 'Sonarcloud'
@@ -40,7 +40,7 @@ steps:
     maximumCpuCount: true
     logProjectEvents: false
 
-- task: VSTest@2
+- task: VSTest@3
   displayName: 'Run Tests'
   inputs:
     testAssemblyVer2: |
@@ -52,8 +52,8 @@ steps:
     configuration: '$(BuildConfiguration)'
     rerunFailedTests: true
 
-- task: SonarCloudAnalyze@3.1.1
+- task: SonarCloudAnalyze@4
   displayName: 'Run SonarCloud Analysis'
 
-- task: SonarCloudPublish@3.1.1
+- task: SonarCloudPublish@4
   displayName: 'Publish SonarCloud Quality Gate'
