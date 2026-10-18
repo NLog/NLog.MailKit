@@ -82,7 +82,7 @@ jobs:
         if: matrix.create_nuget_package
         uses: actions/upload-artifact@v7
         with:
-          name: NuGet package
+          name: NuGetPackages
           path: artifacts/*.*nupkg # also upload snupkg
           if-no-files-found: error
 
@@ -101,7 +101,7 @@ jobs:
       - name: Download NuGet package
         uses: actions/download-artifact@v7
         with:
-          name: nupkg
+          name: NuGetPackages
           path: artifacts
 
       - name: Setup .NET
