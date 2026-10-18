@@ -18,10 +18,10 @@ jobs:
       id-token: write
 
     steps:
-      - uses: actions/checkout@v6
+      - uses: actions/checkout@v7
 
       - name: Setup .NET
-        uses: actions/setup-dotnet@v5
+        uses: actions/setup-dotnet@v6
         with:
           dotnet-version: '8.0.x'
 
@@ -74,7 +74,7 @@ jobs:
           }
 
       - name: Upload nuget package
-        uses: actions/upload-artifact@v4
+        uses: actions/upload-artifact@v7
         with:
           name: nupkg
           path: artifacts/*pkg
