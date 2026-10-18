@@ -1,7 +1,7 @@
 # NLog.MailKit
 
 [![NuGet](https://img.shields.io/nuget/v/NLog.MailKit.svg)](https://www.nuget.org/packages/NLog.MailKit)
-[![Build and test](https://github.com/NLog/NLog.MailKit/actions/workflows/ci.yml/badge.svg)](https://github.com/NLog/NLog.MailKit/actions/workflows/build-and-test.yml)
+[![Build and test](https://github.com/NLog/NLog.MailKit/actions/workflows/ci.yml/badge.svg)](https://github.com/NLog/NLog.MailKit/actions/workflows/ci.yml)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=bugs)](https://sonarcloud.io/summary/new_code?id=nlog.mailkit)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=nlog.mailkit)
 [![](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=code_smells)](https://sonarcloud.io/project/issues?id=nlog.mailkit&resolved=false&types=CODE_SMELL) 
