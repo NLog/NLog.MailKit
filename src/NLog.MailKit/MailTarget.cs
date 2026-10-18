@@ -86,6 +86,7 @@ namespace NLog.MailKit
         private readonly Action<MimeMessage, LogEventInfo> _mailSender;
         private static readonly Encoding DefaultEncoding = System.Text.Encoding.UTF8;
         private const SecureSocketOptions DefaultSecureSocketOption = SecureSocketOptions.StartTlsWhenAvailable;
+        private const  string Test = "old";
 
         private const string RequiredPropertyIsEmptyFormat = "MailTarget '{0}'-property appears to be empty. The email message cannot be sent.";
 
