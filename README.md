@@ -1,7 +1,7 @@
 # NLog.MailKit
 
 [![NuGet](https://img.shields.io/nuget/v/NLog.MailKit.svg)](https://www.nuget.org/packages/NLog.MailKit)
-[![Build Status](https://dev.azure.com/NLogLogging/NLog/_apis/build/status/NLog.MailKit?branchName=master)](https://dev.azure.com/NLogLogging/NLog/_build/latest?definitionId=25&branchName=master)
+[![Build and test](https://github.com/NLog/NLog.MailKit/actions/workflows/build-and-test.yml/badge.svg)](https://github.com/NLog/NLog.MailKit/actions/workflows/build-and-test.yml)
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=bugs)](https://sonarcloud.io/summary/new_code?id=nlog.mailkit)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=nlog.mailkit)
 [![](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=code_smells)](https://sonarcloud.io/project/issues?id=nlog.mailkit&resolved=false&types=CODE_SMELL) 
@@ -63,4 +63,10 @@ and point `SmtpUserName` and `SmtpPassword` to these locations.
 
 ### License
 BSD. License of MailKit is MIT
+
+
+### Builds
+Builds and NuGet publishing is running on GitHub actions. See [build-and-test.yml](/.github/workflows/build-and-test.yml) and [nuget.yml](/.github/workflows/nuget.yml)
+
+SonarQube analysis is running on Azure Devops: [![SonarQube Cloud Build Status](https://dev.azure.com/NLogLogging/NLog/_apis/build/status/NLog.MailKit?branchName=master)](https://dev.azure.com/NLogLogging/NLog/_build/latest?definitionId=25&branchName=master)
 
