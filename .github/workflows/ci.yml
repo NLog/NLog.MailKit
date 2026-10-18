@@ -55,32 +55,15 @@ jobs:
         shell: pwsh
         env:
           REF: ${{ github.ref }}
-          HEAD_REF: ${{ github.head_ref }}
-          REF_NAME: ${{ github.ref_name }}
           PR_NUMBER: ${{ github.event.pull_request.number }}
           RUN_NUMBER: ${{ github.run_number }}
         run: |
           if ($env:REF -eq "refs/heads/master") {
             echo "suffix=" >> $env:GITHUB_OUTPUT
+          } elseif ($env:PR_NUMBER) {
+            echo "suffix=PR$($env:PR_NUMBER)-$($env:RUN_NUMBER)" >> $env:GITHUB_OUTPUT
           } else {
-            # For a PR: use head_ref (actual branch name), otherwise the ref name
-            $branchName = $env:HEAD_REF
-            if ([string]::IsNullOrEmpty($branchName)) {
-              $branchName = $env:REF_NAME
-            }
-
-            # Sanitize: non-alphanumeric -> '-', multiple '-' -> one, trim '-'
-            $clean = $branchName -replace '[^a-zA-Z0-9]', '-' `
-                                 -replace '-+', '-' `
-                                 -replace '^-|-$', ''
-            # Truncate to max 40 characters and remove trailing '-'
-            $short = if ($clean.Length -gt 0) { $clean.Substring(0, [Math]::Min(40, $clean.Length)).TrimEnd('-') } else { "" }
-
-            # PR number prefix
-            $prPrefix = if ($env:PR_NUMBER) { "pr$($env:PR_NUMBER)-" } else { "" }
-
-            $suffix = "${prPrefix}${short}.$($env:RUN_NUMBER)"
-            echo "suffix=$suffix" >> $env:GITHUB_OUTPUT
+            echo "suffix=-$($env:RUN_NUMBER)" >> $env:GITHUB_OUTPUT
           }
 
       - name: Create NuGet package
