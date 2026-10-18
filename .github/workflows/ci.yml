@@ -47,7 +47,7 @@ jobs:
         run: dotnet build ${{ env.SOLUTION }} --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test ${{ env.SOLUTION }} --configuration Release --no-build --logger "console;verbosity=normal"
+        run: dotnet test ${{ env.SOLUTION }} --configuration Release --no-restore --no-build --logger "console;verbosity=normal"
 
       - name: Determine version suffix
         if: matrix.create_nuget_package
