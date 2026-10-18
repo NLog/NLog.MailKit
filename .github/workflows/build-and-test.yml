@@ -7,6 +7,10 @@ on:
   pull_request:
   workflow_dispatch:
 
+env:
+  SOLUTION: src/NLog.MailKit.sln
+  DOTNET_VERSION: '8.0.x'
+
 jobs:
   build:
     strategy:
@@ -22,13 +26,13 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore
-        run: dotnet restore src/NLog.MailKit.sln
+        run: dotnet restore ${{ env.SOLUTION }}
 
       - name: Build
-        run: dotnet build src/NLog.MailKit.sln --configuration Release --no-restore
+        run: dotnet build ${{ env.SOLUTION }} --configuration Release --no-restore
 
       - name: Test
-        run: dotnet test src/NLog.MailKit.sln --configuration Release --no-build --logger "console;verbosity=normal"
+        run: dotnet test ${{ env.SOLUTION }} --configuration Release --no-build --logger "console;verbosity=normal"
