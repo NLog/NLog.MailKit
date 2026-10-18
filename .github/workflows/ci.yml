@@ -99,8 +99,9 @@ jobs:
         if: matrix.create_nuget_package
         uses: actions/upload-artifact@v7
         with:
-          name: nupkg
-          path: artifacts/*pkg
+          name: NuGet package
+          path: artifacts/*.*nupkg
+          if-no-files-found: error
 
   publish:
     name: Publish NuGet package
