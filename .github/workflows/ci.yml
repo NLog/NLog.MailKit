@@ -61,9 +61,9 @@ jobs:
           if ($env:REF -eq "refs/heads/master") {
             echo "suffix=" >> $env:GITHUB_OUTPUT
           } elseif ($env:PR_NUMBER) {
-            echo "suffix=PR$($env:PR_NUMBER)-$($env:RUN_NUMBER)" >> $env:GITHUB_OUTPUT
+            echo "suffix=PR$($env:PR_NUMBER)-ci.$($env:RUN_NUMBER)" >> $env:GITHUB_OUTPUT
           } else {
-            echo "suffix=-$($env:RUN_NUMBER)" >> $env:GITHUB_OUTPUT
+            echo "suffix=-ci.$($env:RUN_NUMBER)" >> $env:GITHUB_OUTPUT
           }
 
       - name: Create NuGet package
