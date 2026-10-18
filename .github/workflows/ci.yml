@@ -14,7 +14,7 @@ on:
 
 env:
   SOLUTION: src/NLog.MailKit.sln
-  DOTNET_VERSION: '8.0.x'
+  DOTNET_VERSION: 8.0.x
 
 jobs:
   build:
@@ -23,10 +23,10 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            name: "Build, test & NuGet package (Windows)"
+            name: Build, test & NuGet package (Windows)
             create_nuget_package: true
           - os: ubuntu-latest
-            name: "Build & test (Ubuntu)"
+            name: Build & test (Ubuntu)
             create_nuget_package: false
     runs-on: ${{ matrix.os }}
     permissions:
