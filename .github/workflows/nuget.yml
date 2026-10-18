@@ -8,6 +8,15 @@ on:
     branches:
       - master
   workflow_dispatch:
+    inputs:
+      force_nuget_publish:
+        description: Force NuGet publish
+        type: boolean
+        default: false
+
+env:
+  SOLUTION: src/NLog.MailKit.sln
+  DOTNET_VERSION: '8.0.x'
 
 jobs:
   pack:
@@ -23,26 +32,31 @@ jobs:
       - name: Setup .NET
         uses: actions/setup-dotnet@v6
         with:
-          dotnet-version: '8.0.x'
+          dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: Restore
-        run: dotnet restore src/NLog.MailKit.sln
+        run: dotnet restore ${{ env.SOLUTION }}
 
       - name: Build
-        run: dotnet build src/NLog.MailKit.sln --configuration Release --no-restore
+        run: dotnet build ${{ env.SOLUTION }} --configuration Release --no-restore
 
       - name: Determine version suffix
         id: version
         shell: pwsh
+        env:
+          REF: ${{ github.ref }}
+          HEAD_REF: ${{ github.head_ref }}
+          REF_NAME: ${{ github.ref_name }}
+          PR_NUMBER: ${{ github.event.pull_request.number }}
+          RUN_NUMBER: ${{ github.run_number }}
         run: |
-          $ref = "${{ github.ref }}"
-          if ($ref -eq "refs/heads/master") {
+          if ($env:REF -eq "refs/heads/master") {
             echo "suffix=" >> $env:GITHUB_OUTPUT
           } else {
             # For a PR: use head_ref (actual branch name), otherwise the ref name
-            $branchName = "${{ github.head_ref }}"
+            $branchName = $env:HEAD_REF
             if ([string]::IsNullOrEmpty($branchName)) {
-              $branchName = "${{ github.ref_name }}"
+              $branchName = $env:REF_NAME
             }
 
             # Sanitize: non-alphanumeric -> '-', multiple '-' -> one, trim '-'
@@ -53,24 +67,21 @@ jobs:
             $short = if ($clean.Length -gt 0) { $clean.Substring(0, [Math]::Min(40, $clean.Length)).TrimEnd('-') } else { "" }
 
             # PR number prefix
-            $prNumber = "${{ github.event.pull_request.number }}"
-            $prPrefix = if ($prNumber) { "pr${prNumber}-" } else { "" }
+            $prPrefix = if ($env:PR_NUMBER) { "pr$($env:PR_NUMBER)-" } else { "" }
 
-            # Build number
-            $build = "${{ github.run_number }}"
-
-            $suffix = "${prPrefix}${short}.${build}"
+            $suffix = "${prPrefix}${short}.$($env:RUN_NUMBER)"
             echo "suffix=$suffix" >> $env:GITHUB_OUTPUT
           }
 
       - name: Pack
         shell: pwsh
+        env:
+          VERSION_SUFFIX: ${{ steps.version.outputs.suffix }}
         run: |
-          $versionSuffix = "${{ steps.version.outputs.suffix }}"
-          if ($versionSuffix) {
-            dotnet pack src/NLog.MailKit.sln --no-build --configuration Release --output artifacts --version-suffix "$versionSuffix"
+          if ($env:VERSION_SUFFIX) {
+            dotnet pack $env:SOLUTION --no-build --configuration Release --output artifacts --version-suffix "$env:VERSION_SUFFIX"
           } else {
-            dotnet pack src/NLog.MailKit.sln --no-build --configuration Release --output artifacts
+            dotnet pack $env:SOLUTION --no-build --configuration Release --output artifacts
           }
 
       - name: Upload nuget package
@@ -80,13 +91,19 @@ jobs:
           path: artifacts/*pkg
 
       - name: NuGet login
-        if: github.ref == 'refs/heads/master'
+        if: >-
+          (github.event_name == 'workflow_run' && github.ref == 'refs/heads/master') ||
+          (github.event_name == 'workflow_dispatch' && inputs.force_nuget_publish)
         uses: NuGet/login@v1
         id: login
         with:
           user: ${{ secrets.NUGET_USER }}
 
       - name: Push to NuGet.org
-        if: github.ref == 'refs/heads/master'
+        if: >-
+          (github.event_name == 'workflow_run' && github.ref == 'refs/heads/master') ||
+          (github.event_name == 'workflow_dispatch' && inputs.force_nuget_publish)
         shell: pwsh
-        run: dotnet nuget push artifacts\*.nupkg --api-key ${{ steps.login.outputs.NUGET_API_KEY }} --source https://api.nuget.org/v3/index.json --skip-duplicate
+        env:
+          NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
+        run: dotnet nuget push artifacts\*.nupkg --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
