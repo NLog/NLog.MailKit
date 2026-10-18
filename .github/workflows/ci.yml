@@ -8,7 +8,7 @@ on:
   workflow_dispatch:
     inputs:
       force_nuget_publish:
-        description: Force NuGet publish
+        description: Force NuGet publish # for non-master. The package version get the PR number of branch name, see Create NuGet Package step
         type: boolean
         default: false
 
@@ -100,7 +100,7 @@ jobs:
         uses: actions/upload-artifact@v7
         with:
           name: NuGet package
-          path: artifacts/*.*nupkg
+          path: artifacts/*.*nupkg # also upload snupkg
           if-no-files-found: error
 
   publish:
