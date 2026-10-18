@@ -1,0 +1,75 @@
+name: SonarQube Cloud Analysis
+on:
+  pull_request_target:
+    types: [opened, synchronize, reopened]
+  push:
+    branches: [master]
+
+permissions:
+  contents: read
+
+jobs:
+  analyze:
+    runs-on: ubuntu-latest
+    environment: ${{ github.event_name == 'pull_request_target' && 'sonar-fork' || '' }}
+    env:
+      PR_KEY: ${{ github.event.pull_request.number }}
+    steps:
+      - uses: actions/checkout@v6
+        with:
+          repository: ${{ github.event.pull_request.head.repo.full_name || github.repository }}
+          ref: ${{ github.event.pull_request.head.sha || github.sha }}
+          fetch-depth: 0
+          persist-credentials: false
+
+      - name: Fetch base branch
+        if: github.event_name == 'pull_request_target'
+        run: |
+          git remote add upstream https://github.com/${{ github.repository }}.git
+          git fetch upstream ${{ github.event.pull_request.base.ref }}
+
+      - name: Setup .NET
+        uses: actions/setup-dotnet@v5
+        with:
+          dotnet-version: '8.0.x'
+
+      - uses: actions/setup-java@v4
+        with:
+          distribution: temurin
+          java-version: 17
+
+      - uses: actions/cache@v4
+        with:
+          path: ~/.sonar/cache
+          key: sonar-cache-${{ runner.os }}
+
+      - name: Install scanner
+        run: dotnet tool install --global dotnet-sonarscanner
+
+      - name: Sonar begin
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN_NLOG_EXECUTE_ANALYSIS_ONLY }}
+        run: |
+          ARGS=(/o:"nlog" /k:"nlog.mailkit"
+                /d:sonar.token="$SONAR_TOKEN"
+                /d:sonar.host.url="https://sonarcloud.io"
+                /d:sonar.scm.revision="${{ github.event.pull_request.head.sha || github.sha }}"
+                /d:sonar.cs.opencover.reportsPaths="**/TestResults/**/coverage.opencover.xml")
+          if [ "${{ github.event_name }}" = "pull_request_target" ]; then
+            ARGS+=(/d:sonar.pullrequest.key="${{ github.event.pull_request.number }}"
+                   /d:sonar.pullrequest.branch="${{ github.event.pull_request.head.ref }}"
+                   /d:sonar.pullrequest.base="${{ github.event.pull_request.base.ref }}")
+          fi
+          dotnet sonarscanner begin "${ARGS[@]}"
+
+      - name: Build and test with coverage
+        run: |
+          dotnet build src/NLog.MailKit.sln --configuration Release --no-incremental
+          dotnet test  src/NLog.MailKit.sln --configuration Release --no-build \
+            --collect:"XPlat Code Coverage" \
+            -- DataCollectionRunSettings.DataCollectors.DataCollector.Configuration.Format=opencover
+
+      - name: Sonar end
+        env:
+          SONAR_TOKEN: ${{ secrets.SONARQUBE_TOKEN_NLOG_EXECUTE_ANALYSIS_ONLY }}
+        run: dotnet sonarscanner end /d:sonar.token="$SONAR_TOKEN"
