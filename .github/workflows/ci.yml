@@ -18,12 +18,15 @@ env:
 
 jobs:
   build:
+    name: ${{ matrix.name }}
     strategy:
       matrix:
         include:
           - os: windows-latest
+            name: "Build, test & NuGet package (Windows)"
             create_nuget_package: true
           - os: ubuntu-latest
+            name: "Build & test (Ubuntu)"
             create_nuget_package: false
     runs-on: ${{ matrix.os }}
     permissions:
@@ -80,7 +83,7 @@ jobs:
             echo "suffix=$suffix" >> $env:GITHUB_OUTPUT
           }
 
-      - name: Pack
+      - name: Create NuGet package
         if: matrix.create_nuget_package
         shell: pwsh
         env:
@@ -92,7 +95,7 @@ jobs:
             dotnet pack $env:SOLUTION --no-build --configuration Release --output artifacts
           }
 
-      - name: Upload nuget package
+      - name: Upload NuGet package
         if: matrix.create_nuget_package
         uses: actions/upload-artifact@v7
         with:
@@ -100,6 +103,7 @@ jobs:
           path: artifacts/*pkg
 
   publish:
+    name: Publish NuGet package
     needs: build
     if: >-
       (github.event_name == 'push' && github.ref == 'refs/heads/master') ||
@@ -110,7 +114,7 @@ jobs:
       id-token: write
 
     steps:
-      - name: Download nuget package
+      - name: Download NuGet package
         uses: actions/download-artifact@v7
         with:
           name: nupkg
@@ -122,7 +126,7 @@ jobs:
           dotnet-version: ${{ env.DOTNET_VERSION }}
 
       - name: NuGet login
-        uses: NuGet/login@v1
+        uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2
         id: login
         with:
           user: ${{ secrets.NUGET_USER }}
