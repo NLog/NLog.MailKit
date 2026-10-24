@@ -27,7 +27,7 @@ jobs:
             framework_args:
           - os: ubuntu-latest
             name: Build & test (Ubuntu)
-            framework_args: --framework net8.0
+            framework_args: --framework netstandard2.1
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
