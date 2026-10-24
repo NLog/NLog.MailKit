@@ -14,6 +14,7 @@ on:
 
 env:
   SOLUTION: src/NLog.MailKit.sln
+  ContinuousIntegrationBuild: true
 
 jobs:
   build:
