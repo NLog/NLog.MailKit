@@ -14,7 +14,7 @@ on:
 
 env:
   SOLUTION: src/NLog.MailKit.sln
-  DOTNET_VERSION: 8.0.x
+  ContinuousIntegrationBuild: true
 
 jobs:
   build:
@@ -23,11 +23,11 @@ jobs:
       matrix:
         include:
           - os: windows-latest
-            name: Build, test & NuGet package (Windows)
-            create_nuget_package: true
+            name: Build & test (Windows)
+            framework_args:
           - os: ubuntu-latest
             name: Build & test (Ubuntu)
-            create_nuget_package: false
+            framework_args:
     runs-on: ${{ matrix.os }}
     permissions:
       contents: read
@@ -35,22 +35,28 @@ jobs:
     steps:
       - uses: actions/checkout@v7
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v6
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
       - name: Restore
         run: dotnet restore ${{ env.SOLUTION }}
 
       - name: Build
-        run: dotnet build ${{ env.SOLUTION }} --configuration Release --no-restore
+        run: dotnet build ${{ env.SOLUTION }} --configuration Release --no-restore ${{ matrix.framework_args }}
 
       - name: Test
-        run: dotnet test ${{ env.SOLUTION }} --configuration Release --no-restore --no-build --logger "console;verbosity=normal"
+        run: dotnet test ${{ env.SOLUTION }} --configuration Release --no-restore --no-build ${{ matrix.framework_args }} --logger "console;verbosity=normal"
+
+  pack:
+    name: Create NuGet package
+    runs-on: windows-latest
+    permissions:
+      contents: read
+
+    steps:
+      - uses: actions/checkout@v7
+
+      - name: Restore
+        run: dotnet restore ${{ env.SOLUTION }}
 
       - name: Determine version suffix
-        if: matrix.create_nuget_package
         id: version
         shell: pwsh
         env:
@@ -67,19 +73,12 @@ jobs:
           }
 
       - name: Create NuGet package
-        if: matrix.create_nuget_package
         shell: pwsh
         env:
           VERSION_SUFFIX: ${{ steps.version.outputs.suffix }}
-        run: |
-          if ($env:VERSION_SUFFIX) {
-            dotnet pack $env:SOLUTION --no-build --configuration Release --output artifacts --version-suffix "$env:VERSION_SUFFIX"
-          } else {
-            dotnet pack $env:SOLUTION --no-build --configuration Release --output artifacts
-          }
+        run: dotnet pack ${{ env.SOLUTION }} --no-restore --no-build --configuration Release --output artifacts -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:EmbedUntrackedSources=true --version-suffix "$env:VERSION_SUFFIX"
 
       - name: Upload NuGet package
-        if: matrix.create_nuget_package
         uses: actions/upload-artifact@v7
         with:
           name: NuGetPackages
@@ -90,11 +89,11 @@ jobs:
 
   publish:
     name: Publish NuGet package
-    needs: build
+    needs: [build, pack]
     if: >-
       (github.event_name == 'push' && github.ref == 'refs/heads/master') ||
       (github.event_name == 'workflow_dispatch' && inputs.force_nuget_publish)
-    runs-on: windows-latest
+    runs-on: ubuntu-latest
     permissions:
       contents: read
       id-token: write
@@ -106,11 +105,6 @@ jobs:
           name: NuGetPackages
           path: artifacts
 
-      - name: Setup .NET
-        uses: actions/setup-dotnet@v6
-        with:
-          dotnet-version: ${{ env.DOTNET_VERSION }}
-
       - name: NuGet login
         uses: NuGet/login@8d196754b4036150537f80ac539e15c2f1028841 # v1.2
         id: login
@@ -121,4 +115,4 @@ jobs:
         shell: pwsh
         env:
           NUGET_API_KEY: ${{ steps.login.outputs.NUGET_API_KEY }}
-        run: dotnet nuget push artifacts\*.nupkg --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
+        run: dotnet nuget push "artifacts/*.nupkg" --api-key $env:NUGET_API_KEY --source https://api.nuget.org/v3/index.json --skip-duplicate
