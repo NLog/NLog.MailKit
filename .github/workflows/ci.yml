@@ -76,7 +76,7 @@ jobs:
         shell: pwsh
         env:
           VERSION_SUFFIX: ${{ steps.version.outputs.suffix }}
-        run: dotnet pack ${{ env.SOLUTION }} --no-restore --configuration Release --output artifacts -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:EmbedUntrackedSources=true --version-suffix "$env:VERSION_SUFFIX"
+        run: dotnet pack ${{ env.SOLUTION }} --no-restore --no-build --configuration Release --output artifacts -p:IncludeSymbols=true -p:SymbolPackageFormat=snupkg -p:EmbedUntrackedSources=true --version-suffix "$env:VERSION_SUFFIX"
 
       - name: Upload NuGet package
         uses: actions/upload-artifact@v7
