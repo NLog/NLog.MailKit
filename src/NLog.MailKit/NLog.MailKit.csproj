@@ -23,7 +23,6 @@ If the mail target was already available on your platform, this package will ove
 		<RepositoryUrl>https://github.com/NLog/NLog.MailKit.git</RepositoryUrl>
 		<RepositoryType>git</RepositoryType>
 		<PackageTags>nlog mail mailkit netcore smtp email</PackageTags>
-		<GeneratePackageOnBuild>True</GeneratePackageOnBuild>
 		<SignAssembly>True</SignAssembly>
 		<AssemblyOriginatorKeyFile>NLog.snk</AssemblyOriginatorKeyFile>
 		<DelaySign>false</DelaySign>
