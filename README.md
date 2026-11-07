@@ -5,7 +5,7 @@
 [![Bugs](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=bugs)](https://sonarcloud.io/summary/new_code?id=nlog.mailkit)
 [![Vulnerabilities](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=vulnerabilities)](https://sonarcloud.io/summary/new_code?id=nlog.mailkit)
 [![](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=code_smells)](https://sonarcloud.io/project/issues?id=nlog.mailkit&resolved=false&types=CODE_SMELL) 
-[![Coverage](https://sonarcloud.io/api/project_badges/measure?project=nlog.mailkit&metric=coverage)](https://sonarcloud.io/component_measures?id=nlog.mailkit&metric=coverage)
+[![codecov](https://codecov.io/gh/NLog/NLog.MailKit/graph/badge.svg?token=fWDfHRUk46)](https://codecov.io/gh/NLog/NLog.MailKit)
 
 Alternative Mail target for [NLog](https://github.com/NLog/NLog) using [MailKit](https://github.com/jstedfast/MailKit).
 
