@@ -54,7 +54,7 @@ See https://github.com/NLog/NLog.MailKit/releases
 	</PropertyGroup>
 	<ItemGroup>
 		<PackageReference Include="MailKit" Version="4.18.1" />
-		<PackageReference Include="Microsoft.SourceLink.GitHub" Version="8.0.0" PrivateAssets="All" />
+		<PackageReference Include="System.Security.Cryptography.Pkcs" Version="10.0.13" Condition="'$(TargetFramework)' == 'netstandard2.0' or '$(TargetFramework)' == 'netstandard2.1'" />
 	</ItemGroup>
 	<ItemGroup>
 		<PackageReference Include="NLog" Version="6.2.2" />
