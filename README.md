@@ -66,7 +66,5 @@ BSD. License of MailKit is MIT
 
 
 ### Builds
-Builds and NuGet publishing is running on GitHub actions. See [ci.yml](/.github/workflows/ci.yml)
-
-SonarQube analysis is running on Azure Devops: [![SonarQube Cloud Build Status](https://dev.azure.com/NLogLogging/NLog/_apis/build/status/NLog.MailKit?branchName=master)](https://dev.azure.com/NLogLogging/NLog/_build/latest?definitionId=25&branchName=master)
+Build, test, and NuGet publishing run on GitHub Actions. See [ci.yml](/.github/workflows/ci.yml).
 
